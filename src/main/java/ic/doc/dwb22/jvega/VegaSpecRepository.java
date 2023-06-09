@@ -5,10 +5,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface VegaSpecRepository extends MongoRepository<VegaSpec, ObjectId> {
 
-    Optional<VegaSpec> findVegaSpecByVizId(String vizIdString);
+    Optional<VegaSpec> findSpecByVizId(String vizId);
 }
