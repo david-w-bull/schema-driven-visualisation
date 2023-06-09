@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @RestController
-public class JvegaApplication {
+public class JVegaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JvegaApplication.class, args);
+		SpringApplication.run(JVegaApplication.class, args);
 	}
 
 	@GetMapping("/")
