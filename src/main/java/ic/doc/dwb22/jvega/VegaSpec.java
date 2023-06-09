@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Document(collection = "test_json")
 @Data
@@ -24,6 +25,7 @@ public class VegaSpec {
     }
     @Id
     private ObjectId id;
+    private UUID vizId;
     private String schema;
     private Integer width;
     private Integer height;
