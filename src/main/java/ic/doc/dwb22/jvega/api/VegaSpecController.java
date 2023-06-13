@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin
@@ -32,9 +33,15 @@ public class VegaSpecController {
         return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specByVizId(vizId), HttpStatus.OK);
     }
 
-//    @PostMapping
-//    public ResponseEntity<VizSpecPayload> createSpec(@RequestBody Map<String, Integer> payload) {
-//        return new ResponseEntity<VizSpecPayload>(vegaSpecService.createSpec(payload.get("testId")), HttpStatus.CREATED);
-//    }
+    @PostMapping
+    public ResponseEntity<VizSpecPayload> createDefaultSpec(@RequestBody Map<String, Integer> payload) {
+        return new ResponseEntity<VizSpecPayload>(vegaSpecService.DefaultSpec(payload.get("testId")), HttpStatus.CREATED);
+    }
+    @CrossOrigin
+    @PostMapping("/postTest")
+    public ResponseEntity<Optional<VizSpecPayload>> createCustomSpec(@RequestBody Map<String, String> payload) {
+        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.CustomSpec(payload.get("viz")), HttpStatus.CREATED);
+    }
+
 
 }

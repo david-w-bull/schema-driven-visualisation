@@ -12,19 +12,21 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VegaLiteSpec {
-    @AllArgsConstructor
-    private class DataPoint implements Serializable {
-        private String a;
-        private Integer b;
-        public String getA() { return a; }
-        public Integer getB() { return b; }
-    }
+//    @AllArgsConstructor
+//    private class DataPoint implements Serializable {
+//        private String a;
+//        private Integer b;
+//        public String getA() { return a; }
+//        public Integer getB() { return b; }
+//    }
     private Integer width = 300;
     private Integer height = 200;
     private String description = "A visualisation specification";
-    private Map<String, List<DataPoint>> data;
+    //private Map<String, List<DataPoint>> data;
+    private Object data;
     private String mark;
-    private Map<String, Map<String, String>> encoding;
+    //private Map<String, Map<String, String>> encoding;
+    private Object encoding;
 
 //    public VegaLiteSpec() { // Default values added to no args constructor in order to test post request to MongoDB
 //
