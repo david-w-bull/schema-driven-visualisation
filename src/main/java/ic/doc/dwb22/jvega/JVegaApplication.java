@@ -24,13 +24,22 @@ public class JVegaApplication {
 		try (Connection connection = DriverManager.getConnection(
 				JdbcUrl,
 				"david",
-				"")) { // password needs to be replaced to function correctly
+				args[0])) { // password passed as program argument for now, as this is just a POC
 			DatabaseMetaData databaseMetaData = connection.getMetaData();
-			try(ResultSet resultSet = databaseMetaData.getTables(null, null, null, new String[]{"TABLE"})){
-				while(resultSet.next()) {
-					String tableName = resultSet.getString("TABLE_NAME");
-					String remarks = resultSet.getString("REMARKS");
+			try(ResultSet tables = databaseMetaData.getTables(null, "mondial", null, new String[]{"TABLE"})){
+				while(tables.next()) {
+					String tableName = tables.getString("TABLE_NAME");
 					System.out.println(tableName);
+					try(ResultSet primaryKeys = databaseMetaData.getPrimaryKeys(null, null, tableName)){
+						while(primaryKeys.next()){
+							String primaryKeyColumnName = primaryKeys.getString("COLUMN_NAME");
+							String primaryKeyName = primaryKeys.getString("PK_NAME");
+							System.out.println("-- pk -> " + primaryKeyColumnName);
+						}
+					} catch (SQLException e) {
+						throw new RuntimeException(e);
+					}
+
 				}
 			}
 		} catch (SQLException e) {
