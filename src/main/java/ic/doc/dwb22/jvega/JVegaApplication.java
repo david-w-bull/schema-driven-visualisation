@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,8 +25,9 @@ import java.util.UUID;
 public class JVegaApplication {
 
 	public static void main(String[] args) {
-		databaseTest();
-		vegaSpecTest();
+		//databaseTest();
+		//System.out.println(UUID.randomUUID());
+		//vegaSpecTest();
 		SpringApplication.run(JVegaApplication.class, args);
 	}
 
@@ -35,45 +37,73 @@ public class JVegaApplication {
 	}
 
 	public static void vegaSpecTest() {
-		VegaSpec testSpec = new VegaSpec.BuildSpec()
-				.setDescription("A test spec")
-				.setWidth(400)
-				.setHeight(300)
+		VegaScale xScale = new LinearScale.BuildScale()
+				.withName("x")
+				.withRange("width")
+				.withDomain(VegaScaleDomain.simpleDomain("source", "Horsepower"))
+				.build();
+
+		VegaScale yScale = new LinearScale.BuildScale()
+				.withName("y")
+				.withRange("height")
+				.withDomain(VegaScaleDomain.simpleDomain("source", "Miles_per_Gallon"))
+				.build();
+
+		VegaScale sizeScale = new LinearScale.BuildScale()
+				.withName("size")
+				.withNice(false)
+				.withRange(Arrays.asList(4,361))
+				.withDomain(VegaScaleDomain.simpleDomain("source", "Acceleration"))
+				.build();
+
+
+		VegaSpec scatterSpec = new VegaSpec.BuildSpec()
+				.setDescription("Scatter chart")
+				.setWidth(200)
+				.setHeight(200)
 				.setPadding(5)
-				.setNewScale(new LinearScale.BuildScale()
-						.withName("Linear Scale")
-						.withRange("height")
-						.withRound(true)
-						.withNice(true)
-						.withZero(false)
-						.build())
-				.setNewScale(new BandScale.BuildScale()
-						.withName("Band Scale")
-						.withRange("width")
-						.withReverse(false)
-						.withAlign(0.3)
-						.withPadding(0.7)
-						.build())
+				.setNewDataset(VegaDataset.urlDataset("source", "data/cars.json"))
+				.setNewScale(xScale)
+				.setNewScale(yScale)
+				.setNewScale(sizeScale)
 				.setNewAxis(new VegaAxis.VegaAxisBuilder()
+						.setScale("x")
 						.setOrient("bottom")
-						.setScale("xscale")
+						.setGrid(true)
+						.setTickCount(5)
+						.setTitle("Horsepower")
 						.build())
 				.setNewAxis(new VegaAxis.VegaAxisBuilder()
+						.setScale("y")
 						.setOrient("left")
-						.setScale("yscale")
+						.setGrid(true)
+						.setTitle("Miles Per Gallon")
+						.setTitlePadding(5)
+						.build())
+				.setNewMark(new VegaMark.BuildMark()
+						.withName("marks")
+						.withType("symbol")
+						.withData("source")
+						.withUpdate(new VegaEncodingProperties.BuildEncodingProperties()
+								.withX(VegaValueReference.setScaleField("x", "Horsepower"))
+								.withY(VegaValueReference.setScaleField("y", "Miles_per_Gallon"))
+								.withSize(VegaValueReference.setScaleField("size", "Acceleration"))
+								.withOpacity(VegaValueReference.setValue(0.5))
+								.withStroke(VegaValueReference.setValue("#4682b4"))
+								//.withFill(VegaValueReference.setValue("#4682b4"))
+								.build())
 						.build())
 				.createVegaSpec();
 
+		// System.out.println(scatterSpec.toJson().toPrettyString());
 
-		System.out.println(testSpec.toJson().toPrettyString());
-
-		String specString = testSpec.toJson().toString();
+		String specString = scatterSpec.toJson().toString();
 
 		VegaSpec deserialized = VegaSpec.fromString(specString);
 
 		String finalString = deserialized.toJson().toPrettyString();
 
-		System.out.println("------deserialised------");
+		// System.out.println("------deserialised------");
 
 		System.out.println(finalString);
 	}
