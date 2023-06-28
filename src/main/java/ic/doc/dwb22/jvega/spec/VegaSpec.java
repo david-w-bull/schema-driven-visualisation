@@ -1,4 +1,4 @@
-package ic.doc.dwb22.jvega;
+package ic.doc.dwb22.jvega.spec;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,12 +22,10 @@ public class VegaSpec {
     private Integer width;
     private Integer height;
     private Integer padding;
-
-    //private List<VegaDataset> datasets;
-
+    private List<VegaDataset> data;
     private List<VegaScale> scales;
-
     private List<VegaAxis> axes;
+    private List<VegaMark> marks;
 
     public JsonNode toJson() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -60,9 +58,10 @@ public class VegaSpec {
         private Integer width = null;
         private Integer height = null;
         private Integer padding = null;
-        //private List<VegaDataset> datasets = null;
+        private List<VegaDataset> data = null;
         private List<VegaScale> scales = null;
         private List<VegaAxis> axes = null;
+        private List <VegaMark> marks = null;
 
         public BuildSpec setDescription(String description) {
             this.description = description;
@@ -84,15 +83,19 @@ public class VegaSpec {
             return this;
         }
 
-//        @JsonProperty("datasets")
-//        public VegaSpecBuilder setNewDataset(VegaDataset dataset) {
-//            if (this.datasets == null) {
-//                this.datasets = new ArrayList<>();
-//            }
-//            this.datasets.add(dataset);
-//            return this;
-//        }
+        public BuildSpec setNewDataset(VegaDataset dataset) {
+            if (this.data == null) {
+                this.data = new ArrayList<>();
+            }
+            this.data.add(dataset);
+            return this;
+        }
 
+        @JsonProperty("data")
+        public BuildSpec setAllDatasets(List<VegaDataset> datasets) {
+            this.data = datasets;
+            return this;
+        }
 
         public BuildSpec setNewScale(VegaScale scale) {
             if (this.scales == null) {
@@ -122,15 +125,31 @@ public class VegaSpec {
             return this;
         }
 
+        public BuildSpec setNewMark(VegaMark mark) {
+            if (this.marks == null) {
+                this.marks = new ArrayList<>();
+            }
+            this.marks.add(mark);
+            return this;
+        }
+
+        @JsonProperty("marks")
+        public BuildSpec setAllMarks(List<VegaMark> marks) {
+            this.marks = marks;
+            return this;
+        }
+
         public VegaSpec createVegaSpec() {
             return new VegaSpec(description,
                     width,
                     height,
                     padding,
-                    //datasets,
+                    data,
                     scales,
-                    axes
+                    axes,
+                    marks
             );
         }
     }
 }
+

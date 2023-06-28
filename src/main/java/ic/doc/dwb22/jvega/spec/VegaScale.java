@@ -1,4 +1,4 @@
-package ic.doc.dwb22.jvega;
+package ic.doc.dwb22.jvega.spec;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -39,7 +39,7 @@ public abstract class VegaScale {
         protected String name;
         protected Object domain;
         protected Object range;
-        protected Boolean round;
+        protected Boolean round = true;
         protected Boolean reverse;
 
         public T withName(String name) {

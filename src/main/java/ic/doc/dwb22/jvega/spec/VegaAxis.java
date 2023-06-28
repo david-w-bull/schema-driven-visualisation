@@ -1,4 +1,4 @@
-package ic.doc.dwb22.jvega;
+package ic.doc.dwb22.jvega.spec;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -11,13 +11,16 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class VegaAxis {
 
-    String scale;
-    String orient;
-    Boolean grid;
-    Boolean domain;
-    String title; // Will need to be updated to List<String> title if allowing setMultiLineTitle();
-    Integer titlePadding; // Will need to be updated to allow a String definition as well if set by signal (for example)
-    Boolean ticks;
+    private String scale;
+    private String orient;
+    private Boolean grid;
+    private Boolean domain;
+    private String title; // Will need to be updated to List<String> title if allowing setMultiLineTitle();
+    private Integer titlePadding; // Will need to be updated to allow a String definition as well if set by signal (for example)
+    private Boolean ticks;
+    private Integer tickCount;
+
+//    private Map<String, Object> additionalProperties;
 
     public static class VegaAxisBuilder {
         private String scale;
@@ -27,6 +30,8 @@ public class VegaAxis {
         private String title;
         private Integer titlePadding;
         private Boolean ticks;
+        private Integer tickCount;
+//        private Map<String, Object> additionalProperties;
 
         public VegaAxisBuilder setScale(String scale) {
             this.scale = scale;
@@ -63,8 +68,22 @@ public class VegaAxis {
             return this;
         }
 
+        public VegaAxisBuilder setTickCount(Integer tickCount) {
+            this.tickCount = tickCount;
+            return this;
+        }
+
+//        public VegaAxisBuilder setAdditionalProperty(String key, Object value) {
+//            if (additionalProperties == null) {
+//                additionalProperties = new HashMap<>();
+//            }
+//            additionalProperties.put(key, value);
+//            return this;
+//        }
+
+
         public VegaAxis build() {
-            return new VegaAxis(scale, orient, grid, domain, title, titlePadding, ticks);
+            return new VegaAxis(scale, orient, grid, domain, title, titlePadding, ticks, tickCount);
         }
     }
 }
