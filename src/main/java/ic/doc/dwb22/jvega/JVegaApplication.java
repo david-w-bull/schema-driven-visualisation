@@ -4,7 +4,6 @@ import ic.doc.dwb22.jvega.spec.*;
 
 import ic.doc.dwb22.jvega.spec.scales.BandScale;
 import ic.doc.dwb22.jvega.spec.scales.LinearScale;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -80,17 +79,17 @@ public class JVegaApplication {
 						.withType("symbol")
 						.withData("source")
 						.withUpdate(new EncodingProps.BuildEncodingProperties()
-								.withX(ValueRef.setScaleField("x", "Horsepower"))
-								.withY(ValueRef.setScaleField("y", "Miles_per_Gallon"))
-								.withSize(ValueRef.setScaleField("size", "Acceleration"))
-								.withOpacity(ValueRef.setValue(0.5))
-								.withStroke(ValueRef.setValue("#4682b4"))
-								//.withFill(VegaValueReference.setValue("#4682b4"))
+								.withX(ValueRef.ScaleField("x", "Horsepower"))
+								.withY(ValueRef.ScaleField("y", "Miles_per_Gallon"))
+								.withSize(ValueRef.ScaleField("size", "Acceleration"))
+								.withOpacity(ValueRef.Value(0.5))
+								.withStroke(ValueRef.Value("#4682b4"))
+								//.withFill(ValueRef.Value("#4682b4"))
 								.build())
 						.build())
 				.createVegaSpec();
 
-		// System.out.println(scatterSpec.toJson().toPrettyString());
+		System.out.println(scatterSpec.toJson().toPrettyString());
 
 		String specString = scatterSpec.toJson().toString();
 
@@ -98,7 +97,7 @@ public class JVegaApplication {
 
 		String finalString = deserialized.toJson().toPrettyString();
 
-		// System.out.println("------deserialised------");
+		System.out.println("------deserialised------");
 
 		System.out.println(finalString);
 	}
