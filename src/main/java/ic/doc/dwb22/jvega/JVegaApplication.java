@@ -2,22 +2,19 @@ package ic.doc.dwb22.jvega;
 
 import ic.doc.dwb22.jvega.spec.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import ic.doc.dwb22.jvega.spec.scales.BandScale;
+import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class}) // Allows SQL connection to be configured at runtime
@@ -27,8 +24,8 @@ public class JVegaApplication {
 	public static void main(String[] args) {
 		//databaseTest();
 		//System.out.println(UUID.randomUUID());
-		//vegaSpecTest();
-		SpringApplication.run(JVegaApplication.class, args);
+		vegaSpecTest();
+		//SpringApplication.run(JVegaApplication.class, args);
 	}
 
 	@GetMapping("/")
@@ -37,25 +34,23 @@ public class JVegaApplication {
 	}
 
 	public static void vegaSpecTest() {
-		VegaScale xScale = new LinearScale.BuildScale()
+		Scale xScale = new LinearScale.BuildScale()
 				.withName("x")
 				.withRange("width")
-				.withDomain(VegaScaleDomain.simpleDomain("source", "Horsepower"))
+				.withDomain(ScaleDomain.simpleDomain("source", "Horsepower"))
 				.build();
 
-		VegaScale yScale = new LinearScale.BuildScale()
+		Scale yScale = new LinearScale.BuildScale()
 				.withName("y")
 				.withRange("height")
-				.withDomain(VegaScaleDomain.simpleDomain("source", "Miles_per_Gallon"))
+				.withDomain(ScaleDomain.simpleDomain("source", "Miles_per_Gallon"))
 				.build();
 
-		VegaScale sizeScale = new LinearScale.BuildScale()
+		Scale sizeScale = new BandScale.BuildScale()
 				.withName("size")
-				.withNice(false)
 				.withRange(Arrays.asList(4,361))
-				.withDomain(VegaScaleDomain.simpleDomain("source", "Acceleration"))
+				.withDomain(ScaleDomain.simpleDomain("source", "Acceleration"))
 				.build();
-
 
 		VegaSpec scatterSpec = new VegaSpec.BuildSpec()
 				.setDescription("Scatter chart")
@@ -66,30 +61,30 @@ public class JVegaApplication {
 				.setNewScale(xScale)
 				.setNewScale(yScale)
 				.setNewScale(sizeScale)
-				.setNewAxis(new VegaAxis.VegaAxisBuilder()
+				.setNewAxis(new Axis.VegaAxisBuilder()
 						.setScale("x")
 						.setOrient("bottom")
 						.setGrid(true)
 						.setTickCount(5)
 						.setTitle("Horsepower")
 						.build())
-				.setNewAxis(new VegaAxis.VegaAxisBuilder()
+				.setNewAxis(new Axis.VegaAxisBuilder()
 						.setScale("y")
 						.setOrient("left")
 						.setGrid(true)
 						.setTitle("Miles Per Gallon")
 						.setTitlePadding(5)
 						.build())
-				.setNewMark(new VegaMark.BuildMark()
+				.setNewMark(new Mark.BuildMark()
 						.withName("marks")
 						.withType("symbol")
 						.withData("source")
-						.withUpdate(new VegaEncodingProperties.BuildEncodingProperties()
-								.withX(VegaValueReference.setScaleField("x", "Horsepower"))
-								.withY(VegaValueReference.setScaleField("y", "Miles_per_Gallon"))
-								.withSize(VegaValueReference.setScaleField("size", "Acceleration"))
-								.withOpacity(VegaValueReference.setValue(0.5))
-								.withStroke(VegaValueReference.setValue("#4682b4"))
+						.withUpdate(new EncodingProps.BuildEncodingProperties()
+								.withX(ValueRef.setScaleField("x", "Horsepower"))
+								.withY(ValueRef.setScaleField("y", "Miles_per_Gallon"))
+								.withSize(ValueRef.setScaleField("size", "Acceleration"))
+								.withOpacity(ValueRef.setValue(0.5))
+								.withStroke(ValueRef.setValue("#4682b4"))
 								//.withFill(VegaValueReference.setValue("#4682b4"))
 								.build())
 						.build())

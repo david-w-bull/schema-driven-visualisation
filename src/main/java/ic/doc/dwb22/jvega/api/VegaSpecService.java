@@ -2,12 +2,12 @@ package ic.doc.dwb22.jvega.api;
 
 import ic.doc.dwb22.jvega.spec.*;
 import ic.doc.dwb22.jvega.VizSpecPayload;
+import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VegaSpecService {
@@ -27,60 +27,60 @@ public class VegaSpecService {
 //    }
 //
     public VizSpecPayload DefaultSpec(Integer testId) {
-        VegaScale xScale = new LinearScale.BuildScale()
+        Scale xScale = new LinearScale.BuildScale()
                 .withName("x")
                 .withRange("width")
-                .withDomain(VegaScaleDomain.simpleDomain("source", "Horsepower"))
+                .withDomain(ScaleDomain.simpleDomain("source", "Horsepower"))
                 .build();
 
-        VegaScale yScale = new LinearScale.BuildScale()
+        Scale yScale = new LinearScale.BuildScale()
                 .withName("y")
                 .withRange("height")
-                .withDomain(VegaScaleDomain.simpleDomain("source", "Miles_per_Gallon"))
+                .withDomain(ScaleDomain.simpleDomain("source", "Miles_per_Gallon"))
                 .build();
 
-        VegaScale sizeScale = new LinearScale.BuildScale()
+        Scale sizeScale = new LinearScale.BuildScale()
                 .withName("size")
                 .withNice(false)
                 .withRange(Arrays.asList(4,361))
-                .withDomain(VegaScaleDomain.simpleDomain("source", "Acceleration"))
+                .withDomain(ScaleDomain.simpleDomain("source", "Acceleration"))
                 .build();
 
 
         VegaSpec spec = new VegaSpec.BuildSpec()
                 .setDescription("Scatter chart")
-                .setWidth(200)
-                .setHeight(200)
+                .setWidth(700)
+                .setHeight(500)
                 .setPadding(5)
                 .setNewDataset(VegaDataset.urlDataset("source", "data/cars.json"))
                 .setNewScale(xScale)
                 .setNewScale(yScale)
-                .setNewScale(sizeScale)
-                .setNewAxis(new VegaAxis.VegaAxisBuilder()
+                //.setNewScale(sizeScale)
+                .setNewAxis(new Axis.VegaAxisBuilder()
                         .setScale("x")
                         .setOrient("bottom")
                         .setGrid(true)
                         .setTickCount(5)
                         .setTitle("Horsepower")
                         .build())
-                .setNewAxis(new VegaAxis.VegaAxisBuilder()
+                .setNewAxis(new Axis.VegaAxisBuilder()
                         .setScale("y")
                         .setOrient("left")
                         .setGrid(true)
                         .setTitle("Miles Per Gallon")
                         .setTitlePadding(5)
                         .build())
-                .setNewMark(new VegaMark.BuildMark()
+                .setNewMark(new Mark.BuildMark()
                         .withName("marks")
                         .withType("symbol")
                         .withData("source")
-                        .withUpdate(new VegaEncodingProperties.BuildEncodingProperties()
-                                .withX(VegaValueReference.setScaleField("x", "Horsepower"))
-                                .withY(VegaValueReference.setScaleField("y", "Miles_per_Gallon"))
-                                .withSize(VegaValueReference.setScaleField("size", "Acceleration"))
-                                .withOpacity(VegaValueReference.setValue(0.5))
-                                .withStroke(VegaValueReference.setValue("#4682b4"))
-                                //.withFill(VegaValueReference.setValue("#4682b4"))
+                        .withUpdate(new EncodingProps.BuildEncodingProperties()
+                                .withX(ValueRef.setScaleField("x", "Horsepower"))
+                                .withY(ValueRef.setScaleField("y", "Miles_per_Gallon"))
+                                //.withSize(VegaValueReference.setScaleField("size", "Acceleration"))
+                                .withOpacity(ValueRef.setValue(0.5))
+                                .withStroke(ValueRef.setValue("#4682b4"))
+                                .withFill(ValueRef.setValue("#4682b4"))
                                 .build())
                         .build())
                 .createVegaSpec();

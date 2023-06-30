@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class VegaAxis {
+public class Axis {
 
     private String scale;
     private String orient;
@@ -82,8 +82,8 @@ public class VegaAxis {
 //        }
 
 
-        public VegaAxis build() {
-            return new VegaAxis(scale, orient, grid, domain, title, titlePadding, ticks, tickCount);
+        public Axis build() {
+            return new Axis(scale, orient, grid, domain, title, titlePadding, ticks, tickCount);
         }
     }
 }

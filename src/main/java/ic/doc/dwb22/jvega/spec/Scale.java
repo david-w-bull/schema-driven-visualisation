@@ -3,6 +3,8 @@ package ic.doc.dwb22.jvega.spec;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import ic.doc.dwb22.jvega.spec.scales.BandScale;
+import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +21,7 @@ import lombok.NoArgsConstructor;
         @JsonSubTypes.Type(value = BandScale.class, name = "band"),
         @JsonSubTypes.Type(value = LinearScale.class, name = "linear")
 })
-public abstract class VegaScale {
+public abstract class Scale {
 
     protected String name;
     protected Object domain;
@@ -27,7 +29,7 @@ public abstract class VegaScale {
     protected Boolean round;
     protected Boolean reverse;
 
-    protected VegaScale(ScaleBuilder<?> builder) {
+    protected Scale(ScaleBuilder<?> builder) {
         this.name = builder.name;
         this.domain = builder.domain;
         this.range = builder.range;
@@ -76,7 +78,7 @@ public abstract class VegaScale {
         protected abstract T self();
 
         // Subclasses will override this method to return new instance
-        public abstract VegaScale build();
+        public abstract Scale build();
 
     }
 

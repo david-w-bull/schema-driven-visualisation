@@ -8,28 +8,35 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class VegaScaleTests {
+public class AxisTests {
 
     @Test
-    public void canBuildMultiScaleSpec() {
+    public void canBuildSingleAxisSpec() {
         VegaSpec testSpec = new VegaSpec.BuildSpec()
-                .setNewScale(new LinearScale.BuildScale()
-                        .withName("Linear Scale")
-                        .withRange("height")
-                        .withZero(false)
-                        .build())
-                .setNewScale(new BandScale.BuildScale()
-                        .withName("Band Scale")
-                        .withRange("width")
-                        .withAlign(0.5)
+                .setNewAxis(new Axis.VegaAxisBuilder()
+                        .setGrid(true)
+                        .setTitle("Test Axis")
                         .build())
                 .createVegaSpec();
 
-        assertThat(testSpec.getScales().size(), is(2));
-        assertThat(testSpec.getScales().get(0).getName(), is("Linear Scale"));
-        assertThat(testSpec.getScales().get(0).getType(), is("linear"));
-        assertThat(testSpec.getScales().get(0).getZero(), is(false));
+        assertThat(testSpec.getAxes().get(0).getTitle(), is("Test Axis"));
+        assertThat(testSpec.getAxes().get(0).getGrid(), is(true));
+    }
 
+    @Test
+    public void canBuildMultiAxisSpec() {
+        VegaSpec testSpec = new VegaSpec.BuildSpec()
+                .setNewAxis(new Axis.VegaAxisBuilder()
+                        .setTitle("Test Axis 1")
+                        .build())
+                .setNewAxis(new Axis.VegaAxisBuilder()
+                        .setTitle("Test Axis 2")
+                        .build())
+                .createVegaSpec();
+
+        assertThat(testSpec.getAxes().size(), is(2));
+        assertThat(testSpec.getAxes().get(0).getTitle(), is("Test Axis 1"));
+        assertThat(testSpec.getAxes().get(1).getTitle(), is("Test Axis 2"));
     }
 
     @Test
@@ -65,11 +72,11 @@ public class VegaScaleTests {
 
         VegaSpec testSpec = new VegaSpec.BuildSpec()
                 .setDescription("Axis Test Spec")
-                .setNewAxis(new VegaAxis.VegaAxisBuilder()
+                .setNewAxis(new Axis.VegaAxisBuilder()
                         .setScale("xscale")
                         .setOrient("bottom")
                         .build())
-                .setNewAxis(new VegaAxis.VegaAxisBuilder()
+                .setNewAxis(new Axis.VegaAxisBuilder()
                         .setScale("yscale")
                         .setOrient("right")
                         .build())
@@ -83,10 +90,10 @@ public class VegaScaleTests {
     @Test
     public void AxisSpecObjectUnchangedWhenConvertedToStringAndBackToObject() {
         VegaSpec originalSpec = new VegaSpec.BuildSpec()
-                .setNewAxis(new VegaAxis.VegaAxisBuilder()
+                .setNewAxis(new Axis.VegaAxisBuilder()
                         .setTitle("Test Axis 1")
                         .build())
-                .setNewAxis(new VegaAxis.VegaAxisBuilder()
+                .setNewAxis(new Axis.VegaAxisBuilder()
                         .setTitle("Test Axis 2")
                         .build())
                 .createVegaSpec();

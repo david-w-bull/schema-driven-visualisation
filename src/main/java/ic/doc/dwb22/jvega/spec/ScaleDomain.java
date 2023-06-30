@@ -11,14 +11,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class VegaScaleDomain {
+public class ScaleDomain {
     private String data;
     private Object field;
     private List<Object> fields;
     private Object sort; // Most likely to be Boolean but Object valued in case a sort object is passed
 
-    public static VegaScaleDomain simpleDomain(String dataSetName, String field) {
-        VegaScaleDomain domain = new VegaScaleDomain();
+    public static ScaleDomain simpleDomain(String dataSetName, String field) {
+        ScaleDomain domain = new ScaleDomain();
         domain.data = dataSetName;
         domain.field = field;
         return domain;

@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class VegaEncoding {
-    private VegaEncodingProperties enter;
-    private VegaEncodingProperties update;
-    private VegaEncodingProperties exit;
-    private VegaEncodingProperties hover;
+public class Encoding {
+    private EncodingProps enter;
+    private EncodingProps update;
+    private EncodingProps exit;
+    private EncodingProps hover;
 }

@@ -23,9 +23,9 @@ public class VegaSpec {
     private Integer height;
     private Integer padding;
     private List<VegaDataset> data;
-    private List<VegaScale> scales;
-    private List<VegaAxis> axes;
-    private List<VegaMark> marks;
+    private List<Scale> scales;
+    private List<Axis> axes;
+    private List<Mark> marks;
 
     public JsonNode toJson() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -59,9 +59,9 @@ public class VegaSpec {
         private Integer height = null;
         private Integer padding = null;
         private List<VegaDataset> data = null;
-        private List<VegaScale> scales = null;
-        private List<VegaAxis> axes = null;
-        private List <VegaMark> marks = null;
+        private List<Scale> scales = null;
+        private List<Axis> axes = null;
+        private List <Mark> marks = null;
 
         public BuildSpec setDescription(String description) {
             this.description = description;
@@ -97,7 +97,7 @@ public class VegaSpec {
             return this;
         }
 
-        public BuildSpec setNewScale(VegaScale scale) {
+        public BuildSpec setNewScale(Scale scale) {
             if (this.scales == null) {
                 this.scales = new ArrayList<>();
             }
@@ -106,12 +106,12 @@ public class VegaSpec {
         }
 
         @JsonProperty("scales")
-        public BuildSpec setAllScales(List<VegaScale> scales) {
+        public BuildSpec setAllScales(List<Scale> scales) {
             this.scales = scales;
             return this;
         }
 
-        public BuildSpec setNewAxis(VegaAxis axis) {
+        public BuildSpec setNewAxis(Axis axis) {
             if (this.axes == null) {
                 this.axes = new ArrayList<>();
             }
@@ -120,12 +120,12 @@ public class VegaSpec {
         }
 
         @JsonProperty("axes")
-        public BuildSpec setAllAxes(List<VegaAxis> axes) {
+        public BuildSpec setAllAxes(List<Axis> axes) {
             this.axes = axes;
             return this;
         }
 
-        public BuildSpec setNewMark(VegaMark mark) {
+        public BuildSpec setNewMark(Mark mark) {
             if (this.marks == null) {
                 this.marks = new ArrayList<>();
             }
@@ -134,7 +134,7 @@ public class VegaSpec {
         }
 
         @JsonProperty("marks")
-        public BuildSpec setAllMarks(List<VegaMark> marks) {
+        public BuildSpec setAllMarks(List<Mark> marks) {
             this.marks = marks;
             return this;
         }

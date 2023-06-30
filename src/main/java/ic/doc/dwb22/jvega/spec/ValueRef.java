@@ -9,36 +9,36 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class VegaValueReference {
+public class ValueRef {
     private Object scale;
     private Object field;
     private Object band;
     private Object value;
     private Object signal;
 
-    public static VegaValueReference setScaleField(Object scale, Object field) {
-        VegaValueReference ref = new VegaValueReference();
+    public static ValueRef setScaleField(Object scale, Object field) {
+        ValueRef ref = new ValueRef();
         ref.scale = scale;
         ref.field = field;
         return ref;
     }
 
-    public static VegaValueReference setScaleBand(Object scale, Object band) {
-        VegaValueReference ref = new VegaValueReference();
+    public static ValueRef setScaleBand(Object scale, Object band) {
+        ValueRef ref = new ValueRef();
         ref.scale = scale;
         ref.band = band;
         return ref;
     }
 
-    public static VegaValueReference setScaleValue(Object scale, Object value) {
-        VegaValueReference ref = new VegaValueReference();
+    public static ValueRef setScaleValue(Object scale, Object value) {
+        ValueRef ref = new ValueRef();
         ref.scale = scale;
         ref.value = value;
         return ref;
     }
 
-    public static VegaValueReference setValue(Object value) {
-        VegaValueReference ref = new VegaValueReference();
+    public static ValueRef setValue(Object value) {
+        ValueRef ref = new ValueRef();
         ref.value = value;
         return ref;
     }
