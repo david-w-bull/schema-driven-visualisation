@@ -67,11 +67,11 @@ public class ScaleTests {
 
         VegaSpec testSpec = new VegaSpec.BuildSpec()
                 .setDescription("Axis Test Spec")
-                .setNewAxis(new Axis.VegaAxisBuilder()
+                .setNewAxis(new Axis.BuildAxis()
                         .setScale("xscale")
                         .setOrient("bottom")
                         .build())
-                .setNewAxis(new Axis.VegaAxisBuilder()
+                .setNewAxis(new Axis.BuildAxis()
                         .setScale("yscale")
                         .setOrient("right")
                         .build())
@@ -85,10 +85,10 @@ public class ScaleTests {
     @Test
     public void AxisSpecObjectUnchangedWhenConvertedToStringAndBackToObject() {
         VegaSpec originalSpec = new VegaSpec.BuildSpec()
-                .setNewAxis(new Axis.VegaAxisBuilder()
+                .setNewAxis(new Axis.BuildAxis()
                         .setTitle("Test Axis 1")
                         .build())
-                .setNewAxis(new Axis.VegaAxisBuilder()
+                .setNewAxis(new Axis.BuildAxis()
                         .setTitle("Test Axis 2")
                         .build())
                 .createVegaSpec();

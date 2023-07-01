@@ -1,5 +1,7 @@
 package ic.doc.dwb22.jvega;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ic.doc.dwb22.jvega.spec.*;
 
 import ic.doc.dwb22.jvega.spec.scales.BandScale;
@@ -7,9 +9,12 @@ import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,13 +28,119 @@ public class JVegaApplication {
 	public static void main(String[] args) {
 		//databaseTest();
 		//System.out.println(UUID.randomUUID());
-		vegaSpecTest();
+		//vegaSpecTest();
+		barDataTest();
 		//SpringApplication.run(JVegaApplication.class, args);
 	}
 
 	@GetMapping("/")
 	public String apiRoot() {
 		return "Test endpoint";
+	}
+
+	public static void barDataTest() {
+
+		JsonNode barData;
+
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			File file = new ClassPathResource("barData.json").getFile();
+			barData = mapper.readTree(file);
+
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		VegaSpec testSpec = new VegaSpec.BuildSpec()
+				.setDescription("Bar data test")
+				.setWidth(400)
+				.setHeight(200)
+				.setPadding(5)
+
+				.setNewDataset(VegaDataset.jsonDataset("table", barData))
+
+				.setNewSignal(new Signal.BuildSignal()
+						.withName("tooltip")
+						.withOn(SignalEvent.EventUpdate("rect:mouseover", "datum"))
+						.withOn(SignalEvent.EventUpdate("rect:mouseout", "{}"))
+						.build())
+
+				.setNewScale(new BandScale.BuildScale()
+						.withName("xscale")
+						.withDomain(ScaleDomain.simpleDomain("table", "category"))
+						.withRange("width")
+						.withPadding(0.05)
+						.build())
+
+				.setNewScale(new LinearScale.BuildScale()
+						.withName("yscale")
+						.withDomain(ScaleDomain.simpleDomain("table", "amount"))
+						.withRange("height")
+						.withNice(true)
+						.build())
+
+				.setNewAxis(new Axis.BuildAxis()
+						.setOrient("bottom")
+						.setScale("xscale")
+						.build())
+
+				.setNewAxis(new Axis.BuildAxis()
+						.setOrient("left")
+						.setScale("yscale")
+						.build())
+
+				.setNewMark(new Mark.BuildMark()
+						.withType("rect")
+						.withData("table")
+						.withEnter(new EncodingProps.BuildProps()
+								.withX(ValueRef.ScaleField("xscale", "category"))
+								.withWidth(ValueRef.ScaleBand("xscale", 1))
+								.withY(ValueRef.ScaleField("yscale", "amount"))
+								.withY2(ValueRef.ScaleValue("yscale", 0))
+								.build())
+						.withUpdate(new EncodingProps.BuildProps().withFill(ValueRef.Value("steelblue")).build())
+						.withHover(new EncodingProps.BuildProps().withFill(ValueRef.Value("red")).build())
+						.build())
+
+				.setNewMark(new Mark.BuildMark()
+						.withType("text")
+						.withEnter(new EncodingProps.BuildProps()
+								.withAlign(ValueRef.Value("center"))
+								.withBaseline(ValueRef.Value("bottom"))
+								.withFill(ValueRef.Value("#333"))
+								.build())
+						.withUpdate(new EncodingProps.BuildProps()
+								.withX(new ValueRef.BuildRef()
+										.withScale("xscale")
+										.withSignal("tooltip.category")
+										.withBand(0.5)
+										.build())
+								.withY(new ValueRef.BuildRef()
+										.withScale("yscale")
+										.withSignal("tooltip.amount")
+										.withOffset(-2)
+										.build())
+								.withFillOpacity(new ValueRef.BuildRef()
+										.withTest("datum === tooltip")
+										.withValue(0)
+										.build())
+								.withFillOpacity(ValueRef.Value(1))
+								.build())
+						.build())
+
+				.createVegaSpec();
+
+		System.out.println(testSpec.toJson().toPrettyString());
+
+		String specString = testSpec.toJson().toString();
+
+		VegaSpec deserialized = VegaSpec.fromString(specString);
+
+		String finalString = deserialized.toJson().toPrettyString();
+
+		System.out.println("------deserialised------");
+
+		System.out.println(finalString);
 	}
 
 	public static void vegaSpecTest() {
@@ -60,14 +171,14 @@ public class JVegaApplication {
 				.setNewScale(xScale)
 				.setNewScale(yScale)
 				.setNewScale(sizeScale)
-				.setNewAxis(new Axis.VegaAxisBuilder()
+				.setNewAxis(new Axis.BuildAxis()
 						.setScale("x")
 						.setOrient("bottom")
 						.setGrid(true)
 						.setTickCount(5)
 						.setTitle("Horsepower")
 						.build())
-				.setNewAxis(new Axis.VegaAxisBuilder()
+				.setNewAxis(new Axis.BuildAxis()
 						.setScale("y")
 						.setOrient("left")
 						.setGrid(true)
@@ -78,7 +189,7 @@ public class JVegaApplication {
 						.withName("marks")
 						.withType("symbol")
 						.withData("source")
-						.withUpdate(new EncodingProps.BuildEncodingProperties()
+						.withUpdate(new EncodingProps.BuildProps()
 								.withX(ValueRef.ScaleField("x", "Horsepower"))
 								.withY(ValueRef.ScaleField("y", "Miles_per_Gallon"))
 								.withSize(ValueRef.ScaleField("size", "Acceleration"))

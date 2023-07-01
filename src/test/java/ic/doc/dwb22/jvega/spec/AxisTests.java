@@ -13,7 +13,7 @@ public class AxisTests {
     @Test
     public void canBuildSingleAxisSpec() {
         VegaSpec testSpec = new VegaSpec.BuildSpec()
-                .setNewAxis(new Axis.VegaAxisBuilder()
+                .setNewAxis(new Axis.BuildAxis()
                         .setGrid(true)
                         .setTitle("Test Axis")
                         .build())
@@ -26,10 +26,10 @@ public class AxisTests {
     @Test
     public void canBuildMultiAxisSpec() {
         VegaSpec testSpec = new VegaSpec.BuildSpec()
-                .setNewAxis(new Axis.VegaAxisBuilder()
+                .setNewAxis(new Axis.BuildAxis()
                         .setTitle("Test Axis 1")
                         .build())
-                .setNewAxis(new Axis.VegaAxisBuilder()
+                .setNewAxis(new Axis.BuildAxis()
                         .setTitle("Test Axis 2")
                         .build())
                 .createVegaSpec();
@@ -72,11 +72,11 @@ public class AxisTests {
 
         VegaSpec testSpec = new VegaSpec.BuildSpec()
                 .setDescription("Axis Test Spec")
-                .setNewAxis(new Axis.VegaAxisBuilder()
+                .setNewAxis(new Axis.BuildAxis()
                         .setScale("xscale")
                         .setOrient("bottom")
                         .build())
-                .setNewAxis(new Axis.VegaAxisBuilder()
+                .setNewAxis(new Axis.BuildAxis()
                         .setScale("yscale")
                         .setOrient("right")
                         .build())
@@ -90,10 +90,10 @@ public class AxisTests {
     @Test
     public void AxisSpecObjectUnchangedWhenConvertedToStringAndBackToObject() {
         VegaSpec originalSpec = new VegaSpec.BuildSpec()
-                .setNewAxis(new Axis.VegaAxisBuilder()
+                .setNewAxis(new Axis.BuildAxis()
                         .setTitle("Test Axis 1")
                         .build())
-                .setNewAxis(new Axis.VegaAxisBuilder()
+                .setNewAxis(new Axis.BuildAxis()
                         .setTitle("Test Axis 2")
                         .build())
                 .createVegaSpec();

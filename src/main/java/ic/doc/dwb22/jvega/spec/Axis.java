@@ -22,7 +22,7 @@ public class Axis {
 
 //    private Map<String, Object> additionalProperties;
 
-    public static class VegaAxisBuilder {
+    public static class BuildAxis {
         private String scale;
         private String orient;
         private Boolean grid;
@@ -33,42 +33,42 @@ public class Axis {
         private Integer tickCount;
 //        private Map<String, Object> additionalProperties;
 
-        public VegaAxisBuilder setScale(String scale) {
+        public BuildAxis setScale(String scale) {
             this.scale = scale;
             return this;
         }
 
-        public VegaAxisBuilder setOrient(String orient) {
+        public BuildAxis setOrient(String orient) {
             this.orient = orient;
             return this;
         }
 
-        public VegaAxisBuilder setGrid(Boolean grid) {
+        public BuildAxis setGrid(Boolean grid) {
             this.grid = grid;
             return this;
         }
 
-        public VegaAxisBuilder setDomain(Boolean domain) {
+        public BuildAxis setDomain(Boolean domain) {
             this.domain = domain;
             return this;
         }
 
-        public VegaAxisBuilder setTitle(String title) {
+        public BuildAxis setTitle(String title) {
             this.title = title;
             return this;
         }
 
-        public VegaAxisBuilder setTitlePadding(Integer titlePadding) {
+        public BuildAxis setTitlePadding(Integer titlePadding) {
             this.titlePadding = titlePadding;
             return this;
         }
 
-        public VegaAxisBuilder setTicks(Boolean ticks) {
+        public BuildAxis setTicks(Boolean ticks) {
             this.ticks = ticks;
             return this;
         }
 
-        public VegaAxisBuilder setTickCount(Integer tickCount) {
+        public BuildAxis setTickCount(Integer tickCount) {
             this.tickCount = tickCount;
             return this;
         }

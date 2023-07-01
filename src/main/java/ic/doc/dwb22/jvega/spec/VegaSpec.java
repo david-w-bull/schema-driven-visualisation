@@ -26,6 +26,7 @@ public class VegaSpec {
     private List<Scale> scales;
     private List<Axis> axes;
     private List<Mark> marks;
+    private List<Signal> signals;
 
     public JsonNode toJson() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -62,6 +63,7 @@ public class VegaSpec {
         private List<Scale> scales = null;
         private List<Axis> axes = null;
         private List <Mark> marks = null;
+        private List<Signal> signals = null;
 
         public BuildSpec setDescription(String description) {
             this.description = description;
@@ -139,6 +141,20 @@ public class VegaSpec {
             return this;
         }
 
+        public BuildSpec setNewSignal(Signal signal) {
+            if (this.signals == null) {
+                this.signals = new ArrayList<>();
+            }
+            this.signals.add(signal);
+            return this;
+        }
+
+        @JsonProperty("signals")
+        public BuildSpec setAllSignals(List<Signal> signals) {
+            this.signals = signals;
+            return this;
+        }
+
         public VegaSpec createVegaSpec() {
             return new VegaSpec(description,
                     width,
@@ -147,7 +163,8 @@ public class VegaSpec {
                     data,
                     scales,
                     axes,
-                    marks
+                    marks,
+                    signals
             );
         }
     }
