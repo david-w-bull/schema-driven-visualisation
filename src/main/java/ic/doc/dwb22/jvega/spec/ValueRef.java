@@ -61,6 +61,12 @@ public class ValueRef {
         return ref;
     }
 
+    public static ValueRef Field(Object field) {
+        ValueRef ref = new ValueRef();
+        ref.field = field;
+        return ref;
+    }
+
     public static class BuildRef {
         private String test;
         private Object field;

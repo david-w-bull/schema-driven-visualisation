@@ -21,14 +21,14 @@ public class VegaDataset {
     private JsonNode values;
 
     public static VegaDataset urlDataset(String name, String url) {
-        VegaDataset data = new BuildDataset().createVegaDataset();
+        VegaDataset data = new BuildDataset().build();
         data.name = name;
         data.url = url;
         return data;
     }
 
     public static VegaDataset jsonDataset(String name, JsonNode values) {
-        VegaDataset data = new BuildDataset().createVegaDataset();
+        VegaDataset data = new BuildDataset().build();
         data.name = name;
         data.values = values;
         return data;
@@ -64,7 +64,7 @@ public class VegaDataset {
             return this;
         }
 
-        public VegaDataset createVegaDataset() {
+        public VegaDataset build() {
             return new VegaDataset(name, url, transform, values);
         }
     }

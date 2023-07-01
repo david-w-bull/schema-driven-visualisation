@@ -33,6 +33,12 @@ public class EncodingProps {
     private List<ValueRef> fillOpacity;
     private List<ValueRef> text;
 
+    private List<ValueRef> startAngle;
+    private List<ValueRef> endAngle;
+    private List<ValueRef> padAngle;
+    private List<ValueRef> innerRadius;
+    private List<ValueRef> outerRadius;
+
 
     public static class BuildProps {
         private List<ValueRef> x;
@@ -43,16 +49,22 @@ public class EncodingProps {
         private List<ValueRef> y2;
         private List<ValueRef> yc;
         private List<ValueRef> height;
-        private List<ValueRef> size;
+        private List<ValueRef> size;        // not generic property
         private List<ValueRef> opacity;
         private List<ValueRef> fill;
         private List<ValueRef> stroke;
         private List<ValueRef> tooltip;
         private List<ValueRef> zindex;
-        private List<ValueRef> align;
-        private List<ValueRef> baseline;
+        private List<ValueRef> align;       // not generic property
+        private List<ValueRef> baseline;    // not generic property
         private List<ValueRef> fillOpacity;
-        private List<ValueRef> text;
+        private List<ValueRef> text;        // not generic property
+
+        private List<ValueRef> startAngle;  // not generic property
+        private List<ValueRef> endAngle;    // not generic property
+        private List<ValueRef> padAngle;    // not generic property
+        private List<ValueRef> innerRadius; // not generic property
+        private List<ValueRef> outerRadius; // not generic property
 
         public BuildProps withX(ValueRef x) {
             if(this.x == null) {
@@ -197,6 +209,45 @@ public class EncodingProps {
             this.text.add(text);
             return this;
         }
+        public BuildProps withStartAngle(ValueRef startAngle) {
+            if(this.startAngle == null) {
+                this.startAngle = new ArrayList<>();
+            }
+            this.startAngle.add(startAngle);
+            return this;
+        }
+
+        public BuildProps withEndAngle(ValueRef endAngle) {
+            if(this.endAngle == null) {
+                this.endAngle = new ArrayList<>();
+            }
+            this.endAngle.add(endAngle);
+            return this;
+        }
+
+        public BuildProps withPadAngle(ValueRef padAngle) {
+            if(this.padAngle == null) {
+                this.padAngle = new ArrayList<>();
+            }
+            this.padAngle.add(padAngle);
+            return this;
+        }
+
+        public BuildProps withInnerRadius(ValueRef innerRadius) {
+            if(this.innerRadius == null) {
+                this.innerRadius = new ArrayList<>();
+            }
+            this.innerRadius.add(innerRadius);
+            return this;
+        }
+
+        public BuildProps withOuterRadius(ValueRef outerRadius) {
+            if(this.outerRadius == null) {
+                this.outerRadius = new ArrayList<>();
+            }
+            this.outerRadius.add(outerRadius);
+            return this;
+        }
 
         public EncodingProps build() {
             return new EncodingProps(x,
@@ -216,7 +267,12 @@ public class EncodingProps {
                     align,
                     baseline,
                     fillOpacity,
-                    text);
+                    text,
+                    startAngle,
+                    endAngle,
+                    padAngle,
+                    innerRadius,
+                    outerRadius);
         }
     }
 }

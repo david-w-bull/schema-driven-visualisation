@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import ic.doc.dwb22.jvega.spec.scales.BandScale;
 import ic.doc.dwb22.jvega.spec.scales.LinearScale;
+import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,8 @@ import lombok.NoArgsConstructor;
         property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = BandScale.class, name = "band"),
-        @JsonSubTypes.Type(value = LinearScale.class, name = "linear")
+        @JsonSubTypes.Type(value = LinearScale.class, name = "linear"),
+        @JsonSubTypes.Type(value = OrdinalScale.class, name = "ordinal")
 })
 public abstract class Scale {
 

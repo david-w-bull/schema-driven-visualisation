@@ -6,6 +6,8 @@ import ic.doc.dwb22.jvega.spec.*;
 
 import ic.doc.dwb22.jvega.spec.scales.BandScale;
 import ic.doc.dwb22.jvega.spec.scales.LinearScale;
+import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
+import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -29,7 +31,8 @@ public class JVegaApplication {
 		//databaseTest();
 		//System.out.println(UUID.randomUUID());
 		//vegaSpecTest();
-		barDataTest();
+		//barDataTest();
+		donutChartTest();
 		//SpringApplication.run(JVegaApplication.class, args);
 	}
 
@@ -38,6 +41,66 @@ public class JVegaApplication {
 		return "Test endpoint";
 	}
 
+	public static void donutChartTest() {
+		JsonNode donutData;
+
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			File file = new ClassPathResource("donutData.json").getFile();
+			donutData = mapper.readTree(file);
+
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		VegaDataset donutDataset = new VegaDataset.BuildDataset()
+				.withName("table")
+				.withValues(donutData)
+				.withTransform(new PieTransform.BuildPie()
+						.withField("field")
+						.withStartAngle(0.0)
+						.build())
+				.build();
+
+		VegaSpec donutSpec = new VegaSpec.BuildSpec()
+				.setDescription("Simple donut chart")
+				.setWidth(400)
+				.setHeight(400)
+				.setNewDataset(donutDataset)
+				.setNewScale(new OrdinalScale.BuildScale()
+						.withName("color")
+						.withDomain(ScaleDomain.simpleDomain("table", "id"))
+						.withRange(GenericJsonObject.createObjectNode("scheme", "category20"))
+						.build())
+				.setNewMark(new Mark.BuildMark()
+						.withType("arc")
+						.withData("table")
+						.withEnter(new EncodingProps.BuildProps()
+								.withFill(ValueRef.ScaleField("color", "id"))
+								.withX(ValueRef.Signal("width / 2"))
+								.withY(ValueRef.Signal("height / 2"))
+								.build())
+						.withUpdate(new EncodingProps.BuildProps()
+								.withStartAngle(ValueRef.Field("startAngle"))
+								.withEndAngle(ValueRef.Field("endAngle"))
+								.withPadAngle(ValueRef.Value(0))
+								.withInnerRadius(ValueRef.Value(140))
+								.withOuterRadius(ValueRef.Signal("width / 2"))
+								.build())
+						.build())
+				.createVegaSpec();
+
+		System.out.println(donutSpec.toJson().toPrettyString());
+
+		String specString = donutSpec.toJson().toString();
+
+		VegaSpec deserialized = VegaSpec.fromString(specString);
+
+		String finalString = deserialized.toJson().toPrettyString();
+
+		System.out.println("------deserialised------");
+
+		System.out.println(finalString);
+	}
 	public static void barDataTest() {
 
 		JsonNode barData;
