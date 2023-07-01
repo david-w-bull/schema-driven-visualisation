@@ -55,6 +55,12 @@ public class ValueRef {
         return ref;
     }
 
+    public static ValueRef Signal(Object signal) {
+        ValueRef ref = new ValueRef();
+        ref.signal = signal;
+        return ref;
+    }
+
     public static class BuildRef {
         private String test;
         private Object field;

@@ -125,6 +125,7 @@ public class JVegaApplication {
 										.withValue(0)
 										.build())
 								.withFillOpacity(ValueRef.Value(1))
+								.withText(ValueRef.Signal("tooltip.amount"))
 								.build())
 						.build())
 

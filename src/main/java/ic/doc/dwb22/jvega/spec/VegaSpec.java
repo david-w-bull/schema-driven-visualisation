@@ -23,11 +23,10 @@ public class VegaSpec {
     private Integer height;
     private Integer padding;
     private List<VegaDataset> data;
+    private List<Signal> signals;
     private List<Scale> scales;
     private List<Axis> axes;
     private List<Mark> marks;
-    private List<Signal> signals;
-
     public JsonNode toJson() {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.valueToTree(this);
@@ -60,10 +59,10 @@ public class VegaSpec {
         private Integer height = null;
         private Integer padding = null;
         private List<VegaDataset> data = null;
+        private List<Signal> signals = null;
         private List<Scale> scales = null;
         private List<Axis> axes = null;
         private List <Mark> marks = null;
-        private List<Signal> signals = null;
 
         public BuildSpec setDescription(String description) {
             this.description = description;
@@ -161,10 +160,10 @@ public class VegaSpec {
                     height,
                     padding,
                     data,
+                    signals,
                     scales,
                     axes,
-                    marks,
-                    signals
+                    marks
             );
         }
     }

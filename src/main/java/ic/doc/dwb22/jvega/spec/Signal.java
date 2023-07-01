@@ -19,7 +19,7 @@ public class Signal {
     private String init;
     private String update;
     private Boolean react;
-    private Object value = ""; // Vega expects a placeholder value even if empty
+    private Object value; // Vega expects a placeholder value even if empty
 
     public static class BuildSignal {
         private String name;
@@ -28,7 +28,7 @@ public class Signal {
         private String init;
         private String update;
         private Boolean react;
-        private Object value;
+        private Object value = "{}";
 
         public BuildSignal withName(String name) {
             this.name = name;
