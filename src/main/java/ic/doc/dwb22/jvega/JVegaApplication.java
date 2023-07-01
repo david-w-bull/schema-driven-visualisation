@@ -128,7 +128,6 @@ public class JVegaApplication {
 								.withText(ValueRef.Signal("tooltip.amount"))
 								.build())
 						.build())
-
 				.createVegaSpec();
 
 		System.out.println(testSpec.toJson().toPrettyString());

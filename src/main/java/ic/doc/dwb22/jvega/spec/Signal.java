@@ -1,9 +1,8 @@
 package ic.doc.dwb22.jvega.spec;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,8 @@ public class Signal {
     private String init;
     private String update;
     private Boolean react;
-    private Object value; // Vega expects a placeholder value even if empty
+    @JsonInclude(JsonInclude.Include.ALWAYS) // Empty object placeholder needed by Vega compiler therefore not excluded by Jackson when empty
+    private Object value;
 
     public static class BuildSignal {
         private String name;
@@ -28,7 +28,7 @@ public class Signal {
         private String init;
         private String update;
         private Boolean react;
-        private Object value = "{}";
+        private Object value = JsonNodeFactory.instance.objectNode(); // Vega compiler requires an empty object if no value set
 
         public BuildSignal withName(String name) {
             this.name = name;
