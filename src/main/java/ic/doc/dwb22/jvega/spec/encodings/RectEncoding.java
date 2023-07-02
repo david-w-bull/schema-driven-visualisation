@@ -2,9 +2,7 @@ package ic.doc.dwb22.jvega.spec.encodings;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ic.doc.dwb22.jvega.spec.EncodingProps;
-import ic.doc.dwb22.jvega.spec.Scale;
 import ic.doc.dwb22.jvega.spec.ValueRef;
-import ic.doc.dwb22.jvega.spec.scales.BandScale;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,70 +15,70 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@TypeAlias("arc")
-public class ArcEncoding extends EncodingProps {
+@TypeAlias("rect")
+public class RectEncoding extends EncodingProps {
 
-    private List<ValueRef> startAngle;
-    private List<ValueRef> endAngle;
-    private List<ValueRef> padAngle;
-    private List<ValueRef> innerRadius;
-    private List<ValueRef> outerRadius;
+    private List<ValueRef> cornerRadius;
+    private List<ValueRef> cornerRadiusTopLeft;
+    private List<ValueRef> cornerRadiusTopRight;
+    private List<ValueRef> cornerRadiusBottomLeft;
+    private List<ValueRef> cornerRadiusBottomRight;
 
-    private ArcEncoding(BuildEncoding builder) {
+    private RectEncoding(BuildEncoding builder) {
         super(builder);
-        this.startAngle = builder.startAngle;
-        this.endAngle = builder.endAngle;
-        this.padAngle = builder.padAngle;
-        this.innerRadius = builder.innerRadius;
-        this.outerRadius = builder.outerRadius;
+        this.cornerRadius = builder.cornerRadius;
+        this.cornerRadiusTopLeft = builder.cornerRadiusTopLeft;
+        this.cornerRadiusTopRight = builder.cornerRadiusTopRight;
+        this.cornerRadiusBottomLeft = builder.cornerRadiusBottomLeft;
+        this.cornerRadiusBottomRight = builder.cornerRadiusBottomRight;
 
     }
 
     public static class BuildEncoding extends BuildProps<BuildEncoding> {
-        private List<ValueRef> startAngle;
-        private List<ValueRef> endAngle;
-        private List<ValueRef> padAngle;
-        private List<ValueRef> innerRadius;
-        private List<ValueRef> outerRadius;
+        private List<ValueRef> cornerRadius;
+        private List<ValueRef> cornerRadiusTopLeft;
+        private List<ValueRef> cornerRadiusTopRight;
+        private List<ValueRef> cornerRadiusBottomLeft;
+        private List<ValueRef> cornerRadiusBottomRight;
 
 
-        public BuildEncoding withStartAngle(ValueRef startAngle) {
-            if (this.startAngle == null) {
-                this.startAngle = new ArrayList<>();
+        public BuildEncoding withCornerRadius(ValueRef cornerRadius) {
+            if (this.cornerRadius == null) {
+                this.cornerRadius = new ArrayList<>();
             }
-            this.startAngle.add(startAngle);
+            this.cornerRadius.add(cornerRadius);
             return this;
         }
 
-        public BuildEncoding withEndAngle(ValueRef endAngle) {
-            if (this.endAngle == null) {
-                this.endAngle = new ArrayList<>();
+        public BuildEncoding withCornerRadiusTopLeft(ValueRef cornerRadiusTopLeft) {
+            if (this.cornerRadiusTopLeft == null) {
+                this.cornerRadiusTopLeft = new ArrayList<>();
             }
-            this.endAngle.add(endAngle);
+            this.cornerRadiusTopLeft.add(cornerRadiusTopLeft);
             return this;
         }
 
-        public BuildEncoding withPadAngle(ValueRef padAngle) {
-            if (this.padAngle == null) {
-                this.padAngle = new ArrayList<>();
+        public BuildEncoding withCornerRadiusTopRight(ValueRef cornerRadiusTopRight) {
+            if (this.cornerRadiusTopRight == null) {
+                this.cornerRadiusTopRight = new ArrayList<>();
             }
-            this.padAngle.add(padAngle);
+            this.cornerRadiusTopRight.add(cornerRadiusTopRight);
             return this;
         }
 
-        public BuildEncoding withInnerRadius(ValueRef innerRadius) {
-            if (this.innerRadius == null) {
-                this.innerRadius = new ArrayList<>();
+        public BuildEncoding withCornerRadiusBottomLeft(ValueRef cornerRadiusBottomLeft) {
+            if (this.cornerRadiusBottomLeft == null) {
+                this.cornerRadiusBottomLeft = new ArrayList<>();
             }
-            this.innerRadius.add(innerRadius);
+            this.cornerRadiusBottomLeft.add(cornerRadiusBottomLeft);
             return this;
         }
 
-        public BuildEncoding withOuterRadius(ValueRef outerRadius) {
-            if (this.outerRadius == null) {
-                this.outerRadius = new ArrayList<>();
+        public BuildEncoding withCornerRadiusBottomRight(ValueRef cornerRadiusBottomRight) {
+            if (this.cornerRadiusBottomRight == null) {
+                this.cornerRadiusBottomRight = new ArrayList<>();
             }
-            this.outerRadius.add(outerRadius);
+            this.cornerRadiusBottomRight.add(cornerRadiusBottomRight);
             return this;
         }
 
@@ -90,8 +88,8 @@ public class ArcEncoding extends EncodingProps {
         }
 
         @Override
-        public ArcEncoding build() {
-            return new ArcEncoding(this);
+        public RectEncoding build() {
+            return new RectEncoding(this);
         }
     }
 }

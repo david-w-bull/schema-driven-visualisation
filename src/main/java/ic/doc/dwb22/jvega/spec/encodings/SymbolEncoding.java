@@ -15,70 +15,47 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@TypeAlias("arc")
+@TypeAlias("symbol")
 public class SymbolEncoding extends EncodingProps {
 
-    private List<ValueRef> startAngle;
-    private List<ValueRef> endAngle;
-    private List<ValueRef> padAngle;
-    private List<ValueRef> innerRadius;
-    private List<ValueRef> outerRadius;
+    private List<ValueRef> angle;
+    private List<ValueRef> size;
+    private List<ValueRef> shape;
 
     private SymbolEncoding(BuildEncoding builder) {
         super(builder);
-        this.startAngle = builder.startAngle;
-        this.endAngle = builder.endAngle;
-        this.padAngle = builder.padAngle;
-        this.innerRadius = builder.innerRadius;
-        this.outerRadius = builder.outerRadius;
-
+        this.angle = builder.angle;
+        this.size = builder.size;
+        this.shape = builder.shape;
     }
 
     public static class BuildEncoding extends BuildProps<BuildEncoding> {
-        private List<ValueRef> startAngle;
-        private List<ValueRef> endAngle;
-        private List<ValueRef> padAngle;
-        private List<ValueRef> innerRadius;
-        private List<ValueRef> outerRadius;
+        private List<ValueRef> angle;
+        private List<ValueRef> size;
+        private List<ValueRef> shape;
 
 
-        public BuildEncoding withStartAngle(ValueRef startAngle) {
-            if (this.startAngle == null) {
-                this.startAngle = new ArrayList<>();
+        public BuildEncoding withAngle(ValueRef angle) {
+            if (this.angle == null) {
+                this.angle = new ArrayList<>();
             }
-            this.startAngle.add(startAngle);
+            this.angle.add(angle);
             return this;
         }
 
-        public BuildEncoding withEndAngle(ValueRef endAngle) {
-            if (this.endAngle == null) {
-                this.endAngle = new ArrayList<>();
+        public BuildEncoding withSize(ValueRef size) {
+            if (this.size == null) {
+                this.size = new ArrayList<>();
             }
-            this.endAngle.add(endAngle);
+            this.size.add(size);
             return this;
         }
 
-        public BuildEncoding withPadAngle(ValueRef padAngle) {
-            if (this.padAngle == null) {
-                this.padAngle = new ArrayList<>();
+        public BuildEncoding withShape(ValueRef shape) {
+            if (this.shape == null) {
+                this.shape = new ArrayList<>();
             }
-            this.padAngle.add(padAngle);
-            return this;
-        }
-
-        public BuildEncoding withInnerRadius(ValueRef innerRadius) {
-            if (this.innerRadius == null) {
-                this.innerRadius = new ArrayList<>();
-            }
-            this.innerRadius.add(innerRadius);
-            return this;
-        }
-
-        public BuildEncoding withOuterRadius(ValueRef outerRadius) {
-            if (this.outerRadius == null) {
-                this.outerRadius = new ArrayList<>();
-            }
-            this.outerRadius.add(outerRadius);
+            this.shape.add(shape);
             return this;
         }
 

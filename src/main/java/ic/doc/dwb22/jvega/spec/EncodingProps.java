@@ -1,6 +1,15 @@
 package ic.doc.dwb22.jvega.spec;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import ic.doc.dwb22.jvega.spec.encodings.ArcEncoding;
+import ic.doc.dwb22.jvega.spec.encodings.RectEncoding;
+import ic.doc.dwb22.jvega.spec.encodings.SymbolEncoding;
+import ic.doc.dwb22.jvega.spec.encodings.TextEncoding;
+import ic.doc.dwb22.jvega.spec.scales.BandScale;
+import ic.doc.dwb22.jvega.spec.scales.LinearScale;
+import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,35 +21,51 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class EncodingProps {
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "_type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ArcEncoding.class, name = "arc"),
+        @JsonSubTypes.Type(value = SymbolEncoding.class, name = "symbol"),
+        @JsonSubTypes.Type(value = RectEncoding.class, name = "rect"),
+        @JsonSubTypes.Type(value = TextEncoding.class, name = "text")
+})
+public abstract class EncodingProps {
 
-    private List<ValueRef> x;
-    private List<ValueRef> x2;
-    private List<ValueRef> xc;
-    private List<ValueRef> width;
-    private List<ValueRef> y;
-    private List<ValueRef> y2;
-    private List<ValueRef> yc;
-    private List<ValueRef> height;
-    private List<ValueRef> size;
-    private List<ValueRef> opacity;
-    private List<ValueRef> fill;
-    private List<ValueRef> stroke;
-    private List<ValueRef> tooltip;
-    private List<ValueRef> zindex;
-    private List<ValueRef> align;
-    private List<ValueRef> baseline;
-    private List<ValueRef> fillOpacity;
-    private List<ValueRef> text;
+    protected List<ValueRef> x;
+    protected List<ValueRef> x2;
+    protected List<ValueRef> xc;
+    protected List<ValueRef> width;
+    protected List<ValueRef> y;
+    protected List<ValueRef> y2;
+    protected List<ValueRef> yc;
+    protected List<ValueRef> height;
+    protected List<ValueRef> opacity;
+    protected List<ValueRef> fill;
+    protected List<ValueRef> stroke;
+    protected List<ValueRef> tooltip;
+    protected List<ValueRef> zindex;
+    protected List<ValueRef> fillOpacity;
+    protected EncodingProps(EncodingProps.BuildProps<?> builder) {
+        this.x = builder.x;
+        this.x2 = builder.x2;
+        this.xc = builder.xc;
+        this.width = builder.width;
+        this.y = builder.y;
+        this.y2 = builder.y2;
+        this.yc = builder.yc;
+        this.height = builder.height;
+        this.opacity = builder.opacity;
+        this.fill = builder.fill;
+        this.stroke = builder.stroke;
+        this.tooltip = builder.tooltip;
+        this.zindex = builder.zindex;
+        this.fillOpacity = builder.fillOpacity;
+    }
 
-    private List<ValueRef> startAngle;
-    private List<ValueRef> endAngle;
-    private List<ValueRef> padAngle;
-    private List<ValueRef> innerRadius;
-    private List<ValueRef> outerRadius;
 
-
-    public static class BuildProps {
+    public static abstract class BuildProps<T extends BuildProps<T>>  {
         private List<ValueRef> x;
         private List<ValueRef> x2;
         private List<ValueRef> xc;
@@ -49,230 +74,151 @@ public class EncodingProps {
         private List<ValueRef> y2;
         private List<ValueRef> yc;
         private List<ValueRef> height;
-        private List<ValueRef> size;        // not generic property
+
         private List<ValueRef> opacity;
         private List<ValueRef> fill;
         private List<ValueRef> stroke;
         private List<ValueRef> tooltip;
         private List<ValueRef> zindex;
-        private List<ValueRef> align;       // not generic property
-        private List<ValueRef> baseline;    // not generic property
         private List<ValueRef> fillOpacity;
-        private List<ValueRef> text;        // not generic property
 
-        private List<ValueRef> startAngle;  // not generic property
-        private List<ValueRef> endAngle;    // not generic property
-        private List<ValueRef> padAngle;    // not generic property
-        private List<ValueRef> innerRadius; // not generic property
-        private List<ValueRef> outerRadius; // not generic property
-
-        public BuildProps withX(ValueRef x) {
+        public T withX(ValueRef x) {
             if(this.x == null) {
                 this.x = new ArrayList<>();
             }
             this.x.add(x);
-            return this;
+            return self();
         }
 
-        public BuildProps withX2(ValueRef x2) {
+        public T withX2(ValueRef x2) {
             if(this.x2 == null) {
                 this.x2 = new ArrayList<>();
             }
             this.x2.add(x2);
-            return this;
+            return self();
         }
 
-        public BuildProps withXc(ValueRef xc) {
+        public T withXc(ValueRef xc) {
             if(this.xc == null) {
                 this.xc = new ArrayList<>();
             }
             this.xc.add(xc);
-            return this;
+            return self();
         }
 
-        public BuildProps withWidth(ValueRef width) {
+        public T withWidth(ValueRef width) {
             if(this.width == null) {
                 this.width = new ArrayList<>();
             }
             this.width.add(width);
-            return this;
+            return self();
         }
 
-        public BuildProps withY(ValueRef y) {
+        public T withY(ValueRef y) {
             if(this.y == null) {
                 this.y = new ArrayList<>();
             }
             this.y.add(y);
-            return this;
+            return self();
         }
 
-        public BuildProps withY2(ValueRef y2) {
+        public T withY2(ValueRef y2) {
             if(this.y2 == null) {
                 this.y2 = new ArrayList<>();
             }
             this.y2.add(y2);
-            return this;
+            return self();
         }
 
-        public BuildProps withYc(ValueRef yc) {
+        public T withYc(ValueRef yc) {
             if(this.yc == null) {
                 this.yc = new ArrayList<>();
             }
             this.yc.add(yc);
-            return this;
+            return self();
         }
 
-        public BuildProps withHeight(ValueRef height) {
+        public T withHeight(ValueRef height) {
             if(this.height == null) {
                 this.height = new ArrayList<>();
             }
             this.height.add(height);
-            return this;
+            return self();
         }
 
-        public BuildProps withSize(ValueRef size) {
-            if(this.size == null) {
-                this.size = new ArrayList<>();
-            }
-            this.size.add(size);
-            return this;
-        }
-
-        public BuildProps withOpacity(ValueRef opacity) {
+        public T withOpacity(ValueRef opacity) {
             if(this.opacity == null) {
                 this.opacity = new ArrayList<>();
             }
             this.opacity.add(opacity);
-            return this;
+            return self();
         }
 
-        public BuildProps withFill(ValueRef fill) {
+        public T withFill(ValueRef fill) {
             if(this.fill == null) {
                 this.fill = new ArrayList<>();
             }
             this.fill.add(fill);
-            return this;
+            return self();
         }
 
-        public BuildProps withStroke(ValueRef stroke) {
+        public T withStroke(ValueRef stroke) {
             if(this.stroke == null) {
                 this.stroke = new ArrayList<>();
             }
             this.stroke.add(stroke);
-            return this;
+            return self();
         }
 
-        public BuildProps withTooltip(ValueRef tooltip) {
+        public T withTooltip(ValueRef tooltip) {
             if(this.tooltip == null) {
                 this.tooltip = new ArrayList<>();
             }
             this.tooltip.add(tooltip);
-            return this;
+            return self();
         }
 
-        public BuildProps withZindex(ValueRef zindex) {
+        public T withZindex(ValueRef zindex) {
             if(this.zindex == null) {
                 this.zindex = new ArrayList<>();
             }
             this.zindex.add(zindex);
-            return this;
+            return self();
         }
 
-        public BuildProps withAlign(ValueRef align) {
-            if(this.align == null) {
-                this.align = new ArrayList<>();
-            }
-            this.align.add(align);
-            return this;
-        }
-
-        public BuildProps withBaseline(ValueRef baseline) {
-            if(this.baseline == null) {
-                this.baseline = new ArrayList<>();
-            }
-            this.baseline.add(baseline);
-            return this;
-        }
-
-        public BuildProps withFillOpacity(ValueRef fillOpacity) {
+        public T withFillOpacity(ValueRef fillOpacity) {
             if(this.fillOpacity == null) {
                 this.fillOpacity = new ArrayList<>();
             }
             this.fillOpacity.add(fillOpacity);
-            return this;
+            return self();
         }
 
-        public BuildProps withText(ValueRef text) {
-            if(this.text == null) {
-                this.text = new ArrayList<>();
-            }
-            this.text.add(text);
-            return this;
-        }
-        public BuildProps withStartAngle(ValueRef startAngle) {
-            if(this.startAngle == null) {
-                this.startAngle = new ArrayList<>();
-            }
-            this.startAngle.add(startAngle);
-            return this;
-        }
+//        public BuildProps withAlign(ValueRef align) {
+//            if(this.align == null) {
+//                this.align = new ArrayList<>();
+//            }
+//            this.align.add(align);
+//            return this;
+//        }
+//
+//        public BuildProps withBaseline(ValueRef baseline) {
+//            if(this.baseline == null) {
+//                this.baseline = new ArrayList<>();
+//            }
+//            this.baseline.add(baseline);
+//            return this;
+//        }
+//
+//        public BuildProps withText(ValueRef text) {
+//            if(this.text == null) {
+//                this.text = new ArrayList<>();
+//            }
+//            this.text.add(text);
+//            return this;
+//        }
 
-        public BuildProps withEndAngle(ValueRef endAngle) {
-            if(this.endAngle == null) {
-                this.endAngle = new ArrayList<>();
-            }
-            this.endAngle.add(endAngle);
-            return this;
-        }
-
-        public BuildProps withPadAngle(ValueRef padAngle) {
-            if(this.padAngle == null) {
-                this.padAngle = new ArrayList<>();
-            }
-            this.padAngle.add(padAngle);
-            return this;
-        }
-
-        public BuildProps withInnerRadius(ValueRef innerRadius) {
-            if(this.innerRadius == null) {
-                this.innerRadius = new ArrayList<>();
-            }
-            this.innerRadius.add(innerRadius);
-            return this;
-        }
-
-        public BuildProps withOuterRadius(ValueRef outerRadius) {
-            if(this.outerRadius == null) {
-                this.outerRadius = new ArrayList<>();
-            }
-            this.outerRadius.add(outerRadius);
-            return this;
-        }
-
-        public EncodingProps build() {
-            return new EncodingProps(x,
-                    x2,
-                    xc,
-                    width,
-                    y,
-                    y2,
-                    yc,
-                    height,
-                    size,
-                    opacity,
-                    fill,
-                    stroke,
-                    tooltip,
-                    zindex,
-                    align,
-                    baseline,
-                    fillOpacity,
-                    text,
-                    startAngle,
-                    endAngle,
-                    padAngle,
-                    innerRadius,
-                    outerRadius);
-        }
+        protected abstract T self();
+        protected abstract EncodingProps build();
     }
 }

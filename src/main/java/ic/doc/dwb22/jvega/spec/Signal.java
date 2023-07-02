@@ -28,7 +28,7 @@ public class Signal {
         private String init;
         private String update;
         private Boolean react;
-        private Object value = JsonNodeFactory.instance.objectNode(); // Vega compiler requires an empty object if no value set
+        private Object value = ""; // Vega compiler requires an empty object if no value set
 
         public BuildSignal withName(String name) {
             this.name = name;

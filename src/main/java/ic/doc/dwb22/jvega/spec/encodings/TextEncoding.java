@@ -15,70 +15,46 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@TypeAlias("rect")
-public class RectEncoding extends EncodingProps {
+@TypeAlias("text")
+public class TextEncoding extends EncodingProps {
 
-    private List<ValueRef> cornerRadius;
-    private List<ValueRef> cornerRadiusTopLeft;
-    private List<ValueRef> cornerRadiusTopRight;
-    private List<ValueRef> cornerRadiusBottomLeft;
-    private List<ValueRef> cornerRadiusBottomRight;
+    private List<ValueRef> align;
+    private List<ValueRef> baseline;
+    private List<ValueRef> text;
 
-    private RectEncoding(BuildEncoding builder) {
+    private TextEncoding(BuildEncoding builder) {
         super(builder);
-        this.cornerRadius = builder.cornerRadius;
-        this.cornerRadiusTopLeft = builder.cornerRadiusTopLeft;
-        this.cornerRadiusTopRight = builder.cornerRadiusTopRight;
-        this.cornerRadiusBottomLeft = builder.cornerRadiusBottomLeft;
-        this.cornerRadiusBottomRight = builder.cornerRadiusBottomRight;
-
+        this.align = builder.align;
+        this.baseline = builder.baseline;
+        this.text = builder.text;
     }
 
     public static class BuildEncoding extends BuildProps<BuildEncoding> {
-        private List<ValueRef> cornerRadius;
-        private List<ValueRef> cornerRadiusTopLeft;
-        private List<ValueRef> cornerRadiusTopRight;
-        private List<ValueRef> cornerRadiusBottomLeft;
-        private List<ValueRef> cornerRadiusBottomRight;
+        private List<ValueRef> align;
+        private List<ValueRef> baseline;
+        private List<ValueRef> text;
 
-
-        public BuildEncoding withCornerRadius(ValueRef cornerRadius) {
-            if (this.cornerRadius == null) {
-                this.cornerRadius = new ArrayList<>();
+        public BuildEncoding withAlign(ValueRef align) {
+            if (this.align == null) {
+                this.align = new ArrayList<>();
             }
-            this.cornerRadius.add(cornerRadius);
+            this.align.add(align);
             return this;
         }
 
-        public BuildEncoding withCornerRadiusTopLeft(ValueRef cornerRadiusTopLeft) {
-            if (this.cornerRadiusTopLeft == null) {
-                this.cornerRadiusTopLeft = new ArrayList<>();
+        public BuildEncoding withBaseline(ValueRef baseline) {
+            if (this.baseline == null) {
+                this.baseline = new ArrayList<>();
             }
-            this.cornerRadiusTopLeft.add(cornerRadiusTopLeft);
+            this.baseline.add(baseline);
             return this;
         }
 
-        public BuildEncoding withCornerRadiusTopRight(ValueRef cornerRadiusTopRight) {
-            if (this.cornerRadiusTopRight == null) {
-                this.cornerRadiusTopRight = new ArrayList<>();
+        public BuildEncoding withText(ValueRef text) {
+            if (this.text == null) {
+                this.text = new ArrayList<>();
             }
-            this.cornerRadiusTopRight.add(cornerRadiusTopRight);
-            return this;
-        }
-
-        public BuildEncoding withCornerRadiusBottomLeft(ValueRef cornerRadiusBottomLeft) {
-            if (this.cornerRadiusBottomLeft == null) {
-                this.cornerRadiusBottomLeft = new ArrayList<>();
-            }
-            this.cornerRadiusBottomLeft.add(cornerRadiusBottomLeft);
-            return this;
-        }
-
-        public BuildEncoding withCornerRadiusBottomRight(ValueRef cornerRadiusBottomRight) {
-            if (this.cornerRadiusBottomRight == null) {
-                this.cornerRadiusBottomRight = new ArrayList<>();
-            }
-            this.cornerRadiusBottomRight.add(cornerRadiusBottomRight);
+            this.text.add(text);
             return this;
         }
 
@@ -88,8 +64,8 @@ public class RectEncoding extends EncodingProps {
         }
 
         @Override
-        public RectEncoding build() {
-            return new RectEncoding(this);
+        public TextEncoding build() {
+            return new TextEncoding(this);
         }
     }
 }

@@ -7,6 +7,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import ic.doc.dwb22.jvega.spec.encodings.ArcEncoding;
+import ic.doc.dwb22.jvega.spec.encodings.RectEncoding;
+import ic.doc.dwb22.jvega.spec.encodings.TextEncoding;
+import ic.doc.dwb22.jvega.spec.scales.BandScale;
+import ic.doc.dwb22.jvega.spec.scales.LinearScale;
+import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
+import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -166,6 +173,128 @@ public class VegaSpec {
                     marks
             );
         }
+    }
+
+    public static VegaSpec donutChart(JsonNode data) {
+        VegaDataset donutDataset = new VegaDataset.BuildDataset()
+                .withName("table")
+                .withValues(data)
+                .withTransform(new PieTransform.BuildPie()
+                        .withField("field")
+                        .withStartAngle(0.0)
+                        .build())
+                .build();
+
+        VegaSpec donutSpec = new VegaSpec.BuildSpec()
+                .setDescription("Simple donut chart")
+                .setWidth(400)
+                .setHeight(400)
+                .setNewDataset(donutDataset)
+                .setNewScale(new OrdinalScale.BuildScale()
+                        .withName("color")
+                        .withDomain(ScaleDomain.simpleDomain("table", "id"))
+                        .withRange(GenericMapObject.createMap("scheme", "category20"))
+                        .build())
+                .setNewMark(new Mark.BuildMark()
+                        .withType("arc")
+                        .withData("table")
+                        .withEnter(new ArcEncoding.BuildEncoding()
+                                .withFill(ValueRef.ScaleField("color", "id"))
+                                .withX(ValueRef.Signal("width / 2"))
+                                .withY(ValueRef.Signal("height / 2"))
+                                .build())
+                        .withUpdate(new ArcEncoding.BuildEncoding()
+                                .withStartAngle(ValueRef.Field("startAngle"))
+                                .withEndAngle(ValueRef.Field("endAngle"))
+                                .withPadAngle(ValueRef.Value(0))
+                                .withInnerRadius(ValueRef.Value(140))
+                                .withOuterRadius(ValueRef.Signal("width / 2"))
+                                .build())
+                        .build())
+                .createVegaSpec();
+        return donutSpec;
+    }
+
+    public static VegaSpec barChart(JsonNode data) {
+        VegaSpec barSpec = new VegaSpec.BuildSpec()
+                .setDescription("Bar data test")
+                .setWidth(400)
+                .setHeight(200)
+                .setPadding(5)
+
+                .setNewDataset(VegaDataset.jsonDataset("table", data))
+
+                .setNewSignal(new Signal.BuildSignal()
+                        .withName("tooltip")
+                        .withOn(SignalEvent.EventUpdate("rect:mouseover", "datum"))
+                        .withOn(SignalEvent.EventUpdate("rect:mouseout", "{}"))
+                        .build())
+
+                .setNewScale(new BandScale.BuildScale()
+                        .withName("xscale")
+                        .withDomain(ScaleDomain.simpleDomain("table", "category"))
+                        .withRange("width")
+                        .withPadding(0.05)
+                        .build())
+
+                .setNewScale(new LinearScale.BuildScale()
+                        .withName("yscale")
+                        .withDomain(ScaleDomain.simpleDomain("table", "amount"))
+                        .withRange("height")
+                        .withNice(true)
+                        .build())
+
+                .setNewAxis(new Axis.BuildAxis()
+                        .setOrient("bottom")
+                        .setScale("xscale")
+                        .build())
+
+                .setNewAxis(new Axis.BuildAxis()
+                        .setOrient("left")
+                        .setScale("yscale")
+                        .build())
+
+                .setNewMark(new Mark.BuildMark()
+                        .withType("rect")
+                        .withData("table")
+                        .withEnter(new RectEncoding.BuildEncoding()
+                                .withX(ValueRef.ScaleField("xscale", "category"))
+                                .withWidth(ValueRef.ScaleBand("xscale", 1))
+                                .withY(ValueRef.ScaleField("yscale", "amount"))
+                                .withY2(ValueRef.ScaleValue("yscale", 0))
+                                .build())
+                        .withUpdate(new RectEncoding.BuildEncoding().withFill(ValueRef.Value("steelblue")).build())
+                        .withHover(new RectEncoding.BuildEncoding().withFill(ValueRef.Value("red")).build())
+                        .build())
+
+                .setNewMark(new Mark.BuildMark()
+                        .withType("text")
+                        .withEnter(new TextEncoding.BuildEncoding()
+                                .withAlign(ValueRef.Value("center"))
+                                .withBaseline(ValueRef.Value("bottom"))
+                                .withFill(ValueRef.Value("#333"))
+                                .build())
+                        .withUpdate(new TextEncoding.BuildEncoding()
+                                .withX(new ValueRef.BuildRef()
+                                        .withScale("xscale")
+                                        .withSignal("tooltip.category")
+                                        .withBand(0.5)
+                                        .build())
+                                .withY(new ValueRef.BuildRef()
+                                        .withScale("yscale")
+                                        .withSignal("tooltip.amount")
+                                        .withOffset(-2)
+                                        .build())
+                                .withFillOpacity(new ValueRef.BuildRef()
+                                        .withTest("datum === tooltip")
+                                        .withValue(0)
+                                        .build())
+                                .withFillOpacity(ValueRef.Value(1))
+                                .withText(ValueRef.Signal("tooltip.amount"))
+                                .build())
+                        .build())
+                .createVegaSpec();
+        return barSpec;
     }
 }
 

@@ -1,0 +1,106 @@
+{
+  "values": {
+    "_children": [
+      {
+        "_children": {
+          "id": {
+            "_value": 1,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          },
+          "field": {
+            "_value": 4,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        },
+        "_class": "com.fasterxml.jackson.databind.node.ObjectNode"
+      },
+      {
+        "_children": {
+          "id": {
+            "_value": 2,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          },
+          "field": {
+            "_value": 6,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        },
+        "_class": "com.fasterxml.jackson.databind.node.ObjectNode"
+      },
+      {
+        "_children": {
+          "id": {
+            "_value": 3,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          },
+          "field": {
+            "_value": 10,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        },
+        "_class": "com.fasterxml.jackson.databind.node.ObjectNode"
+      },
+      {
+        "_children": {
+          "id": {
+            "_value": 4,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          },
+          "field": {
+            "_value": 3,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        },
+        "_class": "com.fasterxml.jackson.databind.node.ObjectNode"
+      },
+      {
+        "_children": {
+          "id": {
+            "_value": 5,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          },
+          "field": {
+            "_value": 7,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        },
+        "_class": "com.fasterxml.jackson.databind.node.ObjectNode"
+      },
+      {
+        "_children": {
+          "id": {
+            "_value": 6,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          },
+          "field": {
+            "_value": 8,
+            "_class": "com.fasterxml.jackson.databind.node.IntNode"
+          }
+        },
+        "_nodeFactory": {
+          "_cfgBigDecimalExact": false
+        },
+        "_class": "com.fasterxml.jackson.databind.node.ObjectNode"
+      }
+    ],
+    "_nodeFactory": {
+      "_cfgBigDecimalExact": false
+    },
+    "_class": "com.fasterxml.jackson.databind.node.ArrayNode"
+  }
+}

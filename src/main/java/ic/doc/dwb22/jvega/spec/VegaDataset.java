@@ -1,13 +1,17 @@
 package ic.doc.dwb22.jvega.spec;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -18,7 +22,9 @@ public class VegaDataset {
     private String name;
     private String url;
     private List<Transform> transform;
-    private JsonNode values;
+    private List<Map<String, Object>> values;
+
+
 
     public static VegaDataset urlDataset(String name, String url) {
         VegaDataset data = new BuildDataset().build();
@@ -27,10 +33,8 @@ public class VegaDataset {
         return data;
     }
 
-    public static VegaDataset jsonDataset(String name, JsonNode values) {
-        VegaDataset data = new BuildDataset().build();
-        data.name = name;
-        data.values = values;
+    public static VegaDataset jsonDataset(String name, JsonNode jsonValues) {
+        VegaDataset data = new BuildDataset().withName(name).withValues(jsonValues).build();
         return data;
     }
 
@@ -39,7 +43,7 @@ public class VegaDataset {
         private String name;
         private String url;
         private List<Transform> transform;
-        private JsonNode values;
+        private List<Map<String, Object>> values;
 
         public BuildDataset withName(String name) {
             this.name = name;
@@ -59,8 +63,17 @@ public class VegaDataset {
             return this;
         }
 
-        public BuildDataset withValues(JsonNode values) {
-            this.values = values;
+        public BuildDataset withValues(JsonNode jsonValues) {
+            ObjectMapper mapper = new ObjectMapper();
+            String jsonString;
+            List<Map<String, Object>> dataMap;
+            try {
+                jsonString = mapper.writeValueAsString(jsonValues);
+                dataMap = mapper.readValue(jsonString, new TypeReference<>() {});
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            this.values = dataMap;
             return this;
         }
 
