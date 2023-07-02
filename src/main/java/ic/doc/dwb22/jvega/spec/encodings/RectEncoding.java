@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import ic.doc.dwb22.jvega.spec.EncodingProps;
 import ic.doc.dwb22.jvega.spec.ValueRef;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.TypeAlias;
@@ -11,6 +12,7 @@ import org.springframework.data.annotation.TypeAlias;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor

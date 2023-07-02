@@ -3,6 +3,7 @@ package ic.doc.dwb22.jvega.spec.scales;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ic.doc.dwb22.jvega.spec.Scale;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.TypeAlias;

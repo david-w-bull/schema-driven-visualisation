@@ -37,24 +37,6 @@ public class JVegaApplication {
 		//barDataTest();
 		//donutChartTest();
 		SpringApplication.run(JVegaApplication.class, args);
-
-//		try {
-//			ObjectMapper mapper = new ObjectMapper();
-//			File jsonFile = new ClassPathResource("donutData.json").getFile();
-//			List<Map<String, Object>> data = mapper.readValue(jsonFile, new TypeReference<>(){});
-//			for (Map<String, Object> item : data) {
-//				int id = (int) item.get("id");
-//				int field = (int) item.get("field");
-//
-//				System.out.println("id: " + id + ", field: " + field);
-//			}
-//
-//			System.out.println(data);
-//
-//		} catch (IOException e) {
-//			throw new RuntimeException(e);
-//		}
-
 	}
 
 	@GetMapping("/")
