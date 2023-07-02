@@ -29,7 +29,8 @@ import java.util.List;
         @JsonSubTypes.Type(value = ArcEncoding.class, name = "arc"),
         @JsonSubTypes.Type(value = SymbolEncoding.class, name = "symbol"),
         @JsonSubTypes.Type(value = RectEncoding.class, name = "rect"),
-        @JsonSubTypes.Type(value = TextEncoding.class, name = "text")
+        @JsonSubTypes.Type(value = TextEncoding.class, name = "text"),
+        @JsonSubTypes.Type(value = TextEncoding.class, name = "group")
 })
 public abstract class EncodingProps {
 

@@ -214,7 +214,7 @@ public class VegaSpec {
                         .build())
                 .setNewMark(new Mark.BuildMark()
                         .withType("arc")
-                        .withData("table")
+                        .withDataSource("table")
                         .withEnter(new ArcEncoding.BuildEncoding()
                                 .withFill(ValueRef.ScaleField("color", "id"))
                                 .withX(ValueRef.Signal("width / 2"))
@@ -273,7 +273,7 @@ public class VegaSpec {
 
                 .setNewMark(new Mark.BuildMark()
                         .withType("rect")
-                        .withData("table")
+                        .withDataSource("table")
                         .withEnter(new RectEncoding.BuildEncoding()
                                 .withX(ValueRef.ScaleField("xscale", "category"))
                                 .withWidth(ValueRef.ScaleBand("xscale", 1))

@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -81,7 +80,7 @@ public class VegaSpecService {
                 .setNewMark(new Mark.BuildMark()
                         .withName("marks")
                         .withType("symbol")
-                        .withData("source")
+                        .withDataSource("source")
                         .withUpdate(new SymbolEncoding.BuildEncoding()
                                 .withX(ValueRef.ScaleField("x", "Horsepower"))
                                 .withY(ValueRef.ScaleField("y", "Miles_per_Gallon"))

@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,20 +20,32 @@ public class Mark {
     private Object from;
     private Encoding encode;
 
+    // Additional properties only relevant for group marks
+    private List<VegaDataset> data;
+    private List<Signal> signals;
+    private List<Scale> scales;
+    private List<Mark> marks;
+
     public static class BuildMark {
         private String type;
         private String name;
         private Boolean interactive;
         private Object from;
         private Encoding encode;
-        //private Map<String, VegaEncodingProperties>;
+
+        // Additional properties only relevant for group marks
+        private List<VegaDataset> data;
+        private List<Signal> signals;
+        private List<Scale> scales;
+        private List<Mark> marks;
 
         public BuildMark withType(String type) {
             this.type = type;
             return this;
         }
 
-        public BuildMark withData(String dataSetName) {
+        // Sets the 'from' attribute - i.e. "from": {"data": "table"}
+        public BuildMark withDataSource(String dataSetName) {
             HashMap<String, String> fromMap = new HashMap<>();
             fromMap.put("data", dataSetName);
             this.from = fromMap;
@@ -80,8 +94,42 @@ public class Mark {
             return this;
         }
 
+        //Nested properties are relevant to the 'group' mark type
+        public BuildMark withNestedDataset(VegaDataset data) {
+            if(this.data == null) {
+                this.data = new ArrayList<>();
+            }
+            this.data.add(data);
+            return this;
+        }
+
+        public BuildMark withNestedSignal(Signal signal) {
+            if(this.signals == null) {
+                this.signals = new ArrayList<>();
+            }
+            this.signals.add(signal);
+            return this;
+        }
+
+        public BuildMark withNestedScale(Scale scale) {
+            if(this.scales == null) {
+                this.scales = new ArrayList<>();
+            }
+            this.scales.add(scale);
+            return this;
+        }
+
+        public BuildMark withNestedMark(Mark mark) {
+            if(this.marks == null) {
+                this.marks = new ArrayList<>();
+            }
+            this.marks.add(mark);
+            return this;
+        }
+
+
         public Mark build() {
-            return new Mark(type, name, interactive, from, encode);
+            return new Mark(type, name, interactive, from, encode, data, signals, scales, marks);
         }
     }
 }
