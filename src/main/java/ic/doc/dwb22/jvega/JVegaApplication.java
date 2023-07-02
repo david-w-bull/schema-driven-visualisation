@@ -33,8 +33,8 @@ public class JVegaApplication {
 	public static void main(String[] args) {
 		//databaseTest();
 		//System.out.println(UUID.randomUUID());
-		//vegaSpecTest();
-		//barDataTest();
+		//scatterChartTest();
+		//barChartTest();
 		//donutChartTest();
 		SpringApplication.run(JVegaApplication.class, args);
 	}
@@ -104,7 +104,7 @@ public class JVegaApplication {
 
 		System.out.println(finalString);
 	}
-	public static void barDataTest() {
+	public static void barChartTest() {
 
 		JsonNode barData;
 
@@ -209,7 +209,7 @@ public class JVegaApplication {
 		System.out.println(finalString);
 	}
 
-	public static void vegaSpecTest() {
+	public static void scatterChartTest() {
 		Scale xScale = new LinearScale.BuildScale()
 				.withName("x")
 				.withRange("width")
@@ -222,10 +222,20 @@ public class JVegaApplication {
 				.withDomain(ScaleDomain.simpleDomain("source", "Miles_per_Gallon"))
 				.build();
 
-		Scale sizeScale = new BandScale.BuildScale()
+		Scale sizeScale = new LinearScale.BuildScale()
 				.withName("size")
 				.withRange(Arrays.asList(4,361))
 				.withDomain(ScaleDomain.simpleDomain("source", "Acceleration"))
+				.build();
+
+		Legend legend = new Legend.BuildLegend()
+				.withSize("size")
+				.withTitle("Acceleration")
+				.withFormat("s")
+				.withSymbolStrokeColor("#4682b4")
+				.withSymbolStrokeWidth(2)
+				.withSymbolOpacity(0.5)
+				.withSymbolType("circle")
 				.build();
 
 		VegaSpec scatterSpec = new VegaSpec.BuildSpec()
@@ -237,6 +247,7 @@ public class JVegaApplication {
 				.setNewScale(xScale)
 				.setNewScale(yScale)
 				.setNewScale(sizeScale)
+				.setNewLegend(legend)
 				.setNewAxis(new Axis.BuildAxis()
 						.setScale("x")
 						.setOrient("bottom")

@@ -33,6 +33,7 @@ public class VegaSpec {
     private List<Signal> signals;
     private List<Scale> scales;
     private List<Axis> axes;
+    private List <Legend> legends;
     private List<Mark> marks;
     public JsonNode toJson() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -61,15 +62,16 @@ public class VegaSpec {
 
     @JsonPOJOBuilder(withPrefix = "set", buildMethodName = "createVegaSpec")
     public static class BuildSpec {
-        private String description = null;
-        private Integer width = null;
-        private Integer height = null;
-        private Integer padding = null;
-        private List<VegaDataset> data = null;
-        private List<Signal> signals = null;
-        private List<Scale> scales = null;
-        private List<Axis> axes = null;
-        private List <Mark> marks = null;
+        private String description;
+        private Integer width;
+        private Integer height;
+        private Integer padding;
+        private List<VegaDataset> data;
+        private List<Signal> signals;
+        private List<Scale> scales;
+        private List<Axis> axes;
+        private List <Legend> legends;
+        private List <Mark> marks;
 
         public BuildSpec setDescription(String description) {
             this.description = description;
@@ -133,6 +135,20 @@ public class VegaSpec {
             return this;
         }
 
+        public BuildSpec setNewLegend(Legend legend) {
+            if (this.legends == null) {
+                this.legends = new ArrayList<>();
+            }
+            this.legends.add(legend);
+            return this;
+        }
+
+        @JsonProperty("legends")
+        public BuildSpec setAllLegends(List<Legend> legends) {
+            this.legends = legends;
+            return this;
+        }
+
         public BuildSpec setNewMark(Mark mark) {
             if (this.marks == null) {
                 this.marks = new ArrayList<>();
@@ -170,6 +186,7 @@ public class VegaSpec {
                     signals,
                     scales,
                     axes,
+                    legends,
                     marks
             );
         }

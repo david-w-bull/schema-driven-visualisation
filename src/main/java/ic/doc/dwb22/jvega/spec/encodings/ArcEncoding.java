@@ -21,7 +21,6 @@ import java.util.List;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @TypeAlias("arc")
-@JsonTypeName("arc")
 public class ArcEncoding extends EncodingProps {
 
     private List<ValueRef> startAngle;
