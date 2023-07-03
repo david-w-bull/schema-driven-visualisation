@@ -52,6 +52,13 @@ public class Mark {
             return this;
         }
 
+        public BuildMark withFacetSource(Facet facet) {
+            HashMap<String, Facet> fromMap = new HashMap<>();
+            fromMap.put("facet", facet);
+            this.from = fromMap;
+            return this;
+        }
+
         public BuildMark withInteractive(Boolean interactive) {
             this.interactive = interactive;
             return this;

@@ -19,6 +19,9 @@ public class Axis {
     private Integer titlePadding; // Will need to be updated to allow a String definition as well if set by signal (for example)
     private Boolean ticks;
     private Integer tickCount;
+    private Integer tickSize;
+    private Integer labelPadding;
+    private Integer zindex;
 
 //    private Map<String, Object> additionalProperties;
 
@@ -31,6 +34,9 @@ public class Axis {
         private Integer titlePadding;
         private Boolean ticks;
         private Integer tickCount;
+        private Integer tickSize;
+        private Integer labelPadding;
+        private Integer zindex;
 //        private Map<String, Object> additionalProperties;
 
         public BuildAxis setScale(String scale) {
@@ -73,6 +79,21 @@ public class Axis {
             return this;
         }
 
+        public BuildAxis setTickSize(Integer tickSize) {
+            this.tickSize = tickSize;
+            return this;
+        }
+
+        public BuildAxis setLabelPadding(Integer labelPadding) {
+            this.labelPadding = labelPadding;
+            return this;
+        }
+
+        public BuildAxis setZIndex(Integer zindex) {
+            this.zindex = zindex;
+            return this;
+        }
+
 //        public VegaAxisBuilder setAdditionalProperty(String key, Object value) {
 //            if (additionalProperties == null) {
 //                additionalProperties = new HashMap<>();
@@ -83,7 +104,17 @@ public class Axis {
 
 
         public Axis build() {
-            return new Axis(scale, orient, grid, domain, title, titlePadding, ticks, tickCount);
+            return new Axis(scale,
+                    orient,
+                    grid,
+                    domain,
+                    title,
+                    titlePadding,
+                    ticks,
+                    tickCount,
+                    tickSize,
+                    labelPadding,
+                    zindex);
         }
     }
 }

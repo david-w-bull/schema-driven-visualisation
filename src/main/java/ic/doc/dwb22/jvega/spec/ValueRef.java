@@ -49,6 +49,13 @@ public class ValueRef {
         return ref;
     }
 
+    public static ValueRef TestValue(String test, Object value) {
+        ValueRef ref = new ValueRef();
+        ref.test = test;
+        ref.value = value;
+        return ref;
+    }
+
     public static ValueRef Value(Object value) {
         ValueRef ref = new ValueRef();
         ref.value = value;

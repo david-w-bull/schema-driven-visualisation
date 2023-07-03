@@ -3,13 +3,7 @@ package ic.doc.dwb22.jvega.spec;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import ic.doc.dwb22.jvega.spec.encodings.ArcEncoding;
-import ic.doc.dwb22.jvega.spec.encodings.RectEncoding;
-import ic.doc.dwb22.jvega.spec.encodings.SymbolEncoding;
-import ic.doc.dwb22.jvega.spec.encodings.TextEncoding;
-import ic.doc.dwb22.jvega.spec.scales.BandScale;
-import ic.doc.dwb22.jvega.spec.scales.LinearScale;
-import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
+import ic.doc.dwb22.jvega.spec.encodings.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,7 +24,7 @@ import java.util.List;
         @JsonSubTypes.Type(value = SymbolEncoding.class, name = "symbol"),
         @JsonSubTypes.Type(value = RectEncoding.class, name = "rect"),
         @JsonSubTypes.Type(value = TextEncoding.class, name = "text"),
-        @JsonSubTypes.Type(value = TextEncoding.class, name = "group")
+        @JsonSubTypes.Type(value = GroupEncoding.class, name = "group")
 })
 public abstract class EncodingProps {
 

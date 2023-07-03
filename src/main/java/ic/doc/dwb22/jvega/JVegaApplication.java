@@ -4,14 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ic.doc.dwb22.jvega.spec.*;
 
-import ic.doc.dwb22.jvega.spec.encodings.ArcEncoding;
-import ic.doc.dwb22.jvega.spec.encodings.RectEncoding;
-import ic.doc.dwb22.jvega.spec.encodings.SymbolEncoding;
-import ic.doc.dwb22.jvega.spec.encodings.TextEncoding;
+import ic.doc.dwb22.jvega.spec.encodings.*;
 import ic.doc.dwb22.jvega.spec.scales.BandScale;
 import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
+import io.github.MigadaTang.exception.DBConnectionException;
+import io.github.MigadaTang.exception.ParseException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,6 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
@@ -30,18 +30,135 @@ import java.util.*;
 @RestController
 public class JVegaApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException, DBConnectionException, ParseException, IOException {
 		//databaseTest();
 		//System.out.println(UUID.randomUUID());
 		//scatterChartTest();
 		//barChartTest();
 		//donutChartTest();
-		SpringApplication.run(JVegaApplication.class, args);
+		groupBarChartTest();
+		//SpringApplication.run(JVegaApplication.class, args);
+
+
+//		DatabaseConnectTest db = new DatabaseConnectTest();
+//
+//		db.reverseEngineer();
 	}
 
 	@GetMapping("/")
 	public String apiRoot() {
 		return "Test endpoint";
+	}
+
+	public static void groupBarChartTest() {
+		JsonNode groupedBarData;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			File file = new ClassPathResource("groupedBarData.json").getFile();
+			groupedBarData = mapper.readTree(file);
+
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		VegaSpec groupedBarSpec = new VegaSpec.BuildSpec()
+				.setDescription("Grouped bar")
+				.setHeight(240)
+				.setWidth(300)
+				.setPadding(5)
+				.setNewDataset(VegaDataset.jsonDataset("table", groupedBarData))
+
+				.setNewScale(new BandScale.BuildScale()
+						.withName("yscale")
+						.withDomain(ScaleDomain.simpleDomain("table", "category"))
+						.withRange("height")
+						.withPadding(0.2)
+						.build())
+
+				.setNewScale(new LinearScale.BuildScale()
+						.withName("xscale")
+						.withDomain(ScaleDomain.simpleDomain("table", "value"))
+						.withRange("width")
+						.withRound(true)
+						.build())
+
+				.setNewScale(new OrdinalScale.BuildScale()
+						.withName("color")
+						.withDomain(ScaleDomain.simpleDomain("table", "position"))
+						.withRange(GenericMapObject.createMap("scheme", "category20"))
+						.build())
+
+				.setNewAxis(new Axis.BuildAxis()
+						.setOrient("left")
+						.setScale("yscale")
+						.setTickSize(0)
+						.setLabelPadding(4)
+						.setZIndex(1)
+						.build())
+
+				.setNewAxis(new Axis.BuildAxis()
+						.setOrient("bottom")
+						.setScale("xscale")
+						.build())
+
+				.setNewMark(new Mark.BuildMark()
+						.withType("group")
+						.withFacetSource(Facet.simpleFacet("facet", "table", "category"))
+						.withEnter(new GroupEncoding.BuildEncoding()
+								.withY(ValueRef.ScaleField("yscale", "category"))
+								.build())
+						.withNestedSignal(new Signal.BuildSignal()
+								.withName("height")
+								.withUpdate("bandwidth('yscale')")
+								.build())
+						.withNestedScale(new BandScale.BuildScale()
+								.withName("pos")
+								.withRange("height")
+								.withDomain(ScaleDomain.simpleDomain("facet", "position"))
+								.build())
+						.withNestedMark(new Mark.BuildMark()
+								.withName("bars")
+								.withDataSource("facet")
+								.withType("rect")
+								.withEnter(new RectEncoding.BuildEncoding()
+										.withY(ValueRef.ScaleField("pos", "position"))
+										.withHeight(ValueRef.ScaleBand("pos", 1))
+										.withX(ValueRef.ScaleField("xscale", "value"))
+										.withX2(ValueRef.ScaleValue("xscale", 0))
+										.withFill(ValueRef.ScaleField("color", "position"))
+										.build())
+								.build())
+						.withNestedMark(new Mark.BuildMark()
+								.withType("text")
+								.withDataSource("bars")
+								.withEnter(new TextEncoding.BuildEncoding()
+										.withAlign(ValueRef.Value("right"))
+										.withBaseline(ValueRef.Value("middle"))
+										.withText(ValueRef.Field("datum.value"))
+										.withX(new ValueRef.BuildRef().withField("x2").withOffset(-5).build())
+										.withY(new ValueRef.BuildRef()
+												.withField("y")
+												.withOffset(GenericMapObject.createMap("field", "height", "mult", 0.5))
+												.build())
+										.withFill(ValueRef.TestValue("contrast('white', datum.fill) > contrast('black', datum.fill)", "white"))
+										.withFill(ValueRef.Value("black"))
+										.build())
+								.build())
+						.build())
+
+				.createVegaSpec();
+
+		System.out.println(groupedBarSpec.toJson().toPrettyString());
+
+		String specString = groupedBarSpec.toJson().toString();
+
+		VegaSpec deserialized = VegaSpec.fromString(specString);
+
+		String finalString = deserialized.toJson().toPrettyString();
+
+		System.out.println("------deserialised------");
+
+		System.out.println(finalString);
 	}
 
 	public static void donutChartTest() {
@@ -311,7 +428,7 @@ public class JVegaApplication {
 		try {
 			Connection connection = DriverManager.getConnection(connectionString, user, pw);
 			DatabaseMetaData databaseMetaData = connection.getMetaData();
-			ResultSet tables = databaseMetaData.getTables(null, schemaName, null, new String[]{"TABLE"});
+			ResultSet tables = databaseMetaData.getTables(null, null, null, new String[]{"TABLE"});
 			while (tables.next()) {
 				String tableName = tables.getString("TABLE_NAME");
 				dbTables.add(tableName);
