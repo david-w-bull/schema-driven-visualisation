@@ -34,3 +34,6 @@ build/
 
 ### Env files ###
 .env
+
+### External JAR files ###
+/lib/*.jar
