@@ -93,10 +93,8 @@ public class DefaultChartSpec {
         VegaDataset edgesDataset = new VegaDataset.BuildDataset()
                 .withName(EDGES_DATASET)
                 .withTransform(LookupTransform.simpleAliasedLookup(
-                        DESTINATION_NODES_DATASET,
-                        "key",
-                        Arrays.asList("key"),
-                        Arrays.asList("target")))
+                        DESTINATION_NODES_DATASET, "key", Arrays.asList("key"), Arrays.asList("target")))
+
 
                 .build();
 

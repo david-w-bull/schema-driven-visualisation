@@ -11,6 +11,8 @@ import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
 import ic.doc.dwb22.jvega.utils.GenericMap;
 import ic.doc.dwb22.jvega.utils.JsonData;
+import io.github.MigadaTang.exception.DBConnectionException;
+import io.github.MigadaTang.exception.ParseException;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -40,11 +42,18 @@ public class JVegaApplication {
 		VegaSpec sankeySpec = DefaultChartSpec.sankeyChart(sankeyData, "fromField", "toField", "docCount");
 		specTester(sankeySpec);
 
-
 		//donutChartTest();
 		//groupBarChartTest();
 		//SpringApplication.run(JVegaApplication.class, args);
 
+//		DatabaseConnectTest db = new DatabaseConnectTest();
+//		try {
+//			db.reverseEngineer();
+//		} catch (ParseException e) {
+//			throw new RuntimeException(e);
+//		} catch (DBConnectionException e) {
+//			throw new RuntimeException(e);
+//		}
 
 	}
 
