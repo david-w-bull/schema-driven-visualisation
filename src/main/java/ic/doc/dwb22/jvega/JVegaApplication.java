@@ -9,6 +9,7 @@ import ic.doc.dwb22.jvega.spec.scales.BandScale;
 import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
+import ic.doc.dwb22.jvega.utils.GenericMap;
 import ic.doc.dwb22.jvega.utils.JsonData;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

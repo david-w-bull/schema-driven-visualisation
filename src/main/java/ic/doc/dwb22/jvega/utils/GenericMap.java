@@ -1,4 +1,4 @@
-package ic.doc.dwb22.jvega.spec;
+package ic.doc.dwb22.jvega.utils;
 
 import java.util.HashMap;
 import java.util.Map;

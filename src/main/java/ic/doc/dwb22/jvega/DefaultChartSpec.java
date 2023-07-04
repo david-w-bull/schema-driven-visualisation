@@ -6,35 +6,32 @@ import ic.doc.dwb22.jvega.spec.encodings.RectEncoding;
 import ic.doc.dwb22.jvega.spec.encodings.TextEncoding;
 import ic.doc.dwb22.jvega.spec.scales.BandScale;
 import ic.doc.dwb22.jvega.spec.scales.LinearScale;
-import ic.doc.dwb22.jvega.spec.transforms.FilterTransform;
-import ic.doc.dwb22.jvega.spec.transforms.FoldTransform;
-import ic.doc.dwb22.jvega.spec.transforms.FormulaTransform;
-import ic.doc.dwb22.jvega.spec.transforms.StackTransform;
+import ic.doc.dwb22.jvega.spec.transforms.*;
+import ic.doc.dwb22.jvega.utils.GenericMap;
 
-import java.text.Normalizer;
 import java.util.Arrays;
 
 public class DefaultChartSpec {
 
     public static VegaSpec sankeyChart(JsonNode sankeyData, String leftField, String rightField, String valueField) {
 
+        // Dataset names referenced throughout the spec in different objects
+        final String BASE_DATASET = "rawData"; // referenced throughout spec in other datasets
+        final String NODES_DATASET = "nodes";
+        final String EDGES_DATASET = "edges";
+        final String GROUPS_DATASET = "groups";
+        final String DESTINATION_NODES_DATASET = "destinationNodes";
+
         /* ----- Create the base dataset and alias the fields according to method input parameters -----*/
-        String baseDatasetName = "rawData"; // referenced throughout spec in other datasets
         VegaDataset baseDataset = new VegaDataset.BuildDataset()
-                .withName(baseDatasetName)
+                .withName(BASE_DATASET)
                 .withValues(sankeyData)
                 .withTransform(FormulaTransform.simpleFormula("datum." + leftField, "stk1"))
                 .withTransform(FormulaTransform.simpleFormula("datum." + rightField, "stk2"))
                 .withTransform(FormulaTransform.simpleFormula("datum." + valueField, "size"))
                 .build();
 
-
         /* ----- Transform the data to define individual sankey nodes (the smallest unit on each of the stacks) -----*/
-        Transform filterNodes = FilterTransform.simpleFilter(
-                "!groupSelector " +
-                "|| groupSelector.stk1 == datum.stk1 " +
-                "|| groupSelector.stk2 == datum.stk2");
-
         Transform calculateNodePairKey = FormulaTransform.simpleFormula("datum.stk1+datum.stk2", "key");
 
         Transform calculateSortField = FormulaTransform.simpleFormula(
@@ -46,33 +43,73 @@ public class DefaultChartSpec {
                 Arrays.asList("stack", "grpId"));
 
         Transform createStacks = StackTransform.simpleStack(
-                Arrays.asList("stack"), "size",
-                GenericMap.createMap("field", "sortField", "order", "descending")
-
-
-        )
+                Arrays.asList("stack"),
+                "size",
+                GenericMap.createMap("field", "sortField", "order", "descending"));
 
         Transform calculateYcPosition = FormulaTransform.simpleFormula("(datum.y0+datum.y1)/2", "yc");
 
         VegaDataset nodesDataset = new VegaDataset.BuildDataset()
-                .withName("nodes")
-                .withSource(baseDatasetName)
-                .withTransform(filterNodes)
+                .withName(NODES_DATASET)
+                .withSource(BASE_DATASET)
                 .withTransform(calculateNodePairKey)
                 .withTransform(unpivotStacks)
                 .withTransform(calculateSortField)
+                .withTransform(createStacks)
                 .withTransform(calculateYcPosition)
                 .build();
 
-         /* -----  -----*/
+         /* ------------------- Create node groupings --------------------*/
 
+        Transform calculateNodeGroups = new AggregateTransform.BuildTransform()
+                .withGroupBy(Arrays.asList("stack", "grpId"))
+                .withFields(Arrays.asList("size"))
+                .withOps(Arrays.asList("sum"))
+                .withAliases(Arrays.asList("total"))
+                .build();
 
+        Transform stackNodeGroups = new StackTransform.BuildTransform()
+                .withGroupBy(Arrays.asList("stack"))
+                .withSort(GenericMap.createMap("field", "grpId", "order", "descending"))
+                .withField("total")
+                .build();
+
+        VegaDataset groupsDataset = new VegaDataset.BuildDataset()
+                .withName(GROUPS_DATASET)
+                .withSource(NODES_DATASET)
+                .withTransform(calculateNodeGroups)
+                .withTransform(stackNodeGroups)
+                .withTransform(FormulaTransform.simpleFormula("scale('y', datum.y0)", "scaledY0"))
+                .withTransform(FormulaTransform.simpleFormula("scale('y', datum.y1)", "scaledY1"))
+                .withTransform(FormulaTransform.simpleFormula("datum.stack == 'stk1'", "rightLabel"))
+                .withTransform(FormulaTransform.simpleFormula("datum.total/domain('y')[1]", "percentage"))
+                .build();
+
+        VegaDataset destinationNodesDataset = new VegaDataset.BuildDataset()
+                .withSource(NODES_DATASET)
+                .withTransform(FilterTransform.simpleFilter("datum.stack == 'stk2'"))
+                .build();
+
+        VegaDataset edgesDataset = new VegaDataset.BuildDataset()
+                .withName(EDGES_DATASET)
+                .withTransform(LookupTransform.simpleAliasedLookup(
+                        DESTINATION_NODES_DATASET,
+                        "key",
+                        Arrays.asList("key"),
+                        Arrays.asList("target")))
+
+                .build();
+
+        /* -------------------- Build final specification -------------------*/
         VegaSpec stackedBarSpec = new VegaSpec.BuildSpec()
                 .setDescription("Default sankey chart")
                 .setHeight(300)
                 .setWidth(600)
                 .setNewDataset(baseDataset)
                 .setNewDataset(nodesDataset)
+                .setNewDataset(groupsDataset)
+                .setNewDataset(destinationNodesDataset)
+                .setNewDataset(edgesDataset)
                 .createVegaSpec();
         return stackedBarSpec;
     }
