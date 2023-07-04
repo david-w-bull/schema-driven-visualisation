@@ -3,7 +3,7 @@ package ic.doc.dwb22.jvega.spec;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GenericMapObject {
+public class GenericMap {
     public static Map<String, Object> createMap(Object... keysAndValues) {
         if (keysAndValues.length % 2 != 0) {
             throw new IllegalArgumentException("You need to provide an even number of keys/values");

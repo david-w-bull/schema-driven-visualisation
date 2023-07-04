@@ -1,0 +1,7 @@
+[
+  {"fromField": "aa", "toField": "cc", "docCount": 7},
+  {"fromField": "bb", "toField": "aa", "docCount": 8},
+  {"fromField": "bb", "toField": "bb", "docCount": 6},
+  {"fromField": "bb", "toField": "cc", "docCount": 3},
+  {"fromField": "cc", "toField": "aa", "docCount": 9}
+]

@@ -9,9 +9,7 @@ import ic.doc.dwb22.jvega.spec.scales.BandScale;
 import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
-import io.github.MigadaTang.exception.DBConnectionException;
-import io.github.MigadaTang.exception.ParseException;
-import org.springframework.boot.SpringApplication;
+import ic.doc.dwb22.jvega.utils.JsonData;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -19,7 +17,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
@@ -30,19 +27,24 @@ import java.util.*;
 @RestController
 public class JVegaApplication {
 
-	public static void main(String[] args) throws SQLException, DBConnectionException, ParseException, IOException {
+	public static void main(String[] args) throws SQLException, IOException {
 		//databaseTest();
 		//System.out.println(UUID.randomUUID());
 		//scatterChartTest();
-		//barChartTest();
+//		JsonNode barData = JsonData.readJsonFileToJsonNode("barData.json");
+//		VegaSpec barSpec = DefaultChartSpec.barChart(barData);
+//		specTester(barSpec);
+
+		JsonNode sankeyData = JsonData.readJsonFileToJsonNode("sankeyData.json");
+		VegaSpec sankeySpec = DefaultChartSpec.sankeyChart(sankeyData, "fromField", "toField", "docCount");
+		specTester(sankeySpec);
+
+
 		//donutChartTest();
-		groupBarChartTest();
+		//groupBarChartTest();
 		//SpringApplication.run(JVegaApplication.class, args);
 
 
-//		DatabaseConnectTest db = new DatabaseConnectTest();
-//
-//		db.reverseEngineer();
 	}
 
 	@GetMapping("/")
@@ -50,6 +52,14 @@ public class JVegaApplication {
 		return "Test endpoint";
 	}
 
+	public static void specTester(VegaSpec spec) {
+		System.out.println(spec.toJson().toPrettyString());
+		String specString = spec.toJson().toString();
+		VegaSpec deserialized = VegaSpec.fromString(specString);
+		String finalString = deserialized.toJson().toPrettyString();
+		System.out.println("------deserialised------");
+		System.out.println(finalString);
+	}
 	public static void groupBarChartTest() {
 		JsonNode groupedBarData;
 		try {
@@ -85,7 +95,7 @@ public class JVegaApplication {
 				.setNewScale(new OrdinalScale.BuildScale()
 						.withName("color")
 						.withDomain(ScaleDomain.simpleDomain("table", "position"))
-						.withRange(GenericMapObject.createMap("scheme", "category20"))
+						.withRange(GenericMap.createMap("scheme", "category20"))
 						.build())
 
 				.setNewAxis(new Axis.BuildAxis()
@@ -138,7 +148,7 @@ public class JVegaApplication {
 										.withX(new ValueRef.BuildRef().withField("x2").withOffset(-5).build())
 										.withY(new ValueRef.BuildRef()
 												.withField("y")
-												.withOffset(GenericMapObject.createMap("field", "height", "mult", 0.5))
+												.withOffset(GenericMap.createMap("field", "height", "mult", 0.5))
 												.build())
 										.withFill(ValueRef.TestValue("contrast('white', datum.fill) > contrast('black', datum.fill)", "white"))
 										.withFill(ValueRef.Value("black"))
@@ -175,7 +185,7 @@ public class JVegaApplication {
 		VegaDataset donutDataset = new VegaDataset.BuildDataset()
 				.withName("table")
 				.withValues(donutData)
-				.withTransform(new PieTransform.BuildPie()
+				.withTransform(new PieTransform.BuildTransform()
 						.withField("field")
 						.withStartAngle(0.0)
 						.build())
@@ -189,7 +199,7 @@ public class JVegaApplication {
 				.setNewScale(new OrdinalScale.BuildScale()
 						.withName("color")
 						.withDomain(ScaleDomain.simpleDomain("table", "id"))
-						.withRange(GenericMapObject.createMap("scheme", "category20"))
+						.withRange(GenericMap.createMap("scheme", "category20"))
 						.build())
 				.setNewMark(new Mark.BuildMark()
 						.withType("arc")
@@ -212,110 +222,6 @@ public class JVegaApplication {
 		System.out.println(donutSpec.toJson().toPrettyString());
 
 		String specString = donutSpec.toJson().toString();
-
-		VegaSpec deserialized = VegaSpec.fromString(specString);
-
-		String finalString = deserialized.toJson().toPrettyString();
-
-		System.out.println("------deserialised------");
-
-		System.out.println(finalString);
-	}
-	public static void barChartTest() {
-
-		JsonNode barData;
-
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			File file = new ClassPathResource("barData.json").getFile();
-			barData = mapper.readTree(file);
-
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		VegaSpec testSpec = new VegaSpec.BuildSpec()
-				.setDescription("Bar data test")
-				.setWidth(400)
-				.setHeight(200)
-				.setPadding(5)
-
-				.setNewDataset(VegaDataset.jsonDataset("table", barData))
-
-				.setNewSignal(new Signal.BuildSignal()
-						.withName("tooltip")
-						.withOn(SignalEvent.EventUpdate("rect:mouseover", "datum"))
-						.withOn(SignalEvent.EventUpdate("rect:mouseout", "{}"))
-						.build())
-
-				.setNewScale(new BandScale.BuildScale()
-						.withName("xscale")
-						.withDomain(ScaleDomain.simpleDomain("table", "category"))
-						.withRange("width")
-						.withPadding(0.05)
-						.build())
-
-				.setNewScale(new LinearScale.BuildScale()
-						.withName("yscale")
-						.withDomain(ScaleDomain.simpleDomain("table", "amount"))
-						.withRange("height")
-						.withNice(true)
-						.build())
-
-				.setNewAxis(new Axis.BuildAxis()
-						.setOrient("bottom")
-						.setScale("xscale")
-						.build())
-
-				.setNewAxis(new Axis.BuildAxis()
-						.setOrient("left")
-						.setScale("yscale")
-						.build())
-
-				.setNewMark(new Mark.BuildMark()
-						.withType("rect")
-						.withDataSource("table")
-						.withEnter(new RectEncoding.BuildEncoding()
-								.withX(ValueRef.ScaleField("xscale", "category"))
-								.withWidth(ValueRef.ScaleBand("xscale", 1))
-								.withY(ValueRef.ScaleField("yscale", "amount"))
-								.withY2(ValueRef.ScaleValue("yscale", 0))
-								.build())
-						.withUpdate(new RectEncoding.BuildEncoding().withFill(ValueRef.Value("steelblue")).build())
-						.withHover(new RectEncoding.BuildEncoding().withFill(ValueRef.Value("red")).build())
-						.build())
-
-				.setNewMark(new Mark.BuildMark()
-						.withType("text")
-						.withEnter(new TextEncoding.BuildEncoding()
-								.withAlign(ValueRef.Value("center"))
-								.withBaseline(ValueRef.Value("bottom"))
-								.withFill(ValueRef.Value("#333"))
-								.build())
-						.withUpdate(new TextEncoding.BuildEncoding()
-								.withX(new ValueRef.BuildRef()
-										.withScale("xscale")
-										.withSignal("tooltip.category")
-										.withBand(0.5)
-										.build())
-								.withY(new ValueRef.BuildRef()
-										.withScale("yscale")
-										.withSignal("tooltip.amount")
-										.withOffset(-2)
-										.build())
-								.withFillOpacity(new ValueRef.BuildRef()
-										.withTest("datum === tooltip")
-										.withValue(0)
-										.build())
-								.withFillOpacity(ValueRef.Value(1))
-								.withText(ValueRef.Signal("tooltip.amount"))
-								.build())
-						.build())
-				.createVegaSpec();
-
-		System.out.println(testSpec.toJson().toPrettyString());
-
-		String specString = testSpec.toJson().toString();
 
 		VegaSpec deserialized = VegaSpec.fromString(specString);
 
