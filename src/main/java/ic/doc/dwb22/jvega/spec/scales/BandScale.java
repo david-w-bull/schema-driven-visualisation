@@ -18,11 +18,15 @@ public class BandScale extends Scale {
     private String type = "band";
     private Double align;
     private Double padding;
+    private Double paddingInner;
+    private Double paddingOuter;
 
     private BandScale(BuildScale builder) {
         super(builder);
         this.align = builder.align;
         this.padding = builder.padding;
+        this.paddingInner = builder.paddingInner;
+        this.paddingOuter = builder.paddingOuter;
     }
 
     @Override
@@ -33,10 +37,18 @@ public class BandScale extends Scale {
 
     @Override
     public Double getPadding() { return this.padding; }
+
+    @Override
+    public Double getPaddingInner() { return this.paddingInner; }
+
+    @Override
+    public Double getPaddingOuter() { return this.paddingOuter; }
     public static class BuildScale extends ScaleBuilder<BuildScale> {
         private String type = "band";
         private Double align;
         private Double padding;
+        private Double paddingInner;
+        private Double paddingOuter;
 
         public BuildScale withAlign(Double align) {
             this.align = align;
@@ -45,6 +57,16 @@ public class BandScale extends Scale {
 
         public BuildScale withPadding(Double padding) {
             this.padding = padding;
+            return this;
+        }
+
+        public BuildScale withPaddingInner(Double paddingInner) {
+            this.paddingInner = paddingInner;
+            return this;
+        }
+
+        public BuildScale withPaddingOuter(Double paddingOuter) {
+            this.paddingOuter = paddingOuter;
             return this;
         }
 
@@ -64,10 +86,6 @@ public class BandScale extends Scale {
     public Object getBins() { return null; }
     @Override
     public Boolean getClamp() { return null; }
-    @Override
-    public Double getPaddingInner() { return null; }
-    @Override
-    public Double getPaddingOuter() { return null; }
     @Override
     public Boolean getNice() { return null; }
     @Override

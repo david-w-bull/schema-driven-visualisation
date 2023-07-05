@@ -25,6 +25,14 @@ public class Axis {
 
 //    private Map<String, Object> additionalProperties;
 
+    public static Axis simpleAxis(String orient, String scale) {
+        Axis axis = new Axis.BuildAxis()
+                .setOrient(orient)
+                .setScale(scale)
+                .build();
+        return axis;
+    }
+
     public static class BuildAxis {
         private String scale;
         private String orient;

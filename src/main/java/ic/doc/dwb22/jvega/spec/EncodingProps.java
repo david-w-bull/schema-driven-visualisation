@@ -24,7 +24,8 @@ import java.util.List;
         @JsonSubTypes.Type(value = SymbolEncoding.class, name = "symbol"),
         @JsonSubTypes.Type(value = RectEncoding.class, name = "rect"),
         @JsonSubTypes.Type(value = TextEncoding.class, name = "text"),
-        @JsonSubTypes.Type(value = GroupEncoding.class, name = "group")
+        @JsonSubTypes.Type(value = GroupEncoding.class, name = "group"),
+        @JsonSubTypes.Type(value = PathEncoding.class, name = "path")
 })
 public abstract class EncodingProps {
 
@@ -39,6 +40,8 @@ public abstract class EncodingProps {
     protected List<ValueRef> opacity;
     protected List<ValueRef> fill;
     protected List<ValueRef> stroke;
+    protected List<ValueRef> strokeWidth;
+    protected List<ValueRef> strokeOpacity;
     protected List<ValueRef> tooltip;
     protected List<ValueRef> zindex;
     protected List<ValueRef> fillOpacity;
@@ -54,6 +57,8 @@ public abstract class EncodingProps {
         this.opacity = builder.opacity;
         this.fill = builder.fill;
         this.stroke = builder.stroke;
+        this.strokeWidth = builder.strokeWidth;
+        this.strokeOpacity = builder.strokeOpacity;
         this.tooltip = builder.tooltip;
         this.zindex = builder.zindex;
         this.fillOpacity = builder.fillOpacity;
@@ -73,6 +78,8 @@ public abstract class EncodingProps {
         private List<ValueRef> opacity;
         private List<ValueRef> fill;
         private List<ValueRef> stroke;
+        private List<ValueRef> strokeWidth;
+        private List<ValueRef> strokeOpacity;
         private List<ValueRef> tooltip;
         private List<ValueRef> zindex;
         private List<ValueRef> fillOpacity;
@@ -165,6 +172,22 @@ public abstract class EncodingProps {
             return self();
         }
 
+        public T withStrokeWidth(ValueRef strokeWidth) {
+            if(this.strokeWidth == null) {
+                this.strokeWidth = new ArrayList<>();
+            }
+            this.strokeWidth.add(strokeWidth);
+            return self();
+        }
+
+        public T withStrokeOpacity(ValueRef strokeOpacity) {
+            if(this.strokeOpacity == null) {
+                this.strokeOpacity = new ArrayList<>();
+            }
+            this.strokeOpacity.add(strokeOpacity);
+            return self();
+        }
+
         public T withTooltip(ValueRef tooltip) {
             if(this.tooltip == null) {
                 this.tooltip = new ArrayList<>();
@@ -188,30 +211,6 @@ public abstract class EncodingProps {
             this.fillOpacity.add(fillOpacity);
             return self();
         }
-
-//        public BuildProps withAlign(ValueRef align) {
-//            if(this.align == null) {
-//                this.align = new ArrayList<>();
-//            }
-//            this.align.add(align);
-//            return this;
-//        }
-//
-//        public BuildProps withBaseline(ValueRef baseline) {
-//            if(this.baseline == null) {
-//                this.baseline = new ArrayList<>();
-//            }
-//            this.baseline.add(baseline);
-//            return this;
-//        }
-//
-//        public BuildProps withText(ValueRef text) {
-//            if(this.text == null) {
-//                this.text = new ArrayList<>();
-//            }
-//            this.text.add(text);
-//            return this;
-//        }
 
         protected abstract T self();
         protected abstract EncodingProps build();

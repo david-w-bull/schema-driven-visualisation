@@ -24,7 +24,7 @@ public class FilterTransform implements Transform {
     }
 
     public static class BuildTransform {
-        private String type = "formula";
+        private String type = "filter";
         private String expr;
 
         public BuildTransform withExpr(String expr) {

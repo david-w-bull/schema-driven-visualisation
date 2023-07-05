@@ -18,6 +18,7 @@ public class Mark {
     private String name;
     private Boolean interactive;
     private Object from;
+    private Boolean clip;
     private Encoding encode;
 
     // Additional properties only relevant for group marks
@@ -31,6 +32,7 @@ public class Mark {
         private String name;
         private Boolean interactive;
         private Object from;
+        private Boolean clip;
         private Encoding encode;
 
         // Additional properties only relevant for group marks
@@ -64,10 +66,17 @@ public class Mark {
             return this;
         }
 
+        public BuildMark withClip(Boolean clip) {
+            this.clip = clip;
+            return this;
+        }
+
         public BuildMark withName(String name) {
             this.name = name;
             return this;
         }
+
+
 
         public BuildMark withEnter(EncodingProps properties) {
             if (this.encode == null) {
@@ -136,7 +145,16 @@ public class Mark {
 
 
         public Mark build() {
-            return new Mark(type, name, interactive, from, encode, data, signals, scales, marks);
+            return new Mark(type,
+                    name,
+                    interactive,
+                    from,
+                    clip,
+                    encode,
+                    data,
+                    signals,
+                    scales,
+                    marks);
         }
     }
 }
