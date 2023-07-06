@@ -2,6 +2,8 @@ package ic.doc.dwb22.jvega;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ic.doc.dwb22.jvega.api.VegaSpecRepository;
+import ic.doc.dwb22.jvega.schema.DatabaseConnectTest;
 import ic.doc.dwb22.jvega.spec.*;
 
 import ic.doc.dwb22.jvega.spec.encodings.*;
@@ -10,9 +12,7 @@ import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
 import ic.doc.dwb22.jvega.utils.GenericMap;
-import ic.doc.dwb22.jvega.utils.JsonData;
-import io.github.MigadaTang.exception.DBConnectionException;
-import io.github.MigadaTang.exception.ParseException;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -38,13 +38,13 @@ public class JVegaApplication {
 //		VegaSpec barSpec = DefaultChartSpec.barChart(barData);
 //		specTester(barSpec);
 
-		JsonNode sankeyData = JsonData.readJsonFileToJsonNode("sankeyData.json");
-		VegaSpec sankeySpec = DefaultChartSpec.sankeyChart(sankeyData, "fromField", "toField", "docCount");
-		specTester(sankeySpec);
+//		JsonNode sankeyData = JsonData.readJsonFileToJsonNode("sankeyData.json");
+//		VegaSpec sankeySpec = DefaultChartSpec.sankeyChart(sankeyData, "fromField", "toField", "docCount");
+//		specTester(sankeySpec);
 
 		//donutChartTest();
 		//groupBarChartTest();
-		//SpringApplication.run(JVegaApplication.class, args);
+		SpringApplication.run(JVegaApplication.class, args);
 
 //		DatabaseConnectTest db = new DatabaseConnectTest();
 //		try {
@@ -54,6 +54,7 @@ public class JVegaApplication {
 //		} catch (DBConnectionException e) {
 //			throw new RuntimeException(e);
 //		}
+
 
 	}
 

@@ -1,0 +1,764 @@
+{
+  "name" : "public",
+  "entityList" : [ {
+    "name" : "airport",
+    "entityType" : "STRONG",
+    "attributeList" : [ {
+      "name" : "iata_code",
+      "dataType" : "VARCHAR",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "latitude",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "longitude",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "elevation",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "gmt_offset",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    } ]
+  }, {
+    "name" : "continent",
+    "entityType" : "STRONG",
+    "attributeList" : [ {
+      "name" : "name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "area",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    } ]
+  }, {
+    "name" : "country",
+    "entityType" : "STRONG",
+    "attributeList" : [ {
+      "name" : "name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "code",
+      "dataType" : "VARCHAR",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "capital",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "province",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "area",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "population",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "local_name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "other_name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Both"
+    } ]
+  }, {
+    "name" : "feature",
+    "entityType" : "STRONG",
+    "attributeList" : [ {
+      "name" : "name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "latitude",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "longitude",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ]
+  }, {
+    "name" : "mountain_range",
+    "entityType" : "STRONG",
+    "attributeList" : [ {
+      "name" : "name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    } ]
+  }, {
+    "name" : "organization",
+    "entityType" : "STRONG",
+    "attributeList" : [ {
+      "name" : "abbreviation",
+      "dataType" : "VARCHAR",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "established",
+      "dataType" : "DATE",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ]
+  }, {
+    "name" : "ethnic_group",
+    "entityType" : "WEAK",
+    "attributeList" : [ {
+      "name" : "name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "percentage",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ]
+  }, {
+    "name" : "province",
+    "entityType" : "WEAK",
+    "attributeList" : [ {
+      "name" : "name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "population",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "area",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "capital",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "capital_province",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "local_name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "other_name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Both"
+    } ]
+  }, {
+    "name" : "religion",
+    "entityType" : "WEAK",
+    "attributeList" : [ {
+      "name" : "name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "percentage",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    } ]
+  }, {
+    "name" : "spoken",
+    "entityType" : "WEAK",
+    "attributeList" : [ {
+      "name" : "name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "percentage",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ]
+  }, {
+    "name" : "desert",
+    "entityType" : "SUBSET",
+    "attributeList" : [ {
+      "name" : "area",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    } ],
+    "belongStrongEntity" : "feature"
+  }, {
+    "name" : "economy",
+    "entityType" : "SUBSET",
+    "attributeList" : [ {
+      "name" : "gdp",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "agriculture",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "service",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "industry",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "inflation",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "unemployment",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ],
+    "belongStrongEntity" : "country"
+  }, {
+    "name" : "island",
+    "entityType" : "SUBSET",
+    "attributeList" : [ {
+      "name" : "islands",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "area",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "elevation",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "type",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ],
+    "belongStrongEntity" : "feature"
+  }, {
+    "name" : "mountain",
+    "entityType" : "SUBSET",
+    "attributeList" : [ {
+      "name" : "elevation",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "type",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ],
+    "belongStrongEntity" : "feature"
+  }, {
+    "name" : "politics",
+    "entityType" : "SUBSET",
+    "attributeList" : [ {
+      "name" : "independence",
+      "dataType" : "DATE",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "was_dependent",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "government",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    } ],
+    "belongStrongEntity" : "country"
+  }, {
+    "name" : "population",
+    "entityType" : "SUBSET",
+    "attributeList" : [ {
+      "name" : "population_growth",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "infant_mortality",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ],
+    "belongStrongEntity" : "country"
+  }, {
+    "name" : "waterbody",
+    "entityType" : "SUBSET",
+    "attributeList" : [ {
+      "name" : "area",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ],
+    "belongStrongEntity" : "feature"
+  }, {
+    "name" : "city",
+    "entityType" : "WEAK",
+    "attributeList" : [ {
+      "name" : "name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "population",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "latitude",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "longitude",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "elevation",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "local_name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "other_name",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Both"
+    } ]
+  }, {
+    "name" : "province_population",
+    "entityType" : "WEAK",
+    "attributeList" : [ {
+      "name" : "year",
+      "dataType" : "INT4",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "population",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    } ]
+  }, {
+    "name" : "lake",
+    "entityType" : "SUBSET",
+    "attributeList" : [ {
+      "name" : "elevation",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "depth",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "dam_height",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "type",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ],
+    "belongStrongEntity" : "waterbody"
+  }, {
+    "name" : "river",
+    "entityType" : "SUBSET",
+    "attributeList" : [ {
+      "name" : "length",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "source_elevation",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    }, {
+      "name" : "estuary_latitude",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "estuary_longitude",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "estuary_elevation",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ],
+    "belongStrongEntity" : "waterbody"
+  }, {
+    "name" : "sea",
+    "entityType" : "SUBSET",
+    "attributeList" : [ {
+      "name" : "depth",
+      "dataType" : "INT4",
+      "isPrimary" : false,
+      "attributeType" : "Optional"
+    } ],
+    "belongStrongEntity" : "waterbody"
+  }, {
+    "name" : "city_population",
+    "entityType" : "WEAK",
+    "attributeList" : [ {
+      "name" : "year",
+      "dataType" : "NUMERIC",
+      "isPrimary" : true,
+      "attributeType" : "Mandatory"
+    }, {
+      "name" : "population",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    } ]
+  } ],
+  "relationshipList" : [ {
+    "name" : "ethnic_group_country",
+    "edgeList" : [ {
+      "entity" : "ethnic_group",
+      "cardinality" : "1:1",
+      "isKey" : true
+    }, {
+      "entity" : "country",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "province_country",
+    "edgeList" : [ {
+      "entity" : "province",
+      "cardinality" : "1:1",
+      "isKey" : true
+    }, {
+      "entity" : "country",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "religion_country",
+    "edgeList" : [ {
+      "entity" : "religion",
+      "cardinality" : "1:1",
+      "isKey" : true
+    }, {
+      "entity" : "country",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "spoken_country",
+    "edgeList" : [ {
+      "entity" : "spoken",
+      "cardinality" : "1:1",
+      "isKey" : true
+    }, {
+      "entity" : "country",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "city_province",
+    "edgeList" : [ {
+      "entity" : "city",
+      "cardinality" : "1:1",
+      "isKey" : true
+    }, {
+      "entity" : "province",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "province_population_province",
+    "edgeList" : [ {
+      "entity" : "province_population",
+      "cardinality" : "1:1",
+      "isKey" : true
+    }, {
+      "entity" : "province",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "city_population_city",
+    "edgeList" : [ {
+      "entity" : "city_population",
+      "cardinality" : "1:1",
+      "isKey" : true
+    }, {
+      "entity" : "city",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "borders",
+    "attributeList" : [ {
+      "name" : "length",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    } ],
+    "edgeList" : [ {
+      "entity" : "country",
+      "cardinality" : "0:N"
+    }, {
+      "entity" : "country",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "encompasses",
+    "attributeList" : [ {
+      "name" : "percentage",
+      "dataType" : "NUMERIC",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    } ],
+    "edgeList" : [ {
+      "entity" : "country",
+      "cardinality" : "0:N"
+    }, {
+      "entity" : "continent",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "geo_estuary",
+    "edgeList" : [ {
+      "entity" : "river",
+      "cardinality" : "0:N"
+    }, {
+      "entity" : "province",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "geo_source",
+    "edgeList" : [ {
+      "entity" : "river",
+      "cardinality" : "0:N"
+    }, {
+      "entity" : "province",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "is_member",
+    "attributeList" : [ {
+      "name" : "type",
+      "dataType" : "VARCHAR",
+      "isPrimary" : false,
+      "attributeType" : "Mandatory"
+    } ],
+    "edgeList" : [ {
+      "entity" : "country",
+      "cardinality" : "0:N"
+    }, {
+      "entity" : "organization",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "located_by",
+    "edgeList" : [ {
+      "entity" : "city",
+      "cardinality" : "0:N"
+    }, {
+      "entity" : "waterbody",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "located_on",
+    "edgeList" : [ {
+      "entity" : "city",
+      "cardinality" : "0:N"
+    }, {
+      "entity" : "island",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "merges_with",
+    "edgeList" : [ {
+      "entity" : "sea",
+      "cardinality" : "0:N"
+    }, {
+      "entity" : "sea",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "province_has_feature",
+    "edgeList" : [ {
+      "entity" : "province",
+      "cardinality" : "0:N"
+    }, {
+      "entity" : "feature",
+      "cardinality" : "0:N"
+    } ]
+  }, {
+    "name" : "airport_city",
+    "edgeList" : [ {
+      "entity" : "airport",
+      "cardinality" : "0:1"
+    }, {
+      "entity" : "city",
+      "cardinality" : "1:N"
+    } ]
+  }, {
+    "name" : "airport_island",
+    "edgeList" : [ {
+      "entity" : "airport",
+      "cardinality" : "0:1"
+    }, {
+      "entity" : "island",
+      "cardinality" : "1:N"
+    } ]
+  }, {
+    "name" : "organization_city",
+    "edgeList" : [ {
+      "entity" : "organization",
+      "cardinality" : "0:1"
+    }, {
+      "entity" : "city",
+      "cardinality" : "1:N"
+    } ]
+  }, {
+    "name" : "in ",
+    "edgeList" : [ {
+      "entity" : "island",
+      "cardinality" : "1:1"
+    }, {
+      "entity" : "waterbody",
+      "cardinality" : "1:N"
+    } ]
+  }, {
+    "name" : "mountain_mountain_range",
+    "edgeList" : [ {
+      "entity" : "mountain",
+      "cardinality" : "0:1"
+    }, {
+      "entity" : "mountain_range",
+      "cardinality" : "1:N"
+    } ]
+  }, {
+    "name" : "on ",
+    "edgeList" : [ {
+      "entity" : "mountain",
+      "cardinality" : "0:1"
+    }, {
+      "entity" : "island",
+      "cardinality" : "1:N"
+    } ]
+  }, {
+    "name" : "politics_politics",
+    "edgeList" : [ {
+      "entity" : "politics",
+      "cardinality" : "0:1"
+    }, {
+      "entity" : "politics",
+      "cardinality" : "1:N"
+    } ]
+  }, {
+    "name" : "lake_river",
+    "edgeList" : [ {
+      "entity" : "lake",
+      "cardinality" : "0:1"
+    }, {
+      "entity" : "river",
+      "cardinality" : "1:N"
+    } ]
+  }, {
+    "name" : "on 2",
+    "edgeList" : [ {
+      "entity" : "lake",
+      "cardinality" : "0:1"
+    }, {
+      "entity" : "island",
+      "cardinality" : "1:N"
+    } ]
+  }, {
+    "name" : "river_mountain_range",
+    "edgeList" : [ {
+      "entity" : "river",
+      "cardinality" : "0:1"
+    }, {
+      "entity" : "mountain_range",
+      "cardinality" : "1:N"
+    } ]
+  }, {
+    "name" : "river_waterbody",
+    "edgeList" : [ {
+      "entity" : "river",
+      "cardinality" : "0:1"
+    }, {
+      "entity" : "waterbody",
+      "cardinality" : "1:N"
+    } ]
+  }, {
+    "name" : "on 3",
+    "edgeList" : [ {
+      "entity" : "river",
+      "cardinality" : "0:1"
+    }, {
+      "entity" : "island",
+      "cardinality" : "1:N"
+    } ]
+  } ]
+}
