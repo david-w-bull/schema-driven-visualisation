@@ -15,26 +15,26 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class DatabaseConnectTest {
-    public void reverseEngineer()
-            throws SQLException, ParseException, DBConnectionException, IOException {
-        ER.initialize();
-        Reverse reverse = new Reverse();
-        Schema schema = reverse.relationSchemasToERModel(RDBMSType.POSTGRESQL, "localhost"
-                , "5432", "jvegatest", "david", "dReD@pgs5b!");
-
-        DatabaseSchema jVegaSchema = new DatabaseSchema(schema);
-        String schemaString = jVegaSchema.toJSON();
-        System.out.println(schemaString);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            Schema deserializedSchema = objectMapper.readValue(schemaString, Schema.class);
-            DatabaseSchema deserializedFinal = new DatabaseSchema(deserializedSchema);
-            System.out.println(deserializedFinal.toJSON());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
+//    public void reverseEngineer()
+//            throws SQLException, ParseException, DBConnectionException, IOException {
+//        ER.initialize();
+//        Reverse reverse = new Reverse();
+//        Schema schema = reverse.relationSchemasToERModel(RDBMSType.POSTGRESQL, "localhost"
+//                , "5432", "jvegatest", "david", "dReD@pgs5b!");
+//
+//        DatabaseSchema jVegaSchema = new DatabaseSchema(schema);
+//        String schemaString = jVegaSchema.toJSON();
+//        System.out.println(schemaString);
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//
+//        try {
+//            Schema deserializedSchema = objectMapper.readValue(schemaString, Schema.class);
+//            DatabaseSchema deserializedFinal = new DatabaseSchema(deserializedSchema);
+//            System.out.println(deserializedFinal.toJSON());
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//    }
 }

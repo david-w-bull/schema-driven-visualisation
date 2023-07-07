@@ -31,7 +31,7 @@ import java.util.*;
 public class JVegaApplication {
 
 	public static void main(String[] args) throws SQLException, IOException {
-		//databaseTest();
+		databaseTest();
 		//System.out.println(UUID.randomUUID());
 		//scatterChartTest();
 //		JsonNode barData = JsonData.readJsonFileToJsonNode("barData.json");
@@ -44,7 +44,7 @@ public class JVegaApplication {
 
 		//donutChartTest();
 		//groupBarChartTest();
-		SpringApplication.run(JVegaApplication.class, args);
+		//SpringApplication.run(JVegaApplication.class, args);
 
 //		DatabaseConnectTest db = new DatabaseConnectTest();
 //		try {
@@ -329,7 +329,7 @@ public class JVegaApplication {
 		String host = "localhost";
 		String port = "5432";
 		String databaseName = "jvegatest";
-		String schemaName = "mondial_fragment";
+		// String schemaName = "mondial_fragment";
 
 		String connectionString = "jdbc:"
 				+ databaseType
@@ -343,21 +343,31 @@ public class JVegaApplication {
 		String pw = "dReD@pgs5b!";
 		List<String> dbTables = new ArrayList<String>();
 		try {
-			Connection connection = DriverManager.getConnection(connectionString, user, pw);
-			DatabaseMetaData databaseMetaData = connection.getMetaData();
-			ResultSet tables = databaseMetaData.getTables(null, null, null, new String[]{"TABLE"});
-			while (tables.next()) {
-				String tableName = tables.getString("TABLE_NAME");
-				dbTables.add(tableName);
+			Connection conn = DriverManager.getConnection(connectionString, user, pw);
+			if (conn != null) {
+				DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
+
+				ResultSet rs = dm.getImportedKeys(conn.getCatalog(), null, "airport");
+				while (rs.next()) {
+					String fkTableName = rs.getString("FKTABLE_NAME");
+					String fkColumnName = rs.getString("FKCOLUMN_NAME");
+					String pkTableName = rs.getString("PKTABLE_NAME");
+					String pkColumnName = rs.getString("PKCOLUMN_NAME");
+
+					// System.out.println("FK Table Name: " + fkTableName);
+					System.out.println("FK Column Name: " + fkColumnName);
+					System.out.println("FK between: "
+							+ fkTableName
+							+ "::"
+							+ fkColumnName
+							+ " -> "
+							+ pkTableName
+							+ "::"
+							+ pkColumnName );
+				}
 			}
-
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		} catch (SQLException ex) {
+			ex.printStackTrace();
 		}
-
-		for (String t : dbTables) {
-			System.out.println(t);
-		}
-		System.out.println(dbTables.size());
 	}
 }

@@ -23,24 +23,29 @@ public class DatabaseSchema {
 
     @Id
     private ObjectId id;
+    private Integer testId = -1;
 
-    private Integer testId;
-
-    @JsonDeserialize(using = SchemaDeserializer.class)
-    private Schema schema;
-
-    public DatabaseSchema(Schema schema, Integer testId) {
-        this.schema = schema;
-        this.testId = testId;
-    }
+    private Long schemaId;
+    private String name;
+    private List<DatabaseEntity> entityList;
+    private List<DatabaseRelationship> relationshipList;
+    // private String schemaString;
 
     public DatabaseSchema(Schema schema) {
-        this.schema = schema;
-        this.testId = -1;
+        schema.sanityCheck();
+        this.testId = testId;
+        this.schemaId = schema.getID();
+        this.name = schema.getName();
+        for(Entity entity: schema.getEntityList()) {
+            this.entityList.add(new DatabaseEntity(entity));
+        }
+        for(Relationship relationship: schema.getRelationshipList()) {
+            this.relationshipList.add(new DatabaseRelationship(relationship));
+        }
+        // this.schemaString = schema.toJSON();
     }
-
-    /* This method is from the amazing-er library, to allow deserialization of classes from that project */
-    public String toJSON() {
-        return schema.toJSON();
+    public DatabaseSchema(Schema schema, Integer testId) {
+        this(schema);
+        this.testId = testId;
     }
 }
