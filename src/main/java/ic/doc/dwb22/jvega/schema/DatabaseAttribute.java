@@ -2,7 +2,13 @@ package ic.doc.dwb22.jvega.schema;
 
 import io.github.MigadaTang.Attribute;
 import io.github.MigadaTang.common.AttributeType;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@Getter
+@Setter
 public class DatabaseAttribute {
 
     private Long attributeId;

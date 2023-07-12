@@ -3,7 +3,13 @@ package ic.doc.dwb22.jvega.schema;
 import io.github.MigadaTang.ERConnectableObj;
 import io.github.MigadaTang.RelationshipEdge;
 import io.github.MigadaTang.common.Cardinality;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@Getter
+@Setter
 public class DatabaseEdge {
 
     private Long edgeId;

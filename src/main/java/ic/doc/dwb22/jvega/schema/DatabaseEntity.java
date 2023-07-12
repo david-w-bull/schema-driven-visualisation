@@ -2,16 +2,23 @@ package ic.doc.dwb22.jvega.schema;
 
 import io.github.MigadaTang.Attribute;
 import io.github.MigadaTang.Entity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
+@Getter
+@Setter
 public class DatabaseEntity {
 
     private Long entityID;
     private String entityName;
     private DatabaseEntityType entityType;
     private DatabaseEntity relatedStrongEntity;
-    private List<DatabaseAttribute> entityAttributes;
+    private List<DatabaseAttribute> entityAttributes = new ArrayList<>();
 
     public DatabaseEntity(Entity entity) {
         this.entityID = entity.getID();
@@ -23,7 +30,9 @@ public class DatabaseEntity {
             case GENERALISATION -> DatabaseEntityType.GENERALISATION;
             default -> DatabaseEntityType.UNKNOWN;
         };
-        this.relatedStrongEntity = new DatabaseEntity(entity.getBelongStrongEntity());
+        if(entity.getBelongStrongEntity() != null) {
+            this.relatedStrongEntity = new DatabaseEntity(entity.getBelongStrongEntity());
+        }
         for(Attribute attribute: entity.getAttributeList()) {
             this.entityAttributes.add(new DatabaseAttribute(attribute));
         }

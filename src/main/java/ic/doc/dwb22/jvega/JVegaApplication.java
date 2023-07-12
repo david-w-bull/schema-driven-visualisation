@@ -12,6 +12,8 @@ import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
 import ic.doc.dwb22.jvega.utils.GenericMap;
+import io.github.MigadaTang.exception.DBConnectionException;
+import io.github.MigadaTang.exception.ParseException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -31,7 +33,7 @@ import java.util.*;
 public class JVegaApplication {
 
 	public static void main(String[] args) throws SQLException, IOException {
-		databaseTest();
+		//databaseTest();
 		//System.out.println(UUID.randomUUID());
 		//scatterChartTest();
 //		JsonNode barData = JsonData.readJsonFileToJsonNode("barData.json");
@@ -46,16 +48,15 @@ public class JVegaApplication {
 		//groupBarChartTest();
 		//SpringApplication.run(JVegaApplication.class, args);
 
-//		DatabaseConnectTest db = new DatabaseConnectTest();
-//		try {
-//			db.reverseEngineer();
-//		} catch (ParseException e) {
-//			throw new RuntimeException(e);
-//		} catch (DBConnectionException e) {
-//			throw new RuntimeException(e);
-//		}
+		DatabaseConnectTest db = new DatabaseConnectTest();
 
-
+		try {
+			db.reverseEngineer();
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		} catch (DBConnectionException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@GetMapping("/")
