@@ -4,6 +4,8 @@ import "./App.css";
 import Message from "./components/Message";
 import { Vega, VegaLite, VisualizationSpec } from "react-vega";
 import ListGroup from "./components/ListGroup";
+import { Data, Entity, Attribute } from "./types";
+import EntityList from "./components/EntityList";
 
 function App() {
   let items = ["Test Viz 1", "Test Viz 2", "Test Viz 3"];
@@ -21,6 +23,138 @@ function App() {
       .then((response) => setVegaSpec(response.data.spec));
   };
 
+  const testData: Data = {
+    id: null,
+    testId: -1,
+    schemaId: 1,
+    name: "public",
+    entityList: [
+      {
+        entityID: 1,
+        entityName: "airport",
+        entityType: "STRONG",
+        relatedStrongEntity: null,
+        entityAttributes: [
+          {
+            attributeId: 1,
+            attributeName: "iata_code",
+            mandatory: true,
+            optional: false,
+            multiValued: false,
+            dataType: "VARCHAR",
+            isPrimary: true,
+          },
+          {
+            attributeId: 2,
+            attributeName: "name",
+            mandatory: false,
+            optional: true,
+            multiValued: false,
+            dataType: "VARCHAR",
+            isPrimary: false,
+          },
+          {
+            attributeId: 3,
+            attributeName: "latitude",
+            mandatory: true,
+            optional: false,
+            multiValued: false,
+            dataType: "NUMERIC",
+            isPrimary: false,
+          },
+          {
+            attributeId: 4,
+            attributeName: "longitude",
+            mandatory: true,
+            optional: false,
+            multiValued: false,
+            dataType: "NUMERIC",
+            isPrimary: false,
+          },
+          {
+            attributeId: 5,
+            attributeName: "elevation",
+            mandatory: false,
+            optional: true,
+            multiValued: false,
+            dataType: "INT4",
+            isPrimary: false,
+          },
+          {
+            attributeId: 6,
+            attributeName: "gmt_offset",
+            mandatory: true,
+            optional: false,
+            multiValued: false,
+            dataType: "INT4",
+            isPrimary: false,
+          },
+        ],
+      },
+      {
+        entityID: 2,
+        entityName: "country",
+        entityType: "STRONG",
+        relatedStrongEntity: null,
+        entityAttributes: [
+          {
+            attributeId: 7,
+            attributeName: "name",
+            mandatory: true,
+            optional: false,
+            multiValued: false,
+            dataType: "VARCHAR",
+            isPrimary: false,
+          },
+          {
+            attributeId: 8,
+            attributeName: "code",
+            mandatory: true,
+            optional: false,
+            multiValued: false,
+            dataType: "VARCHAR",
+            isPrimary: true,
+          },
+          {
+            attributeId: 9,
+            attributeName: "capital",
+            mandatory: false,
+            optional: true,
+            multiValued: false,
+            dataType: "VARCHAR",
+            isPrimary: false,
+          },
+          {
+            attributeId: 10,
+            attributeName: "province",
+            mandatory: false,
+            optional: true,
+            multiValued: false,
+            dataType: "VARCHAR",
+            isPrimary: false,
+          },
+          {
+            attributeId: 11,
+            attributeName: "area",
+            mandatory: true,
+            optional: false,
+            multiValued: false,
+            dataType: "NUMERIC",
+            isPrimary: false,
+          },
+          {
+            attributeId: 12,
+            attributeName: "population",
+            mandatory: true,
+            optional: false,
+            multiValued: false,
+            dataType: "INT4",
+            isPrimary: false,
+          },
+        ],
+      },
+    ],
+  };
   // useEffect(() => {
   //   axios
   //     .get(
@@ -29,152 +163,15 @@ function App() {
   //     .then((response) => setVegaSpec(response.data.spec));
   // }, []);
 
-  // const testSpec: VisualizationSpec = {
-  //   description: "Simple donut chart",
-  //   width: 400,
-  //   height: 400,
-  //   data: [
-  //     {
-  //       name: "table",
-  //       transform: [
-  //         {
-  //           type: "pie",
-  //           field: "field",
-  //           startAngle: 0.0,
-  //         },
-  //       ],
-  //       values: [
-  //         {
-  //           id: 1,
-  //           field: 4,
-  //         },
-  //         {
-  //           id: 2,
-  //           field: 6,
-  //         },
-  //         {
-  //           id: 3,
-  //           field: 10,
-  //         },
-  //         {
-  //           id: 4,
-  //           field: 3,
-  //         },
-  //         {
-  //           id: 5,
-  //           field: 7,
-  //         },
-  //         {
-  //           id: 6,
-  //           field: 8,
-  //         },
-  //       ],
-  //     },
-  //   ],
-  //   scales: [
-  //     {
-  //       name: "color",
-  //       domain: {
-  //         data: "table",
-  //         field: "id",
-  //       },
-  //       range: {
-  //         scheme: "category20",
-  //       },
-  //       round: true,
-  //       type: "ordinal",
-  //     },
-  //   ],
-  //   marks: [
-  //     {
-  //       type: "arc",
-  //       from: {
-  //         data: "table",
-  //       },
-  //       encode: {
-  //         enter: {
-  //           x: [
-  //             {
-  //               signal: "width / 2",
-  //             },
-  //           ],
-  //           y: [
-  //             {
-  //               signal: "height / 2",
-  //             },
-  //           ],
-  //           fill: [
-  //             {
-  //               field: "id",
-  //               scale: "color",
-  //             },
-  //           ],
-  //           startAngle: [
-  //             {
-  //               field: "startAngle",
-  //             },
-  //           ],
-  //           endAngle: [
-  //             {
-  //               field: "endAngle",
-  //             },
-  //           ],
-  //           padAngle: [
-  //             {
-  //               value: 0,
-  //             },
-  //           ],
-  //           innerRadius: [
-  //             {
-  //               value: 140,
-  //             },
-  //           ],
-  //           outerRadius: [
-  //             {
-  //               signal: "width / 2",
-  //             },
-  //           ],
-  //         },
-  //         update: {
-  //           startAngle: [
-  //             {
-  //               field: "startAngle",
-  //             },
-  //           ],
-  //           endAngle: [
-  //             {
-  //               field: "endAngle",
-  //             },
-  //           ],
-  //           padAngle: [
-  //             {
-  //               value: 0,
-  //             },
-  //           ],
-  //           innerRadius: [
-  //             {
-  //               value: 140,
-  //             },
-  //           ],
-  //           outerRadius: [
-  //             {
-  //               signal: "width / 2",
-  //             },
-  //           ],
-  //         },
-  //       },
-  //     },
-  //   ],
-  // };
-
   return (
     <>
-      <ListGroup
+      <EntityList data={testData}></EntityList>
+      {/* <ListGroup
         items={items}
         heading="Test Options"
         onSelectItem={handleSelectItem}
       />
-      <Vega spec={vegaSpec} actions={false} />
+      <Vega spec={vegaSpec} actions={false} /> */}
     </>
   );
 }
