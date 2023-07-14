@@ -1,5 +1,5 @@
-HELP.md
-target/
+backend/HELP.md
+backend/target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -36,4 +36,7 @@ build/
 .env
 
 ### External JAR files ###
-/lib/*.jar
+backend/lib/*.jar
+
+### Frontend node modules ###
+frontend/node_modules
