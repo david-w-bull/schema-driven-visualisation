@@ -13,9 +13,9 @@ public class DatabaseAttribute {
 
     private Long attributeId;
     private String attributeName;
-    private Boolean mandatory;
-    private Boolean optional;
-    private Boolean multiValued;
+    private Boolean mandatory = false;
+    private Boolean optional = false;
+    private Boolean multiValued = false;
     private SqlDataType dataType;
     private Boolean isPrimary;
     public DatabaseAttribute(Attribute attribute) {

@@ -34,9 +34,7 @@ public class DatabaseSchema {
         this.schemaId = schema.getID();
         this.name = schema.getName();
         for(Entity entity: schema.getEntityList()) {
-            System.out.println(entity.getName());
             DatabaseEntity dbEntity = new DatabaseEntity(entity);
-            System.out.println(entity.getName());
             this.entityList.add(dbEntity);
         }
         for(Relationship relationship: schema.getRelationshipList()) {
