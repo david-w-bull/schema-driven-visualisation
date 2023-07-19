@@ -6,6 +6,8 @@ interface EntityListProps {
   data: Data;
 }
 
+// To do: split into separate entity components for each entity list. As per OAI
+
 const EntityList = ({ data: initialData }: EntityListProps) => {
   const [data, setData] = useState(initialData);
 

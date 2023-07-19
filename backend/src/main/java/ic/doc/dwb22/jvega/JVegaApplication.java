@@ -46,17 +46,17 @@ public class JVegaApplication {
 
 		//donutChartTest();
 		//groupBarChartTest();
-		//SpringApplication.run(JVegaApplication.class, args);
+		SpringApplication.run(JVegaApplication.class, args);
 
-		DatabaseConnectTest db = new DatabaseConnectTest();
-
-		try {
-			db.reverseEngineer();
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		} catch (DBConnectionException e) {
-			throw new RuntimeException(e);
-		}
+//		DatabaseConnectTest db = new DatabaseConnectTest();
+//
+//		try {
+//			db.reverseEngineer();
+//		} catch (ParseException e) {
+//			throw new RuntimeException(e);
+//		} catch (DBConnectionException e) {
+//			throw new RuntimeException(e);
+//		}
 	}
 
 	@GetMapping("/")
