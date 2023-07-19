@@ -10,5 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface SchemaRepository extends MongoRepository<DatabaseSchema, ObjectId> {
-
+    @Override
+    Optional<DatabaseSchema> findById(ObjectId id);
 }

@@ -14,6 +14,7 @@ import io.github.MigadaTang.exception.DBConnectionException;
 import io.github.MigadaTang.exception.ParseException;
 import io.github.MigadaTang.transform.Reverse;
 import lombok.Data;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,10 @@ public class SchemaService {
 
     public List<DatabaseSchema> allSchemas() {
         return schemaRepository.findAll();
+    }
+
+    public Optional<DatabaseSchema> schemaById(ObjectId id) {
+        return schemaRepository.findById(id);
     }
 
     public DatabaseSchema insertSchemaTest(Integer testId) throws DBConnectionException, ParseException, IOException, SQLException {

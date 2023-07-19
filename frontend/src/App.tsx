@@ -5,16 +5,15 @@ import Message from "./components/Message";
 import { Vega, VegaLite, VisualizationSpec } from "react-vega";
 import ListGroup from "./components/ListGroup";
 import { Data, Entity, Attribute } from "./types";
+import { BLANKSPEC, BLANKSCHEMA } from "./constants";
 import EntityList from "./components/EntityList";
+import DatabaseSelector from "./components/DatabaseSelector";
 
 function App() {
   let items = ["Test Viz 1", "Test Viz 2", "Test Viz 3"];
-  const blankSpec = {
-    width: 0,
-    height: 0,
-    mark: "bar",
-  };
-  const [vegaSpec, setVegaSpec] = useState(blankSpec);
+
+  const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
+  const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
 
   const handleSelectItem = (item: string) => {
     const payload = { viz: item };
@@ -23,138 +22,19 @@ function App() {
       .then((response) => setVegaSpec(response.data.spec));
   };
 
-  const testData: Data = {
-    id: null,
-    testId: -1,
-    schemaId: 1,
-    name: "public",
-    entityList: [
-      {
-        entityID: 1,
-        entityName: "airport",
-        entityType: "STRONG",
-        relatedStrongEntity: null,
-        entityAttributes: [
-          {
-            attributeId: 1,
-            attributeName: "iata_code",
-            mandatory: true,
-            optional: false,
-            multiValued: false,
-            dataType: "VARCHAR",
-            isPrimary: true,
-          },
-          {
-            attributeId: 2,
-            attributeName: "name",
-            mandatory: false,
-            optional: true,
-            multiValued: false,
-            dataType: "VARCHAR",
-            isPrimary: false,
-          },
-          {
-            attributeId: 3,
-            attributeName: "latitude",
-            mandatory: true,
-            optional: false,
-            multiValued: false,
-            dataType: "NUMERIC",
-            isPrimary: false,
-          },
-          {
-            attributeId: 4,
-            attributeName: "longitude",
-            mandatory: true,
-            optional: false,
-            multiValued: false,
-            dataType: "NUMERIC",
-            isPrimary: false,
-          },
-          {
-            attributeId: 5,
-            attributeName: "elevation",
-            mandatory: false,
-            optional: true,
-            multiValued: false,
-            dataType: "INT4",
-            isPrimary: false,
-          },
-          {
-            attributeId: 6,
-            attributeName: "gmt_offset",
-            mandatory: true,
-            optional: false,
-            multiValued: false,
-            dataType: "INT4",
-            isPrimary: false,
-          },
-        ],
-      },
-      {
-        entityID: 2,
-        entityName: "country",
-        entityType: "STRONG",
-        relatedStrongEntity: null,
-        entityAttributes: [
-          {
-            attributeId: 7,
-            attributeName: "name",
-            mandatory: true,
-            optional: false,
-            multiValued: false,
-            dataType: "VARCHAR",
-            isPrimary: false,
-          },
-          {
-            attributeId: 8,
-            attributeName: "code",
-            mandatory: true,
-            optional: false,
-            multiValued: false,
-            dataType: "VARCHAR",
-            isPrimary: true,
-          },
-          {
-            attributeId: 9,
-            attributeName: "capital",
-            mandatory: false,
-            optional: true,
-            multiValued: false,
-            dataType: "VARCHAR",
-            isPrimary: false,
-          },
-          {
-            attributeId: 10,
-            attributeName: "province",
-            mandatory: false,
-            optional: true,
-            multiValued: false,
-            dataType: "VARCHAR",
-            isPrimary: false,
-          },
-          {
-            attributeId: 11,
-            attributeName: "area",
-            mandatory: true,
-            optional: false,
-            multiValued: false,
-            dataType: "NUMERIC",
-            isPrimary: false,
-          },
-          {
-            attributeId: 12,
-            attributeName: "population",
-            mandatory: true,
-            optional: false,
-            multiValued: false,
-            dataType: "INT4",
-            isPrimary: false,
-          },
-        ],
-      },
-    ],
+  const handleSelectDatabase = (selectedValue: string) => {
+    console.log(selectedValue);
+    axios
+      .get("http://localhost:8080/api/v1/schemas/" + selectedValue)
+      .then((response) => {
+        console.log(response.data);
+        setSchemaInfo(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error!", error);
+      });
   };
+
   // useEffect(() => {
   //   axios
   //     .get(
@@ -165,7 +45,8 @@ function App() {
 
   return (
     <>
-      <EntityList data={testData}></EntityList>
+      <DatabaseSelector onSelectDatabase={handleSelectDatabase} />
+      <EntityList data={schemaInfo}></EntityList>
       {/* <ListGroup
         items={items}
         heading="Test Options"

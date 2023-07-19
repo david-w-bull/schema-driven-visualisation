@@ -17,10 +17,26 @@ export type Entity = {
   entityAttributes: Attribute[];
 };
 
+export type RelationshipEdge = {
+  cardinality: string;
+  edgeId: number;
+  entityId: number;
+  entityName: string;
+  isKey: boolean;
+  relationshipId: number;
+};
+
+export type Relationship = {
+  relationshipId: number;
+  relationshipName: string;
+  relationships: RelationshipEdge[];
+};
+
 export type Data = {
   id: null;
   testId: number;
   schemaId: number;
   name: string;
   entityList: Entity[];
+  relationshipList: Relationship[];
 };
