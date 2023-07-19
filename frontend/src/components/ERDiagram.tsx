@@ -20,6 +20,7 @@ interface NodeData {
 }
 
 interface LinkData {
+  id: string;
   from: string;
   to: string;
   text: string;
@@ -35,6 +36,9 @@ function initDiagram(): Diagram {
   const diagram: Diagram = $(Diagram, {
     "undoManager.isEnabled": true,
     layout: $(go.TreeLayout, { angle: 90 }),
+    model: $(go.GraphLinksModel, {
+      linkKeyProperty: "id",
+    }),
   });
 
   diagram.nodeTemplate = $(

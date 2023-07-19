@@ -8,6 +8,7 @@ import { Data, Entity, Attribute } from "./types";
 import { BLANKSPEC, BLANKSCHEMA } from "./constants";
 import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
+import ERDiagram from "./components/ERDiagram";
 
 function App() {
   let items = ["Test Viz 1", "Test Viz 2", "Test Viz 3"];
@@ -35,18 +36,29 @@ function App() {
       });
   };
 
-  // useEffect(() => {
-  //   axios
-  //     .get(
-  //       "http://localhost:8080/api/v1/specs/af49b4ac-ae6a-4956-83a9-40ce2f4a042b"
-  //     )
-  //     .then((response) => setVegaSpec(response.data.spec));
-  // }, []);
+  const nodes = [
+    {
+      key: "Entity1",
+      properties: "id: number\nname: string",
+      type: "entity" as const,
+    },
+    {
+      key: "Relationship1",
+      properties: "entity1: number\nentity2: number",
+      type: "relationship" as const,
+    },
+    // Add more entities and relationships as needed...
+  ];
+  const links = [
+    { id: "1", from: "Entity1", to: "Relationship1", text: "1 - n" },
+    // Add more relationships as needed...
+  ];
 
   return (
     <>
       <DatabaseSelector onSelectDatabase={handleSelectDatabase} />
       <EntityList data={schemaInfo}></EntityList>
+      <ERDiagram nodes={nodes} links={links} />
       {/* <ListGroup
         items={items}
         heading="Test Options"
