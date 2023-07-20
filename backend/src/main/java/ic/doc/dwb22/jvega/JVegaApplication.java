@@ -2,8 +2,7 @@ package ic.doc.dwb22.jvega;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ic.doc.dwb22.jvega.api.VegaSpecRepository;
-import ic.doc.dwb22.jvega.schema.DatabaseConnectTest;
+import ic.doc.dwb22.jvega.schema.DatabaseProfiler;
 import ic.doc.dwb22.jvega.spec.*;
 
 import ic.doc.dwb22.jvega.spec.encodings.*;
@@ -12,8 +11,7 @@ import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
 import ic.doc.dwb22.jvega.utils.GenericMap;
-import io.github.MigadaTang.exception.DBConnectionException;
-import io.github.MigadaTang.exception.ParseException;
+import io.github.MigadaTang.common.RDBMSType;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -46,17 +44,17 @@ public class JVegaApplication {
 
 		//donutChartTest();
 		//groupBarChartTest();
-		SpringApplication.run(JVegaApplication.class, args);
+		// SpringApplication.run(JVegaApplication.class, args);
 
-//		DatabaseConnectTest db = new DatabaseConnectTest();
-//
-//		try {
-//			db.reverseEngineer();
-//		} catch (ParseException e) {
-//			throw new RuntimeException(e);
-//		} catch (DBConnectionException e) {
-//			throw new RuntimeException(e);
-//		}
+		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
+				"localhost",
+				"5432",
+				"jvegatest",
+				"david",
+				args[0]);
+
+		System.out.println(db.toString());
+
 	}
 
 	@GetMapping("/")
