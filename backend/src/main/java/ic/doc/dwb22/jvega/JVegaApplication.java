@@ -44,16 +44,16 @@ public class JVegaApplication {
 
 		//donutChartTest();
 		//groupBarChartTest();
-		// SpringApplication.run(JVegaApplication.class, args);
+		SpringApplication.run(JVegaApplication.class, args);
 
-		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
-				"localhost",
-				"5432",
-				"jvegatest",
-				"david",
-				args[0]);
-
-		System.out.println(db.toString());
+//		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
+//				"localhost",
+//				"5432",
+//				"jvegatest",
+//				"david",
+//				args[0]);
+//
+//		System.out.println(db.toString());
 
 	}
 
@@ -346,27 +346,41 @@ public class JVegaApplication {
 			if (conn != null) {
 				DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
 
-				ResultSet rs = dm.getImportedKeys(conn.getCatalog(), null, "airport");
-				while (rs.next()) {
-					String fkTableName = rs.getString("FKTABLE_NAME");
-					String fkColumnName = rs.getString("FKCOLUMN_NAME");
-					String pkTableName = rs.getString("PKTABLE_NAME");
-					String pkColumnName = rs.getString("PKCOLUMN_NAME");
+				// Get all table names
+				ResultSet tables = dm.getTables(conn.getCatalog(), null, null, new String[] { "TABLE" });
+				while (tables.next()) {
+					String tableName = tables.getString("TABLE_NAME");
 
-					// System.out.println("FK Table Name: " + fkTableName);
-					System.out.println("FK Column Name: " + fkColumnName);
-					System.out.println("FK between: "
-							+ fkTableName
-							+ "::"
-							+ fkColumnName
-							+ " -> "
-							+ pkTableName
-							+ "::"
-							+ pkColumnName );
+					ResultSet rs = dm.getImportedKeys(conn.getCatalog(), null, tableName);
+					while (rs.next()) {
+						String fkTableName = rs.getString("FKTABLE_NAME");
+						String fkColumnName = rs.getString("FKCOLUMN_NAME");
+						String pkTableName = rs.getString("PKTABLE_NAME");
+						String pkColumnName = rs.getString("PKCOLUMN_NAME");
+
+						System.out.println(fkTableName);
+						System.out.println(fkColumnName);
+						System.out.println(pkTableName);
+						System.out.println(pkColumnName);
+						System.out.println("\n-----\n");
+
+						// System.out.println("FK Table Name: " + fkTableName);
+//						System.out.println("FK Column Name: " + fkColumnName);
+//						System.out.println("FK between: "
+//								+ fkTableName
+//								+ "::"
+//								+ fkColumnName
+//								+ " -> "
+//								+ pkTableName
+//								+ "::"
+//								+ pkColumnName );
+					}
+					System.out.println("\n-------------------------------\n");
 				}
 			}
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
+
 	}
 }

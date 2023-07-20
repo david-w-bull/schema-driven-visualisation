@@ -3,6 +3,7 @@ package ic.doc.dwb22.jvega.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ic.doc.dwb22.jvega.VizSpecPayload;
+import ic.doc.dwb22.jvega.schema.DatabaseProfiler;
 import ic.doc.dwb22.jvega.schema.DatabaseSchema;
 import ic.doc.dwb22.jvega.spec.*;
 import ic.doc.dwb22.jvega.spec.encodings.SymbolEncoding;
@@ -40,11 +41,14 @@ public class SchemaService {
     }
 
     public DatabaseSchema insertSchemaTest(Integer testId) throws DBConnectionException, ParseException, IOException, SQLException {
-        ER.initialize();
-        Reverse reverse = new Reverse();
-        Schema schema = reverse.relationSchemasToERModel(RDBMSType.POSTGRESQL, "localhost"
-                , "5432", "jvegatest", "david", "dReD@pgs5b!");
-        DatabaseSchema payload = schemaRepository.insert(new DatabaseSchema(schema, testId));
+        DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
+                "localhost",
+                "5432",
+                "jvegatest",
+                "david",
+                "dReD@pgs5b!",
+                testId);
+        DatabaseSchema payload = schemaRepository.insert(db.getDatabaseSchema());
         return payload;
     }
 

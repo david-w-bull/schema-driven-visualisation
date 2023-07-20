@@ -24,15 +24,15 @@ public class DatabaseSchema {
 
     private Long schemaId;
     private String name;
+    private String connectionString;
     private List<DatabaseEntity> entityList = new ArrayList<>();
     private List<DatabaseRelationship> relationshipList = new ArrayList<>();
-    // private String schemaString;
 
-    public DatabaseSchema(Schema schema) {
+    public DatabaseSchema(Schema schema, String connectionString) {
         schema.sanityCheck();
-        this.testId = testId;
         this.schemaId = schema.getID();
         this.name = schema.getName();
+        this.connectionString = connectionString;
         for(Entity entity: schema.getEntityList()) {
             DatabaseEntity dbEntity = new DatabaseEntity(entity);
             this.entityList.add(dbEntity);
@@ -40,10 +40,9 @@ public class DatabaseSchema {
         for(Relationship relationship: schema.getRelationshipList()) {
             this.relationshipList.add(new DatabaseRelationship(relationship));
         }
-        // this.schemaString = schema.toJSON();
     }
-    public DatabaseSchema(Schema schema, Integer testId) {
-        this(schema);
+    public DatabaseSchema(Schema schema, String connectionString, Integer testId) {
+        this(schema, connectionString);
         this.testId = testId;
     }
 

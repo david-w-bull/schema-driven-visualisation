@@ -45,7 +45,7 @@ public class SchemaController {
 
     @CrossOrigin
     @PostMapping("/postTest")
-    public ResponseEntity<DatabaseSchema> createCustomSpec(@RequestBody Map<String, Integer> payload) throws SQLException, DBConnectionException, ParseException, IOException {
+    public ResponseEntity<DatabaseSchema> createSchema(@RequestBody Map<String, Integer> payload) throws SQLException, DBConnectionException, ParseException, IOException {
         return new ResponseEntity<DatabaseSchema>(schemaService.insertSchemaTest(payload.get("testId")), HttpStatus.CREATED);
     }
 }
