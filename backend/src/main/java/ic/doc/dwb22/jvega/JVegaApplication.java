@@ -48,14 +48,15 @@ public class JVegaApplication {
 		//groupBarChartTest();
 		//SpringApplication.run(JVegaApplication.class, args);
 
-//		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
-//				"localhost",
-//				"5432",
-//				"jvegatest",
-//				"david",
-//				args[0]);
-//
-//		System.out.println(db.toString());
+		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
+				"localhost",
+				"5432",
+				"jvegatest",
+				"david",
+				args[0],
+				-1);
+
+		System.out.println(db.getDatabaseSchema().toJson().toPrettyString());
 
 	}
 

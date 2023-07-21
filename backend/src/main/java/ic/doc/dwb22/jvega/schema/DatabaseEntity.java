@@ -20,7 +20,7 @@ public class DatabaseEntity {
     private DatabaseEntityType entityType;
     private DatabaseEntity relatedStrongEntity;
     private List<DatabaseAttribute> entityAttributes = new ArrayList<>();
-    private List<ForeignKey> foreignKeys = new ArrayList<>();
+    private List<ForeignKey> foreignKeys;
 
     public DatabaseEntity(Entity entity) {
         this.entityID = entity.getID();
@@ -38,5 +38,11 @@ public class DatabaseEntity {
         for(Attribute attribute: entity.getAttributeList()) {
             this.entityAttributes.add(new DatabaseAttribute(attribute));
         }
+        this.foreignKeys = new ArrayList<>(); // Blank list if none passed to constructor
+    }
+
+    public DatabaseEntity(Entity entity, List<ForeignKey> foreignKeys) {
+        this(entity);
+        this.foreignKeys = foreignKeys;
     }
 }

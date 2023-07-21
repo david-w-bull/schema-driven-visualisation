@@ -31,7 +31,7 @@ public class DatabaseProfiler {
         }
 
         connectionString = "jdbc:"
-                + databaseType
+                + databaseType.toString().toLowerCase()
                 + "://"
                 + host
                 + ":"

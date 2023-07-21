@@ -44,6 +44,6 @@ public class ForeignKey {
 
     @Override
     public String toString() {
-        return "ForeignKey between: " + fkTableName + "::" + fkColumnNames + " -> " + pkTableName + "::" + pkColumnNames;
+        return "Foreign Key (" + fkName + ") between: " + fkTableName + "::" + fkColumnNames + " -> " + pkTableName + "::" + pkColumnNames;
     }
 }
