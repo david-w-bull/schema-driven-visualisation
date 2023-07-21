@@ -446,7 +446,7 @@ public class JVegaApplication {
 							}
 							else {
 								entityForeignKeys.get(tableName).get(fkName).addForeignKeyColumn(fkColumnName);
-								entityForeignKeys.get(tableName).get(fkName).addForeignKeyColumn(fkColumnName);
+								entityForeignKeys.get(tableName).get(fkName).addPrimaryKeyColumn(pkColumnName);
 							}
 
 						}

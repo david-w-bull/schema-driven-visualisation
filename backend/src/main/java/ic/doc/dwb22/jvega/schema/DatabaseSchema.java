@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Document(collection = "database_schemas")
 @NoArgsConstructor
@@ -28,7 +29,7 @@ public class DatabaseSchema {
     private List<DatabaseEntity> entityList = new ArrayList<>();
     private List<DatabaseRelationship> relationshipList = new ArrayList<>();
 
-    public DatabaseSchema(Schema schema, String connectionString) {
+    public DatabaseSchema(Schema schema, String connectionString, Map<String, List<ForeignKey>> entityForeignKeys) {
         schema.sanityCheck();
         this.schemaId = schema.getID();
         this.name = schema.getName();
@@ -41,8 +42,8 @@ public class DatabaseSchema {
             this.relationshipList.add(new DatabaseRelationship(relationship));
         }
     }
-    public DatabaseSchema(Schema schema, String connectionString, Integer testId) {
-        this(schema, connectionString);
+    public DatabaseSchema(Schema schema, String connectionString, Map<String, List<ForeignKey>> entityForeignKeys, Integer testId) {
+        this(schema, connectionString, entityForeignKeys);
         this.testId = testId;
     }
 

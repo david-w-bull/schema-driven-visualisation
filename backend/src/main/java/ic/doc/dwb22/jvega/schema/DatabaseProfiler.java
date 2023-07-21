@@ -10,6 +10,7 @@ import io.github.MigadaTang.transform.Reverse;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DatabaseProfiler {
 
@@ -18,7 +19,7 @@ public class DatabaseProfiler {
     private String connectionString;
     private Integer testId;
     // Maps a tableName to a further map of fkName to fkInfo
-    private Map<String, Map<String, ForeignKey>> entityForeignKeys;
+    private Map<String, List<ForeignKey>> entityForeignKeys;
     public DatabaseProfiler(RDBMSType databaseType, String host, String port, String databaseName,
                                 String user, String pw, Integer testId) {
         try {
@@ -29,8 +30,6 @@ public class DatabaseProfiler {
             throw new RuntimeException(e);
         }
 
-        entityForeignKeys = new HashMap<>();
-
         connectionString = "jdbc:"
                 + databaseType
                 + "://"
@@ -40,8 +39,9 @@ public class DatabaseProfiler {
                 + "/"
                 + databaseName;
 
+        profileEntityForeignKeys(connectionString, user, pw);
         this.testId = testId;
-        jVegaSchema = new DatabaseSchema(schema, connectionString, this.testId);
+        jVegaSchema = new DatabaseSchema(schema, connectionString, entityForeignKeys, this.testId);
     }
 
     @Override
@@ -64,6 +64,8 @@ public class DatabaseProfiler {
 
     private void profileEntityForeignKeys(String connectionString, String user, String pw) {
 
+        Map<String, Map<String, ForeignKey>> entityForeignKeyMap = new HashMap<>();
+
         try {
             Connection conn = DriverManager.getConnection(connectionString, user, pw);
             if (conn != null) {
@@ -83,7 +85,7 @@ public class DatabaseProfiler {
                         String pkColumnName = rs.getString("PKCOLUMN_NAME");
 
 
-                        if(!entityForeignKeys.containsKey(tableName)) {
+                        if(!entityForeignKeyMap.containsKey(tableName)) {
                             Map<String, ForeignKey> fkInfo = new HashMap<>();
 
                             ForeignKey foreignKey = new ForeignKey(fkName, tableName, pkTableName);
@@ -91,17 +93,17 @@ public class DatabaseProfiler {
                             foreignKey.addPrimaryKeyColumn(pkColumnName);
                             fkInfo.put(fkName, foreignKey);
 
-                            entityForeignKeys.put(tableName, fkInfo);
+                            entityForeignKeyMap.put(tableName, fkInfo);
                         }
-                        else if(!entityForeignKeys.get(tableName).containsKey(fkName)) {
+                        else if(!entityForeignKeyMap.get(tableName).containsKey(fkName)) {
                             ForeignKey foreignKey = new ForeignKey(fkName, tableName, pkTableName);
                             foreignKey.addForeignKeyColumn(fkColumnName);
                             foreignKey.addPrimaryKeyColumn(pkColumnName);
-                            entityForeignKeys.get(tableName).put(fkName, foreignKey);
+                            entityForeignKeyMap.get(tableName).put(fkName, foreignKey);
                         }
                         else {
-                            entityForeignKeys.get(tableName).get(fkName).addForeignKeyColumn(fkColumnName);
-                            entityForeignKeys.get(tableName).get(fkName).addForeignKeyColumn(fkColumnName);
+                            entityForeignKeyMap.get(tableName).get(fkName).addForeignKeyColumn(fkColumnName);
+                            entityForeignKeyMap.get(tableName).get(fkName).addPrimaryKeyColumn(pkColumnName);
                         }
 
                     }
@@ -110,6 +112,14 @@ public class DatabaseProfiler {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+
+        // Remove the inner map in favour of a list of foreign keys per entity
+        // The inner map is needed initially to differentiate during jdbc iteration
+        entityForeignKeys = entityForeignKeyMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> new ArrayList<>(e.getValue().values())
+                ));
     }
     public DatabaseSchema getDatabaseSchema() {
         return jVegaSchema;
