@@ -20,6 +20,7 @@ public class DatabaseEntity {
     private DatabaseEntityType entityType;
     private DatabaseEntity relatedStrongEntity;
     private List<DatabaseAttribute> entityAttributes = new ArrayList<>();
+    private List<ForeignKey> foreignKeys = new ArrayList<>();
 
     public DatabaseEntity(Entity entity) {
         this.entityID = entity.getID();

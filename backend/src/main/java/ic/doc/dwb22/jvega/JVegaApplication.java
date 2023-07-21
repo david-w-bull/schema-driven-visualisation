@@ -3,6 +3,7 @@ package ic.doc.dwb22.jvega;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ic.doc.dwb22.jvega.schema.DatabaseProfiler;
+import ic.doc.dwb22.jvega.schema.ForeignKey;
 import ic.doc.dwb22.jvega.spec.*;
 
 import ic.doc.dwb22.jvega.spec.encodings.*;
@@ -32,6 +33,7 @@ public class JVegaApplication {
 
 	public static void main(String[] args) throws SQLException, IOException {
 		//databaseTest();
+		databaseTest2();
 		//System.out.println(UUID.randomUUID());
 		//scatterChartTest();
 //		JsonNode barData = JsonData.readJsonFileToJsonNode("barData.json");
@@ -44,7 +46,7 @@ public class JVegaApplication {
 
 		//donutChartTest();
 		//groupBarChartTest();
-		SpringApplication.run(JVegaApplication.class, args);
+		//SpringApplication.run(JVegaApplication.class, args);
 
 //		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
 //				"localhost",
@@ -353,12 +355,15 @@ public class JVegaApplication {
 
 					ResultSet rs = dm.getImportedKeys(conn.getCatalog(), null, tableName);
 					while (rs.next()) {
+						String fkName = rs.getString("FK_NAME");
 						String fkTableName = rs.getString("FKTABLE_NAME");
 						String fkColumnName = rs.getString("FKCOLUMN_NAME");
 						String pkTableName = rs.getString("PKTABLE_NAME");
 						String pkColumnName = rs.getString("PKCOLUMN_NAME");
 
+						System.out.println(tableName);
 						System.out.println(fkTableName);
+						System.out.println(fkName);
 						System.out.println(fkColumnName);
 						System.out.println(pkTableName);
 						System.out.println(pkColumnName);
@@ -382,5 +387,74 @@ public class JVegaApplication {
 			ex.printStackTrace();
 		}
 
+	}
+
+	public static void databaseTest2() {
+
+		Map<String, Map<String, ForeignKey>> entityForeignKeys = new HashMap<>();
+
+		String databaseType = "postgresql";
+		String host = "localhost";
+		String port = "5432";
+		String databaseName = "jvegatest";
+
+		String connectionString = "jdbc:"
+				+ databaseType
+				+ "://"
+				+ host
+				+ ":"
+				+ port
+				+ "/"
+				+ databaseName;;
+		String user = "david";
+		String pw = "dReD@pgs5b!";
+
+			try {
+				Connection conn = DriverManager.getConnection(connectionString, user, pw);
+				if (conn != null) {
+					DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
+
+					// Get all table names
+					ResultSet tables = dm.getTables(conn.getCatalog(), null, null, new String[] { "TABLE" });
+					while (tables.next()) {
+						String tableName = tables.getString("TABLE_NAME");
+
+						ResultSet rs = dm.getImportedKeys(conn.getCatalog(), null, tableName);
+						while (rs.next()) {
+
+							String fkName = rs.getString("FK_NAME");
+							String fkColumnName = rs.getString("FKCOLUMN_NAME");
+							String pkTableName = rs.getString("PKTABLE_NAME");
+							String pkColumnName = rs.getString("PKCOLUMN_NAME");
+
+
+							if(!entityForeignKeys.containsKey(tableName)) {
+								Map<String, ForeignKey> fkInfo = new HashMap<>();
+
+								ForeignKey foreignKey = new ForeignKey(fkName, tableName, pkTableName);
+								foreignKey.addForeignKeyColumn(fkColumnName);
+								foreignKey.addPrimaryKeyColumn(pkColumnName);
+								fkInfo.put(fkName, foreignKey);
+
+								entityForeignKeys.put(tableName, fkInfo);
+							}
+							else if(!entityForeignKeys.get(tableName).containsKey(fkName)) {
+								ForeignKey foreignKey = new ForeignKey(fkName, tableName, pkTableName);
+								foreignKey.addForeignKeyColumn(fkColumnName);
+								foreignKey.addPrimaryKeyColumn(pkColumnName);
+								entityForeignKeys.get(tableName).put(fkName, foreignKey);
+							}
+							else {
+								entityForeignKeys.get(tableName).get(fkName).addForeignKeyColumn(fkColumnName);
+								entityForeignKeys.get(tableName).get(fkName).addForeignKeyColumn(fkColumnName);
+							}
+
+						}
+					}
+				}
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+			System.out.println(entityForeignKeys.toString());
 	}
 }

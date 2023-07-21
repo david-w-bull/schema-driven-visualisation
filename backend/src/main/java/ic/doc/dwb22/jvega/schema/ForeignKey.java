@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ForeignKey {
+    private final String fkName;
     private final String fkTableName;
     private final List<String> fkColumnNames;
     private final String pkTableName;
     private final List<String> pkColumnNames;
 
-    public ForeignKey(String fkTableName, List<String> fkColumnNames, String pkTableName, List<String> pkColumnNames) {
+    public ForeignKey(String fkName, String fkTableName, String pkTableName) {
+        this.fkName = fkName;
         this.fkTableName = fkTableName;
-        this.fkColumnNames = new ArrayList<>(fkColumnNames);
+        this.fkColumnNames = new ArrayList<>();
         this.pkTableName = pkTableName;
-        this.pkColumnNames = new ArrayList<>(pkColumnNames);
+        this.pkColumnNames = new ArrayList<>();
     }
 
     public String getFkTableName() {
@@ -30,6 +32,14 @@ public class ForeignKey {
 
     public List<String> getPkColumnNames() {
         return new ArrayList<>(pkColumnNames);
+    }
+
+    public void addForeignKeyColumn(String columnName) {
+        fkColumnNames.add(columnName);
+    }
+
+    public void addPrimaryKeyColumn(String columnName) {
+        pkColumnNames.add(columnName);
     }
 
     @Override

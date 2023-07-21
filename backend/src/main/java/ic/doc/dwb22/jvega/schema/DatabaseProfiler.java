@@ -9,9 +9,7 @@ import io.github.MigadaTang.exception.ParseException;
 import io.github.MigadaTang.transform.Reverse;
 import java.io.IOException;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DatabaseProfiler {
 
@@ -19,7 +17,8 @@ public class DatabaseProfiler {
     private DatabaseSchema jVegaSchema;
     private String connectionString;
     private Integer testId;
-    private Map<String, List<ForeignKey>> entityForeignKeys;
+    // Maps a tableName to a further map of fkName to fkInfo
+    private Map<String, Map<String, ForeignKey>> entityForeignKeys;
     public DatabaseProfiler(RDBMSType databaseType, String host, String port, String databaseName,
                                 String user, String pw, Integer testId) {
         try {
@@ -29,6 +28,8 @@ public class DatabaseProfiler {
         } catch (SQLException | ParseException | DBConnectionException | IOException e) {
             throw new RuntimeException(e);
         }
+
+        entityForeignKeys = new HashMap<>();
 
         connectionString = "jdbc:"
                 + databaseType
@@ -40,9 +41,6 @@ public class DatabaseProfiler {
                 + databaseName;
 
         this.testId = testId;
-
-
-
         jVegaSchema = new DatabaseSchema(schema, connectionString, this.testId);
     }
 
@@ -64,18 +62,7 @@ public class DatabaseProfiler {
         return deserializedSchema;
     }
 
-    private Map<String, List<ForeignKey>> profileEntityForeignKeys(String connectionString, String user, String pw) {
-
-        Map<String, List<ForeignKey>> entityForeignKeyMap = new HashMap<>();
-
-        /*
-       TODO -- Loop through foreign keys. Keep track of the current FK-PK table pair,
-        *  whenever that changes create a new foreign key. Otherwise add to the field list within an FK
-        * Consider creating the lists from both sides, i.e. on the PK entity, not just the FK entity.
-        * Whenever a new ForeignKey is created add the old one to the map.
-        * At the end, call this function in the constructor and pass the map to the schema constructor.
-        *
-        */
+    private void profileEntityForeignKeys(String connectionString, String user, String pw) {
 
         try {
             Connection conn = DriverManager.getConnection(connectionString, user, pw);
@@ -89,25 +76,40 @@ public class DatabaseProfiler {
 
                     ResultSet rs = dm.getImportedKeys(conn.getCatalog(), null, tableName);
                     while (rs.next()) {
-                        String fkTableName = rs.getString("FKTABLE_NAME");
+
+                        String fkName = rs.getString("FK_NAME");
                         String fkColumnName = rs.getString("FKCOLUMN_NAME");
                         String pkTableName = rs.getString("PKTABLE_NAME");
                         String pkColumnName = rs.getString("PKCOLUMN_NAME");
 
-                        System.out.println(fkTableName);
-                        System.out.println(fkColumnName);
-                        System.out.println(pkTableName);
-                        System.out.println(pkColumnName);
-                        System.out.println("\n-----\n");
+
+                        if(!entityForeignKeys.containsKey(tableName)) {
+                            Map<String, ForeignKey> fkInfo = new HashMap<>();
+
+                            ForeignKey foreignKey = new ForeignKey(fkName, tableName, pkTableName);
+                            foreignKey.addForeignKeyColumn(fkColumnName);
+                            foreignKey.addPrimaryKeyColumn(pkColumnName);
+                            fkInfo.put(fkName, foreignKey);
+
+                            entityForeignKeys.put(tableName, fkInfo);
+                        }
+                        else if(!entityForeignKeys.get(tableName).containsKey(fkName)) {
+                            ForeignKey foreignKey = new ForeignKey(fkName, tableName, pkTableName);
+                            foreignKey.addForeignKeyColumn(fkColumnName);
+                            foreignKey.addPrimaryKeyColumn(pkColumnName);
+                            entityForeignKeys.get(tableName).put(fkName, foreignKey);
+                        }
+                        else {
+                            entityForeignKeys.get(tableName).get(fkName).addForeignKeyColumn(fkColumnName);
+                            entityForeignKeys.get(tableName).get(fkName).addForeignKeyColumn(fkColumnName);
+                        }
 
                     }
-                    System.out.println("\n-------------------------------\n");
                 }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return entityForeignKeyMap;
     }
     public DatabaseSchema getDatabaseSchema() {
         return jVegaSchema;
