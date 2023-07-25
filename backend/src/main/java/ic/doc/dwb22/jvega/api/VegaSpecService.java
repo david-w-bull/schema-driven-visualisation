@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class VegaSpecService {
@@ -31,6 +29,10 @@ public class VegaSpecService {
 
     public Optional<VizSpecPayload> specByVizId(String vizId) {
         return vegaSpecRepository.findSpecByVizId(vizId);
+    }
+
+    public List<VizSpecPayload> getSpecTemplatesByChartType(boolean isTemplate, List<String> chartTypes) {
+        return vegaSpecRepository.findByIsTemplateAndChartTypeIn(isTemplate, chartTypes);
     }
 
     public VizSpecPayload DefaultSpec(Integer testId) {
@@ -107,7 +109,13 @@ public class VegaSpecService {
                 throw new RuntimeException(e);
             }
             VegaSpec spec = VegaSpec.barChart(barData);
-            VizSpecPayload payload = new VizSpecPayload(spec, 1111);
+
+            // --------------  Added empty data for creating template  -----------------
+            List<Map<String, Object>> emptyList = new ArrayList<>();
+            spec.setDataValues(emptyList);
+            // -------------------------------------------------------------------------
+
+            VizSpecPayload payload = new VizSpecPayload(spec, "Bar Chart", true);
             String id = payload.getVizId();
             vegaSpecRepository.insert(payload);
             return vegaSpecRepository.findSpecByVizId(id);

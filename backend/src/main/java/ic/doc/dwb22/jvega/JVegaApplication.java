@@ -13,6 +13,8 @@ import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
 import ic.doc.dwb22.jvega.utils.GenericMap;
+import ic.doc.dwb22.jvega.utils.JsonData;
+import ic.doc.dwb22.jvega.utils.VegaSpecTemplateCreator;
 import ic.doc.dwb22.jvega.vizSchema.VizSchema;
 import ic.doc.dwb22.jvega.vizSchema.VizSchemaMapper;
 import org.springframework.boot.SpringApplication;
@@ -50,7 +52,7 @@ public class JVegaApplication {
 
 		//donutChartTest();
 		//groupBarChartTest();
-		//SpringApplication.run(JVegaApplication.class, args);
+		// SpringApplication.run(JVegaApplication.class, args);
 
 //		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
 //				"localhost",
@@ -68,19 +70,17 @@ public class JVegaApplication {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		try {
-			DatabaseSchema schema = objectMapper.readValue(jsonString, DatabaseSchema.class);
-			VizSchemaMapper mapper = new VizSchemaMapper(schema);
-			System.out.println(mapper.generateSql());
+		DatabaseSchema schema = objectMapper.readValue(jsonString, DatabaseSchema.class);
+		VizSchemaMapper mapper = new VizSchemaMapper(schema, System.getenv("POSTGRES_USER"), System.getenv("POSTGRES_PASSWORD"));
 
-			VizSchema vizSchema = mapper.generateVizSchema();
-			System.out.println(vizSchema.getType());
-			System.out.println(vizSchema.getK1FieldName());
-			System.out.println(vizSchema.getA1FieldName());
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		VizSchema vizSchema = mapper.generateVizSchema();
 
+		System.out.println(mapper.getSqlQuery());
+		System.out.println(vizSchema.getType());
+		System.out.println(vizSchema.getK1FieldName());
+		System.out.println(vizSchema.getA1FieldName());
+
+		System.out.println(mapper.getSqlData().toPrettyString());
 	}
 
 	@GetMapping("/")

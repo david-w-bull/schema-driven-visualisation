@@ -2,6 +2,7 @@
   "testId":1000,
   "schemaId":1,
   "name":"public",
+  "connectionString": "jdbc:postgresql://localhost:5432/jvegatest",
   "entityList":[
     {
       "entityID":1,

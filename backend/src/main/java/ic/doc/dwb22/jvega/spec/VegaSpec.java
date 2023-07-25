@@ -20,6 +20,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -59,6 +60,10 @@ public class VegaSpec {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setDataValues(List<Map<String, Object>> dataValues) {
+        this.data.get(0).setValues(dataValues);
     }
 
     @JsonPOJOBuilder(withPrefix = "set", buildMethodName = "createVegaSpec")
