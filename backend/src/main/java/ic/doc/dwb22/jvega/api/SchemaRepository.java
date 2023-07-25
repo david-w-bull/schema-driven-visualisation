@@ -1,6 +1,5 @@
 package ic.doc.dwb22.jvega.api;
 
-import ic.doc.dwb22.jvega.VizSpecPayload;
 import ic.doc.dwb22.jvega.schema.DatabaseSchema;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;

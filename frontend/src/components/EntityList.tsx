@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Data, Entity, Attribute } from "../types";
+import { Data, Entity, Attribute, Relationship } from "../types";
 import { BLANKSCHEMA } from "../constants";
 
 interface AttributeProps {
@@ -66,7 +66,16 @@ const EntityList = ({ data: initialData }: EntityListProps) => {
   };
 
   const handleSubmit = () => {
-    const selectedData = { ...data, entityList: [] as Entity[] };
+    const selectedData = {
+      id: data.id,
+      testId: data.testId,
+      schemaId: data.schemaId,
+      name: data.name,
+      entityList: [] as Entity[],
+      relationshipList: [] as Relationship[],
+    };
+
+    const entityIdsWithCheckedAttributes: number[] = []; // Keep track of entity IDs
 
     for (const entity of data.entityList) {
       const selectedAttributes = entity.entityAttributes.filter(
@@ -74,6 +83,7 @@ const EntityList = ({ data: initialData }: EntityListProps) => {
       );
 
       if (selectedAttributes.length > 0) {
+        entityIdsWithCheckedAttributes.push(entity.entityID); // Add entity ID to list
         selectedData.entityList.push({
           ...entity,
           entityAttributes: selectedAttributes,
@@ -81,7 +91,19 @@ const EntityList = ({ data: initialData }: EntityListProps) => {
       }
     }
 
+    // Include relationships that contain entities with checked attributes
+    for (const relationship of data.relationshipList) {
+      if (
+        relationship.relationships.some((relationshipEdge) =>
+          entityIdsWithCheckedAttributes.includes(relationshipEdge.entityId)
+        )
+      ) {
+        selectedData.relationshipList.push(relationship);
+      }
+    }
+
     console.log(JSON.stringify(selectedData));
+    console.log(selectedData.entityList.length);
   };
 
   return (

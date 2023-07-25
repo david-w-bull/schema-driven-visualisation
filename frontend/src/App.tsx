@@ -58,7 +58,7 @@ function App() {
     <>
       <DatabaseSelector onSelectDatabase={handleSelectDatabase} />
       <EntityList data={schemaInfo}></EntityList>
-      <ERDiagram nodes={nodes} links={links} />
+      {/* <ERDiagram nodes={nodes} links={links} /> */}
       {/* <ListGroup
         items={items}
         heading="Test Options"

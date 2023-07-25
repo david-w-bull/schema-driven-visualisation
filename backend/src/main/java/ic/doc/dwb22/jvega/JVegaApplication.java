@@ -1,8 +1,9 @@
 package ic.doc.dwb22.jvega;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ic.doc.dwb22.jvega.schema.DatabaseProfiler;
+import ic.doc.dwb22.jvega.schema.DatabaseSchema;
 import ic.doc.dwb22.jvega.schema.ForeignKey;
 import ic.doc.dwb22.jvega.spec.*;
 
@@ -12,7 +13,8 @@ import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
 import ic.doc.dwb22.jvega.utils.GenericMap;
-import io.github.MigadaTang.common.RDBMSType;
+import ic.doc.dwb22.jvega.vizSchema.VizSchema;
+import ic.doc.dwb22.jvega.vizSchema.VizSchemaMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,6 +28,8 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
+import static ic.doc.dwb22.jvega.utils.JsonData.readJsonFileToJsonNode;
+
 @SpringBootApplication
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class}) // Allows SQL connection to be configured at runtime
 @RestController
@@ -33,7 +37,7 @@ public class JVegaApplication {
 
 	public static void main(String[] args) throws SQLException, IOException {
 		//databaseTest();
-		databaseTest2();
+		//databaseTest2();
 		//System.out.println(UUID.randomUUID());
 		//scatterChartTest();
 //		JsonNode barData = JsonData.readJsonFileToJsonNode("barData.json");
@@ -48,15 +52,34 @@ public class JVegaApplication {
 		//groupBarChartTest();
 		//SpringApplication.run(JVegaApplication.class, args);
 
-		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
-				"localhost",
-				"5432",
-				"jvegatest",
-				"david",
-				args[0],
-				-1);
+//		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
+//				"localhost",
+//				"5432",
+//				"jvegatest",
+//				"david",
+//				args[0],
+//				-1);
+//
+//		System.out.println(db.getDatabaseSchema().toJson().toPrettyString());
 
-		System.out.println(db.getDatabaseSchema().toJson().toPrettyString());
+		JsonNode json = readJsonFileToJsonNode("basicSchema.json");
+
+		String jsonString = json.toString();
+
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		try {
+			DatabaseSchema schema = objectMapper.readValue(jsonString, DatabaseSchema.class);
+			VizSchemaMapper mapper = new VizSchemaMapper(schema);
+			System.out.println(mapper.generateSql());
+
+			VizSchema vizSchema = mapper.generateVizSchema();
+			System.out.println(vizSchema.getType());
+			System.out.println(vizSchema.getK1FieldName());
+			System.out.println(vizSchema.getA1FieldName());
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 

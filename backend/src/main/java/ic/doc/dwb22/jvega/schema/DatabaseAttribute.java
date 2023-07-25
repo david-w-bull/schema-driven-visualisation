@@ -1,5 +1,6 @@
 package ic.doc.dwb22.jvega.schema;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.github.MigadaTang.Attribute;
 import io.github.MigadaTang.common.AttributeType;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonIgnoreProperties({ "isChecked" }) // This field appears when data is sent back from the frontend but is meaningless serverside
 public class DatabaseAttribute {
 
     private Long attributeId;
