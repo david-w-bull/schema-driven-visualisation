@@ -83,7 +83,12 @@ public class VizSchemaMapper {
             String attributeList = attributes.stream()
                     .map(s -> entity.getEntityName() + "." + s.getAttributeName())
                     .collect(Collectors.joining(", "));
-            return "SELECT " + attributeList + " FROM " + entity.getEntityName();
+            return "SELECT "
+                    + attributeList
+                    + " FROM "
+                    + entity.getEntityName()
+                    + " LIMIT 30"
+                    ; // Limit needs to be removed once a better solution can be found
         }
         return "Invalid SQL";
     }

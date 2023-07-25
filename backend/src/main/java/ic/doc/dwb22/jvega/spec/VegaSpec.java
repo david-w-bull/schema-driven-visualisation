@@ -319,5 +319,88 @@ public class VegaSpec {
                 .createVegaSpec();
         return barSpec;
     }
+
+    public static VegaSpec barChartTemplate() {
+        VegaSpec barSpec = new VegaSpec.BuildSpec()
+                .setDescription("Horizontal Bar Chart")
+                .setWidth(400)
+                .setHeight(400)
+                .setPadding(20)
+
+                .setNewSignal(new Signal.BuildSignal()
+                        .withName("tooltip")
+                        .withOn(SignalEvent.EventUpdate("rect:mouseover", "datum"))
+                        .withOn(SignalEvent.EventUpdate("rect:mouseout", "{}"))
+                        .build())
+
+                .setNewScale(new BandScale.BuildScale()
+                        .withName("yscale")
+                        .withDomain(ScaleDomain.simpleDomain("rawData", "barLabel"))
+                        .withRange("height")
+                        .withPadding(0.1)
+                        .build())
+
+                .setNewScale(new LinearScale.BuildScale()
+                        .withName("xscale")
+                        .withDomain(ScaleDomain.simpleDomain("rawData", "barHeight"))
+                        .withRange("width")
+                        .withNice(true)
+                        .build())
+
+                .setNewAxis(new Axis.BuildAxis()
+                        .setOrient("bottom")
+                        .setScale("xscale")
+                        .build())
+
+                .setNewAxis(new Axis.BuildAxis()
+                        .setOrient("left")
+                        .setScale("yscale")
+                        .build())
+
+                .setNewMark(new Mark.BuildMark()
+                        .withType("rect")
+                        .withDataSource("rawData")
+                        .withEnter(new RectEncoding.BuildEncoding()
+                                .withY(ValueRef.ScaleField("yscale", "barLabel"))
+                                .withHeight(ValueRef.ScaleBand("yscale", 1))
+                                .withX(ValueRef.ScaleValue("xscale", 0))
+                                .withX2(ValueRef.ScaleField("xscale", "barHeight"))
+                                .build())
+                        .withUpdate(new RectEncoding.BuildEncoding().withFill(ValueRef.Value("steelblue")).build())
+                        .withHover(new RectEncoding.BuildEncoding().withFill(ValueRef.Value("orange")).build())
+                        .build())
+
+                .setNewMark(new Mark.BuildMark()
+                        .withType("text")
+                        .withEnter(new TextEncoding.BuildEncoding()
+                                .withAlign(ValueRef.Value("left"))
+                                .withBaseline(ValueRef.Value("middle"))
+                                .withFill(ValueRef.Value("#333"))
+                                .build())
+                        .withUpdate(new TextEncoding.BuildEncoding()
+
+                                .withY(new ValueRef.BuildRef()
+                                        .withScale("yscale")
+                                        .withSignal("tooltip.barLabel")
+                                        .withBand(0.5)
+                                        .build())
+
+                                .withX(new ValueRef.BuildRef()
+                                        .withScale("xscale")
+                                        .withSignal("tooltip.barHeight")
+                                        .withOffset(3)
+                                        .build())
+
+                                .withFillOpacity(new ValueRef.BuildRef()
+                                        .withTest("datum === tooltip")
+                                        .withValue(0)
+                                        .build())
+                                .withFillOpacity(ValueRef.Value(1))
+                                .withText(ValueRef.Signal("tooltip.barHeight"))
+                                .build())
+                        .build())
+                .createVegaSpec();
+        return barSpec;
+    }
 }
 

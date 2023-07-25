@@ -43,4 +43,6 @@ public class VegaSpecController {
     public ResponseEntity<Optional<VizSpecPayload>> createCustomSpec(@RequestBody Map<String, String> payload) {
         return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.CustomSpec(payload.get("viz")), HttpStatus.CREATED);
     }
+
+
 }

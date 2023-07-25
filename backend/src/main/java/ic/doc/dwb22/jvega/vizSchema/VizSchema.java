@@ -18,4 +18,6 @@ public class VizSchema {
     public void setScalarOne(String fieldName) {
         a1FieldName = fieldName;
     }
+
+    // Add a method to match visualisations to the pattern here.
 }

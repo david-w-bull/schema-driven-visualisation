@@ -11,6 +11,8 @@ import ic.doc.dwb22.jvega.spec.encodings.*;
 import ic.doc.dwb22.jvega.spec.scales.BandScale;
 import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
+import ic.doc.dwb22.jvega.spec.transforms.CollectTransform;
+import ic.doc.dwb22.jvega.spec.transforms.FormulaTransform;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
 import ic.doc.dwb22.jvega.utils.GenericMap;
 import ic.doc.dwb22.jvega.utils.JsonData;
@@ -75,12 +77,26 @@ public class JVegaApplication {
 
 		VizSchema vizSchema = mapper.generateVizSchema();
 
-		System.out.println(mapper.getSqlQuery());
-		System.out.println(vizSchema.getType());
-		System.out.println(vizSchema.getK1FieldName());
-		System.out.println(vizSchema.getA1FieldName());
+		VegaSpec spec = VegaSpec.barChartTemplate();
 
-		System.out.println(mapper.getSqlData().toPrettyString());
+		VegaDataset dataset = new VegaDataset.BuildDataset()
+				.withName("rawData")
+				.withValues(mapper.getSqlData())
+				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "barLabel"))
+				.withTransform(FormulaTransform.simpleFormula("parseInt(datum." + vizSchema.getA1FieldName() + ")", "barHeight"))
+				.withTransform(CollectTransform.simpleSort("barHeight", "descending"))
+				.build();
+
+		spec.setData(Arrays.asList(dataset));
+
+		System.out.println(spec.toJson().toPrettyString());
+
+//		System.out.println(mapper.getSqlQuery());
+//		System.out.println(vizSchema.getType());
+//		System.out.println(vizSchema.getK1FieldName());
+//		System.out.println(vizSchema.getA1FieldName());
+//
+//		System.out.println(mapper.getSqlData().toPrettyString());
 	}
 
 	@GetMapping("/")

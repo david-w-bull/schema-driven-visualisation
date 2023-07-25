@@ -17,6 +17,7 @@ import ic.doc.dwb22.jvega.spec.transforms.*;
         @JsonSubTypes.Type(value = AggregateTransform.class, name = "aggregate"),
         @JsonSubTypes.Type(value = LookupTransform.class, name = "lookup"),
         @JsonSubTypes.Type(value = LinkPathTransform.class, name = "linkpath"),
+        @JsonSubTypes.Type(value = CollectTransform.class, name = "collect"),
 })
 public interface Transform {
     // This interface is used only as a marker to provide a general type.
