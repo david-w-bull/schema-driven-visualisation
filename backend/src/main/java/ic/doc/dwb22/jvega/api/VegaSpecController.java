@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +32,13 @@ public class VegaSpecController {
     @GetMapping("/{vizId}")
     public ResponseEntity<Optional<VizSpecPayload>> getSpecByVizId(@PathVariable String vizId) {
         return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specByVizId(vizId), HttpStatus.OK);
+    }
+
+    // Endpoint included for testing only -- otherwise specTemplatesByChartType is only used internally
+    @GetMapping("/admin/{chartType}")
+    public ResponseEntity<List<VizSpecPayload>> getSpecTemplatesByChartType(@PathVariable String chartType) {
+        List<String> chartTypes = Arrays.asList(chartType);
+        return new ResponseEntity<List<VizSpecPayload>>(vegaSpecService.specTemplatesByChartType(true, chartTypes), HttpStatus.OK);
     }
 
     @PostMapping

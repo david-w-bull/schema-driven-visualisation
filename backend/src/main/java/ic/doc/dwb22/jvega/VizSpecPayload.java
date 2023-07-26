@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.UUID;
 
-@Document(collection = "vega_specs")
+@Document(collection = "specs_backup")
 @Data
 @AllArgsConstructor
 public class VizSpecPayload {

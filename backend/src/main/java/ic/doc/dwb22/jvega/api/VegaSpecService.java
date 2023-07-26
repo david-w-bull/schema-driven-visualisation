@@ -37,7 +37,7 @@ public class VegaSpecService {
         return vegaSpecRepository.findSpecByVizId(vizId);
     }
 
-    public List<VizSpecPayload> getSpecTemplatesByChartType(boolean isTemplate, List<String> chartTypes) {
+    public List<VizSpecPayload> specTemplatesByChartType(boolean isTemplate, List<String> chartTypes) {
         return vegaSpecRepository.findByIsTemplateAndChartTypeIn(isTemplate, chartTypes);
     }
 
