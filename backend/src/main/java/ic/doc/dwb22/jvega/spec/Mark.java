@@ -21,8 +21,9 @@ public class Mark {
     private Boolean clip;
     private Encoding encode;
 
-    // Additional properties only relevant for group marks
+    // Additional properties only relevant for group marks and some other specific visualisation types
     private List<VegaDataset> data;
+    private List<Transform> transform;
     private List<Signal> signals;
     private List<Scale> scales;
     private List<Mark> marks;
@@ -35,8 +36,9 @@ public class Mark {
         private Boolean clip;
         private Encoding encode;
 
-        // Additional properties only relevant for group marks
+        // Additional properties only relevant for group marks and some other specific visualisation types
         private List<VegaDataset> data;
+        private List<Transform> transform;
         private List<Signal> signals;
         private List<Scale> scales;
         private List<Mark> marks;
@@ -143,6 +145,14 @@ public class Mark {
             return this;
         }
 
+        public BuildMark withNestedTransform(Transform transform) {
+            if(this.transform == null) {
+                this.transform = new ArrayList<>();
+            }
+            this.transform.add(transform);
+            return this;
+        }
+
 
         public Mark build() {
             return new Mark(type,
@@ -152,6 +162,7 @@ public class Mark {
                     clip,
                     encode,
                     data,
+                    transform,
                     signals,
                     scales,
                     marks);

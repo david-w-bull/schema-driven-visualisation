@@ -9,6 +9,7 @@ import ic.doc.dwb22.jvega.VizSpecPayload;
 import ic.doc.dwb22.jvega.spec.encodings.SymbolEncoding;
 import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import ic.doc.dwb22.jvega.spec.transforms.*;
+import ic.doc.dwb22.jvega.utils.JsonData;
 import ic.doc.dwb22.jvega.vizSchema.VizSchema;
 import ic.doc.dwb22.jvega.vizSchema.VizSchemaMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,21 @@ public class VegaSpecService {
 
     public List<VizSpecPayload> getSpecTemplatesByChartType(boolean isTemplate, List<String> chartTypes) {
         return vegaSpecRepository.findByIsTemplateAndChartTypeIn(isTemplate, chartTypes);
+    }
+
+    public Optional<VizSpecPayload> specTemplateFromFile(String fileName, String chartType) {
+        String specTemplateString = JsonData.readJsonFileToJsonNode(fileName).toString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        VegaSpec spec;
+        try {
+            spec = objectMapper.readValue(specTemplateString, VegaSpec.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        VizSpecPayload specTemplate = new VizSpecPayload(spec, chartType, true);
+        String id = specTemplate.getVizId();
+        vegaSpecRepository.insert(specTemplate);
+        return vegaSpecRepository.findSpecByVizId(id);
     }
 
     public Optional<VizSpecPayload> specFromSchema(String schemaString) {

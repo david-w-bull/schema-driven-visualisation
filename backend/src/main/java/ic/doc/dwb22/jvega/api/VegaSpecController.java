@@ -38,6 +38,11 @@ public class VegaSpecController {
         return new ResponseEntity<VizSpecPayload>(vegaSpecService.defaultSpec(payload.get("testId")), HttpStatus.CREATED);
     }
 
+    @PostMapping("/insertTemplate")
+    public ResponseEntity<Optional<VizSpecPayload>> insertSpecTemplate(@RequestBody Map<String, String> payload) {
+        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specTemplateFromFile(payload.get("fileName"), payload.get("chartType")), HttpStatus.CREATED);
+    }
+
     @CrossOrigin
     @PostMapping("/postTest")
     public ResponseEntity<Optional<VizSpecPayload>> createCustomSpec(@RequestBody Map<String, String> payload) {

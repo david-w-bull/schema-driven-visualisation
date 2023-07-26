@@ -58,7 +58,6 @@ public class JVegaApplication {
 		//groupBarChartTest();
 		SpringApplication.run(JVegaApplication.class, args);
 
-
 		/* Code to produce a barspec with custom data injected */
 
 //		JsonNode json = readJsonFileToJsonNode("basicSchema.json");

@@ -1,92 +1,123 @@
 {
-  "description": "A basic bar chart, with value labels shown upon mouse hover.",
-  "width": 400,
-  "height": 200,
-  "padding": 5,
-
-  "data": [
-    {
-      "name": "table",
-      "values": []
-    }
-  ],
-
-  "signals": [
-    {
-      "name": "tooltip",
-      "value": {},
-      "on": [
-        {"events": "rect:mouseover", "update": "datum"},
-        {"events": "rect:mouseout",  "update": "{}"}
-      ]
-    }
-  ],
-
-  "scales": [
-    {
-      "name": "xscale",
-      "type": "band",
-      "domain": {"data": "table", "field": "category"},
-      "range": "width",
-      "padding": 0.05,
-      "round": true
+  "description" : "Horizontal Bar Chart",
+  "width" : 400,
+  "height" : 400,
+  "padding" : 20,
+  "signals" : [ {
+    "name" : "tooltip",
+    "on" : [ {
+      "events" : "rect:mouseover",
+      "update" : "datum"
+    }, {
+      "events" : "rect:mouseout",
+      "update" : "{}"
+    } ],
+    "value" : ""
+  } ],
+  "scales" : [ {
+    "name" : "yscale",
+    "domain" : {
+      "data" : "rawData",
+      "field" : "barLabel"
     },
-    {
-      "name": "yscale",
-      "type": "linear",
-      "domain": {"data": "table", "field": "amount"},
-      "nice": true,
-      "range": "height"
-    }
-  ],
-
-  "axes": [
-    { "orient": "bottom", "scale": "xscale" },
-    { "orient": "left", "scale": "yscale" }
-  ],
-
-  "marks": [
-    {
-      "type": "rect",
-      "from": {"data":"table"},
-      "encode": {
-        "enter": {
-          "_type": "rect",
-          "x": [{"scale": "xscale", "field": "category"}],
-          "width": [{"scale": "xscale", "band": 1}],
-          "y": [{"scale": "yscale", "field": "amount"}],
-          "y2": [{"scale": "yscale", "value": 0}]
-        },
-        "update": {
-          "_type": "rect",
-          "fill": [{"value": "steelblue"}]
-        },
-        "hover": {
-          "_type": "rect",
-          "fill": [{"value": "red"}]
-        }
-      }
+    "range" : "height",
+    "round" : true,
+    "type" : "band",
+    "padding" : 0.1
+  }, {
+    "name" : "xscale",
+    "domain" : {
+      "data" : "rawData",
+      "field" : "barHeight"
     },
-    {
-      "type": "text",
-      "encode": {
-        "enter": {
-          "_type": "text",
-          "align": [{"value": "center"}],
-          "baseline": [{"value": "bottom"}],
-          "fill": [{"value": "#333"}]
-        },
-        "update": {
-          "_type": "text",
-          "x": [{"scale": "xscale", "signal": "tooltip.category", "band": 0.5}],
-          "y": [{"scale": "yscale", "signal": "tooltip.amount", "offset": -2}],
-          "text": [{"signal": "tooltip.amount"}],
-          "fillOpacity": [
-            {"test": "datum === tooltip", "value": 0},
-            {"value": 1}
-          ]
-        }
+    "range" : "width",
+    "round" : true,
+    "type" : "linear",
+    "nice" : true,
+    "zero" : true
+  } ],
+  "axes" : [ {
+    "scale" : "xscale",
+    "orient" : "bottom"
+  }, {
+    "scale" : "yscale",
+    "orient" : "left"
+  } ],
+  "marks" : [ {
+    "type" : "rect",
+    "from" : {
+      "data" : "rawData"
+    },
+    "encode" : {
+      "enter" : {
+        "_type" : "rect",
+        "x" : [ {
+          "value" : 0,
+          "scale" : "xscale"
+        } ],
+        "x2" : [ {
+          "field" : "barHeight",
+          "scale" : "xscale"
+        } ],
+        "y" : [ {
+          "field" : "barLabel",
+          "scale" : "yscale"
+        } ],
+        "height" : [ {
+          "scale" : "yscale",
+          "band" : 1
+        } ]
+      },
+      "update" : {
+        "_type" : "rect",
+        "fill" : [ {
+          "value" : "steelblue"
+        } ]
+      },
+      "hover" : {
+        "_type" : "rect",
+        "fill" : [ {
+          "value" : "orange"
+        } ]
       }
     }
-  ]
+  }, {
+    "type" : "text",
+    "encode" : {
+      "enter" : {
+        "_type" : "text",
+        "fill" : [ {
+          "value" : "#333"
+        } ],
+        "align" : [ {
+          "value" : "left"
+        } ],
+        "baseline" : [ {
+          "value" : "middle"
+        } ]
+      },
+      "update" : {
+        "_type" : "text",
+        "x" : [ {
+          "signal" : "tooltip.barHeight",
+          "scale" : "xscale",
+          "offset" : 3
+        } ],
+        "y" : [ {
+          "signal" : "tooltip.barLabel",
+          "scale" : "yscale",
+          "band" : 0.5
+        } ],
+        "fillOpacity" : [ {
+          "test" : "datum === tooltip",
+          "value" : 0
+        }, {
+          "value" : 1
+        } ],
+        "text" : [ {
+          "signal" : "tooltip.barHeight"
+        } ]
+      }
+    }
+  } ]
 }

@@ -12,5 +12,4 @@ export const BLANKSCHEMA = {
   connectionString: "",
   entityList: [],
   relationshipList: [],
-  foreignKeys: [],
 };
