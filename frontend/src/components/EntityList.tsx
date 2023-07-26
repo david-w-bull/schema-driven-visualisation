@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Data, Entity, Attribute, Relationship } from "../types";
+import { Data, Entity, Attribute, Relationship, ForeignKey } from "../types";
 import { BLANKSCHEMA } from "../constants";
 
 interface AttributeProps {
@@ -46,9 +46,10 @@ const EntityComponent = ({ entity, onAttributeChange }: EntityProps) => {
 
 interface EntityListProps {
   data: Data;
+  onSelectedData: (selectedData: Data) => void;
 }
 
-const EntityList = ({ data: initialData }: EntityListProps) => {
+const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   const [data, setData] = useState(initialData);
 
   useEffect(() => {
@@ -67,10 +68,9 @@ const EntityList = ({ data: initialData }: EntityListProps) => {
 
   const handleSubmit = () => {
     const selectedData = {
-      id: data.id,
-      testId: data.testId,
       schemaId: data.schemaId,
       name: data.name,
+      connectionString: data.connectionString,
       entityList: [] as Entity[],
       relationshipList: [] as Relationship[],
     };
@@ -102,8 +102,8 @@ const EntityList = ({ data: initialData }: EntityListProps) => {
       }
     }
 
-    console.log(JSON.stringify(selectedData));
-    console.log(selectedData.entityList.length);
+    //console.log(JSON.stringify(selectedData));
+    onSelectedData(selectedData);
   };
 
   return (

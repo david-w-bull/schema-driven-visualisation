@@ -1,11 +1,16 @@
 package ic.doc.dwb22.jvega.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ic.doc.dwb22.jvega.schema.DatabaseSchema;
 import ic.doc.dwb22.jvega.spec.*;
 import ic.doc.dwb22.jvega.VizSpecPayload;
 import ic.doc.dwb22.jvega.spec.encodings.SymbolEncoding;
 import ic.doc.dwb22.jvega.spec.scales.LinearScale;
+import ic.doc.dwb22.jvega.spec.transforms.*;
+import ic.doc.dwb22.jvega.vizSchema.VizSchema;
+import ic.doc.dwb22.jvega.vizSchema.VizSchemaMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -35,7 +40,39 @@ public class VegaSpecService {
         return vegaSpecRepository.findByIsTemplateAndChartTypeIn(isTemplate, chartTypes);
     }
 
-    public VizSpecPayload DefaultSpec(Integer testId) {
+    public Optional<VizSpecPayload> specFromSchema(String schemaString) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        DatabaseSchema schema;
+        try {
+            schema = objectMapper.readValue(schemaString, DatabaseSchema.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+		VizSchemaMapper mapper = new VizSchemaMapper(
+				schema,
+				System.getenv("POSTGRES_USER"),
+				System.getenv("POSTGRES_PASSWORD"));
+
+		VizSchema vizSchema = mapper.generateVizSchema();
+
+		VegaSpec spec = VegaSpec.barChartTemplate();
+
+		VegaDataset dataset = new VegaDataset.BuildDataset()
+				.withName("rawData")
+				.withValues(mapper.getSqlData())
+				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "barLabel"))
+				.withTransform(FormulaTransform.simpleFormula("parseInt(datum." + vizSchema.getA1FieldName() + ")", "barHeight"))
+				.withTransform(CollectTransform.simpleSort("barHeight", "descending"))
+				.build();
+
+		spec.setData(Arrays.asList(dataset));
+        VizSpecPayload payload = new VizSpecPayload(spec, 33);
+        String id = payload.getVizId();
+        vegaSpecRepository.insert(payload);
+        return vegaSpecRepository.findSpecByVizId(id);
+    }
+
+    public VizSpecPayload defaultSpec(Integer testId) {
         Scale xScale = new LinearScale.BuildScale()
                 .withName("x")
                 .withRange("width")
@@ -97,7 +134,7 @@ public class VegaSpecService {
         return payload;
     }
 
-    public Optional<VizSpecPayload> CustomSpec(String vizToLoad) {
+    public Optional<VizSpecPayload> customSpec(String vizToLoad) {
         if(vizToLoad.equals("Test Viz 1")) {
             JsonNode barData;
             try {

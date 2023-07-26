@@ -35,13 +35,19 @@ public class VegaSpecController {
 
     @PostMapping
     public ResponseEntity<VizSpecPayload> createDefaultSpec(@RequestBody Map<String, Integer> payload) {
-        return new ResponseEntity<VizSpecPayload>(vegaSpecService.DefaultSpec(payload.get("testId")), HttpStatus.CREATED);
+        return new ResponseEntity<VizSpecPayload>(vegaSpecService.defaultSpec(payload.get("testId")), HttpStatus.CREATED);
     }
 
     @CrossOrigin
     @PostMapping("/postTest")
     public ResponseEntity<Optional<VizSpecPayload>> createCustomSpec(@RequestBody Map<String, String> payload) {
-        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.CustomSpec(payload.get("viz")), HttpStatus.CREATED);
+        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.customSpec(payload.get("viz")), HttpStatus.CREATED);
+    }
+
+    @CrossOrigin
+    @PostMapping("/specFromSchema")
+    public ResponseEntity<Optional<VizSpecPayload>> createSpecFromSchema(@RequestBody Map<String, String> payload) {
+        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specFromSchema(payload.get("schema")), HttpStatus.CREATED);
     }
 
 

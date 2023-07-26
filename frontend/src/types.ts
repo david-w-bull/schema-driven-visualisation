@@ -9,12 +9,20 @@ export type Attribute = {
   isChecked?: boolean;
 };
 
+export type ForeignKey = {
+  fkTableName: string;
+  fkColumnNames: string[];
+  pkTableName: string;
+  pkColumnNames: string[];
+};
+
 export type Entity = {
   entityID: number;
   entityName: string;
   entityType: string;
   relatedStrongEntity: null;
   entityAttributes: Attribute[];
+  foreignKeys: ForeignKey[];
 };
 
 export type RelationshipEdge = {
@@ -33,10 +41,11 @@ export type Relationship = {
 };
 
 export type Data = {
-  id: null;
-  testId: number;
+  id?: string | null;
+  testId?: number;
   schemaId: number;
   name: string;
+  connectionString: string;
   entityList: Entity[];
   relationshipList: Relationship[];
 };

@@ -36,6 +36,19 @@ function App() {
       });
   };
 
+  const [selectedData, setSelectedData] = useState<Data | null>(null);
+
+  const handleSelectedData = (data: Data) => {
+    setSelectedData(data);
+    const payload = { schema: JSON.stringify(data) };
+    axios
+      .post("http://localhost:8080/api/v1/specs/specFromSchema", payload)
+      .then((response) => setVegaSpec(response.data.spec));
+    //.then((response) => console.log(JSON.stringify(response.data.spec)));
+
+    console.log(JSON.stringify(data));
+  };
+
   const nodes = [
     {
       key: "Entity1",
@@ -57,7 +70,10 @@ function App() {
   return (
     <>
       <DatabaseSelector onSelectDatabase={handleSelectDatabase} />
-      <EntityList data={schemaInfo}></EntityList>
+      <EntityList
+        data={schemaInfo}
+        onSelectedData={handleSelectedData}
+      ></EntityList>
       {/* <ERDiagram nodes={nodes} links={links} /> */}
       {/* <ListGroup
         items={items}
@@ -65,6 +81,7 @@ function App() {
         onSelectItem={handleSelectItem}
       />
       <Vega spec={vegaSpec} actions={false} /> */}
+      <Vega spec={vegaSpec} actions={false} />
     </>
   );
 }

@@ -9,6 +9,8 @@ export const BLANKSCHEMA = {
   schemaId: -1,
   testId: -1,
   name: "blank",
+  connectionString: "",
   entityList: [],
   relationshipList: [],
+  foreignKeys: [],
 };

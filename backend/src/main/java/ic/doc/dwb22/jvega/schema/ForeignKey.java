@@ -1,14 +1,21 @@
 package ic.doc.dwb22.jvega.schema;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
+@Getter
+@Setter
 public class ForeignKey {
-    private final String fkName;
-    private final String fkTableName;
-    private final List<String> fkColumnNames;
-    private final String pkTableName;
-    private final List<String> pkColumnNames;
+    private String fkName;
+    private String fkTableName;
+    private List<String> fkColumnNames;
+    private String pkTableName;
+    private List<String> pkColumnNames;
 
     public ForeignKey(String fkName, String fkTableName, String pkTableName) {
         this.fkName = fkName;
