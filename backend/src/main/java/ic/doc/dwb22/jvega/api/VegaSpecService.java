@@ -96,7 +96,7 @@ public class VegaSpecService {
 //                .build();
 
 		spec.setData(Arrays.asList(dataset));
-        VizSpecPayload payload = new VizSpecPayload(spec, 33);
+        VizSpecPayload payload = new VizSpecPayload(spec, "Bar Chart", false);
         String id = payload.getVizId();
         vegaSpecRepository.insert(payload);
         return vegaSpecRepository.findSpecByVizId(id);
