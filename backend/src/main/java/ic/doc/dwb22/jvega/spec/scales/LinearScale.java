@@ -11,7 +11,7 @@ import org.springframework.data.annotation.TypeAlias;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@TypeAlias("linear")
+//@TypeAlias("linear")
 public class LinearScale extends Scale {
 
     private String type = "linear";

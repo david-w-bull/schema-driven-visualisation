@@ -12,7 +12,7 @@ import org.springframework.data.annotation.TypeAlias;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@TypeAlias("band")
+//@TypeAlias("band")
 public class BandScale extends Scale {
 
     private String type = "band";

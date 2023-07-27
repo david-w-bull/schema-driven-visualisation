@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@TypeAlias("rect")
+//@TypeAlias("rect")
 public class RectEncoding extends EncodingProps {
 
     private List<ValueRef> cornerRadius;

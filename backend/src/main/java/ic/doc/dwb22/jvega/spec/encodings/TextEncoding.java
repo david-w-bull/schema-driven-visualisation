@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@TypeAlias("text")
+//@TypeAlias("text")
 public class TextEncoding extends EncodingProps {
 
     private List<ValueRef> align;

@@ -1,5 +1,6 @@
 package ic.doc.dwb22.jvega.spec;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -27,6 +28,7 @@ import java.util.List;
         @JsonSubTypes.Type(value = GroupEncoding.class, name = "group"),
         @JsonSubTypes.Type(value = PathEncoding.class, name = "path")
 })
+@JsonIgnoreProperties({"_class"})
 public abstract class EncodingProps {
 
     protected List<ValueRef> x;

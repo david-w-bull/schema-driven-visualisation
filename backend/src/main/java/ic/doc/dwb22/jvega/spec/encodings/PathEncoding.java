@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@TypeAlias("path")
+//@TypeAlias("path")
 public class PathEncoding extends EncodingProps {
 
     private List<ValueRef> path;

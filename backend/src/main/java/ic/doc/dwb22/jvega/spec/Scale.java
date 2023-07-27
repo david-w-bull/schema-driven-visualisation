@@ -1,5 +1,6 @@
 package ic.doc.dwb22.jvega.spec;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -23,6 +24,7 @@ import lombok.NoArgsConstructor;
         @JsonSubTypes.Type(value = LinearScale.class, name = "linear"),
         @JsonSubTypes.Type(value = OrdinalScale.class, name = "ordinal")
 })
+@JsonIgnoreProperties({"_class"})
 public abstract class Scale {
 
     protected String name;

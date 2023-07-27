@@ -11,7 +11,7 @@ import org.springframework.data.annotation.TypeAlias;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@TypeAlias("ordinal")
+//@TypeAlias("ordinal")
 public class OrdinalScale extends Scale {
 
     private String type = "ordinal";

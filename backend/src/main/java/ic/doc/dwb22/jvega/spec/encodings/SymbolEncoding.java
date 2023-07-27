@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@TypeAlias("symbol")
+//@TypeAlias("symbol")
 public class SymbolEncoding extends EncodingProps {
 
     private List<ValueRef> angle;

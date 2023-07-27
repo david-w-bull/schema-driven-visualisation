@@ -71,7 +71,11 @@ public class VegaSpecService {
 
 		VizSchema vizSchema = mapper.generateVizSchema();
 
-		VegaSpec spec = VegaSpec.barChartTemplate();
+		//VegaSpec spec = VegaSpec.barChartTemplate();
+
+        VegaSpec spec = specTemplatesByChartType(true, Arrays.asList("Horizontal Bar Chart")).get(0).getSpec();
+
+        System.out.println(spec.toJson().toPrettyString());
 
 		VegaDataset dataset = new VegaDataset.BuildDataset()
 				.withName("rawData")

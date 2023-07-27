@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@TypeAlias("group")
+//@TypeAlias("group")
 public class GroupEncoding extends EncodingProps {
 
     private List<ValueRef> clip;
