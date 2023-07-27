@@ -57,9 +57,9 @@ public class JVegaApplication {
 		//donutChartTest();
 		//groupBarChartTest();
 
-		testTemplateFile("wordCloudTemplate.json");
+		//testTemplateFile("wordCloudTemplate.json");
 
-		//SpringApplication.run(JVegaApplication.class, args);
+		SpringApplication.run(JVegaApplication.class, args);
 
 		/* Code to produce a barspec with custom data injected */
 

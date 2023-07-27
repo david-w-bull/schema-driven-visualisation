@@ -73,15 +73,27 @@ public class VegaSpecService {
 
 		//VegaSpec spec = VegaSpec.barChartTemplate();
 
-        VegaSpec spec = specTemplatesByChartType(true, Arrays.asList("Horizontal Bar Chart")).get(0).getSpec();
+//        VegaSpec spec = specTemplatesByChartType(true, Arrays.asList("Horizontal Bar Chart")).get(0).getSpec();
+//
+//		VegaDataset dataset = new VegaDataset.BuildDataset()
+//				.withName("rawData")
+//				.withValues(mapper.getSqlData())
+//				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "barLabel"))
+//				.withTransform(FormulaTransform.simpleFormula("parseInt(datum." + vizSchema.getA1FieldName() + ")", "barHeight"))
+//				.withTransform(CollectTransform.simpleSort("barHeight", "descending"))
+//				.build();
 
-		VegaDataset dataset = new VegaDataset.BuildDataset()
-				.withName("rawData")
-				.withValues(mapper.getSqlData())
-				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "barLabel"))
-				.withTransform(FormulaTransform.simpleFormula("parseInt(datum." + vizSchema.getA1FieldName() + ")", "barHeight"))
-				.withTransform(CollectTransform.simpleSort("barHeight", "descending"))
-				.build();
+        //VegaSpec spec = VegaSpec.fromString(templateString);
+
+        VegaSpec spec = specTemplatesByChartType(true, Arrays.asList("Word Cloud")).get(0).getSpec();
+
+        VegaDataset dataset = new VegaDataset.BuildDataset()
+                .withName("rawData")
+                .withValues(mapper.getSqlData())
+                .withTransform(FormulaTransform.simpleFormula("[-45, 0, 45][~~(random() * 3)]", "angle"))
+                .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "wordField"))
+                .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1FieldName(), "wordSizeField"))
+                .build();
 
 		spec.setData(Arrays.asList(dataset));
         VizSpecPayload payload = new VizSpecPayload(spec, 33);
