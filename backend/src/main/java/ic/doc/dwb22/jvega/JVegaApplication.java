@@ -56,7 +56,10 @@ public class JVegaApplication {
 
 		//donutChartTest();
 		//groupBarChartTest();
-		SpringApplication.run(JVegaApplication.class, args);
+
+		testTemplateFile("wordCloudTemplate.json");
+
+		//SpringApplication.run(JVegaApplication.class, args);
 
 		/* Code to produce a barspec with custom data injected */
 
@@ -103,6 +106,46 @@ public class JVegaApplication {
 		System.out.println("------deserialised------");
 		System.out.println(finalString);
 	}
+
+	public static void testTemplateFile(String projectFileName) {
+
+		JsonNode json = readJsonFileToJsonNode("basicSchema.json");
+//
+		String schemaString = json.toString();
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		DatabaseSchema schema;
+		try {
+			schema = objectMapper.readValue(schemaString, DatabaseSchema.class);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+		VizSchemaMapper mapper = new VizSchemaMapper(
+				schema,
+				System.getenv("POSTGRES_USER"),
+				System.getenv("POSTGRES_PASSWORD"));
+
+		VizSchema vizSchema = mapper.generateVizSchema();
+
+		//System.out.println(JsonData.readJsonFileToJsonNode(projectFileName).toPrettyString());
+		String templateString = JsonData.readJsonFileToJsonNode("wordCloudTemplate.json").toString();
+
+		VegaSpec testSpec = VegaSpec.fromString(templateString);
+
+		VegaDataset dataset = new VegaDataset.BuildDataset()
+				.withName("rawData")
+				.withValues(mapper.getSqlData())
+				.withTransform(FormulaTransform.simpleFormula("[-45, 0, 45][~~(random() * 3)]", "angle"))
+				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "wordField"))
+				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1FieldName(), "wordSizeField"))
+				.build();
+
+		testSpec.setData(Arrays.asList(dataset));
+
+		specTester(testSpec);
+
+	}
+
 	public static void groupBarChartTest() {
 		JsonNode groupedBarData;
 		try {

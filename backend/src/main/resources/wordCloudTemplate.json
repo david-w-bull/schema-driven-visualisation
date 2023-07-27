@@ -1,0 +1,51 @@
+{
+  "description": "A word cloud visualization",
+  "width": 800,
+  "height": 400,
+  "padding": 0,
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "rawData", "field": "wordField"},
+      "range": ["#d5a928", "#652c90", "#939597"]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "text",
+      "from": {"data": "rawData"},
+      "encode": {
+        "enter": {
+          "_type": "text",
+          "text": [{"field": "wordField"}],
+          "align": [{"value": "center"}],
+          "baseline": [{"value": "alphabetic"}],
+          "fill": [{"scale": "color", "field": "wordField"}]
+        },
+        "update": {
+          "_type": "text",
+          "fillOpacity": [{"value": 1}]
+        },
+        "hover": {
+          "_type": "text",
+          "fillOpacity": [{"value": 0.5}]
+        }
+      },
+      "transform": [
+        {
+          "type": "wordcloud",
+          "size": [{"signal": "width"}, {"signal": "height"}],
+          "text": {"field": "wordField"},
+          "rotate": {"field": "datum.angle"},
+          "font": "Helvetica Neue, Arial",
+          "fontSize": {"field": "datum.wordSizeField"},
+          "fontSizeRange": [10, 56],
+          "padding": 4
+        }
+      ]
+    }
+  ]
+}
