@@ -75,8 +75,6 @@ public class VegaSpecService {
 
         VegaSpec spec = specTemplatesByChartType(true, Arrays.asList("Horizontal Bar Chart")).get(0).getSpec();
 
-        System.out.println(spec.toJson().toPrettyString());
-
 		VegaDataset dataset = new VegaDataset.BuildDataset()
 				.withName("rawData")
 				.withValues(mapper.getSqlData())
