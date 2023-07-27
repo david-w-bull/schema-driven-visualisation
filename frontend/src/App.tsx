@@ -43,8 +43,8 @@ function App() {
     const payload = { schema: JSON.stringify(data) };
     axios
       .post("http://localhost:8080/api/v1/specs/specFromSchema", payload)
-      .then((response) => setVegaSpec(response.data.spec));
-    //.then((response) => console.log(JSON.stringify(response.data.spec)));
+      .then((response) => setVegaSpec(response.data.spec[0]));
+    //.then((response) => console.log(JSON.stringify(response.data.spec[0])));
 
     console.log(JSON.stringify(data));
   };

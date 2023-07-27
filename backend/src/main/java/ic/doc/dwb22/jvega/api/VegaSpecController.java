@@ -51,6 +51,7 @@ public class VegaSpecController {
         return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specTemplateFromFile(payload.get("fileName"), payload.get("chartType")), HttpStatus.CREATED);
     }
 
+
     @CrossOrigin
     @PostMapping("/postTest")
     public ResponseEntity<Optional<VizSpecPayload>> createCustomSpec(@RequestBody Map<String, String> payload) {
