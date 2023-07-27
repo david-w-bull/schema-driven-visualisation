@@ -1,22 +1,52 @@
 package ic.doc.dwb22.jvega.vizSchema;
 
+import ic.doc.dwb22.jvega.schema.DatabaseAttribute;
+import ic.doc.dwb22.jvega.schema.SqlDataType;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class VizSchema {
     private VizSchemaType type;
-    private String k1FieldName;
-    private String a1FieldName;
+    private DatabaseAttribute k1Field;
+    private DatabaseAttribute a1Field;
 
     public VizSchema(VizSchemaType type) {
         this.type = type;
     }
-    public void setKeyOne(String fieldName) {
-        k1FieldName = fieldName;
+    public void setKeyOne(DatabaseAttribute k1Field) {
+        this.k1Field = k1Field;
+    }
+    public void setScalarOne(DatabaseAttribute a1Field) {
+        this.a1Field = a1Field;
+    }
+    public String getK1FieldName() { return k1Field.getAttributeName(); }
+    public String getA1FieldName() { return a1Field.getAttributeName(); }
+
+    public List<String> matchChartTypes() {
+        List<String> matchedChartTypes = new ArrayList<>();
+        if (type == VizSchemaType.BASIC) {
+            if (k1Field != null && a1Field != null) {
+                matchedChartTypes.add("Bar Chart");             //consider updating to enum
+            }
+            if(k1Field != null && a1Field != null && isLexical(k1Field.getDataType())) {
+                matchedChartTypes.add("Word Cloud");
+            }
+        }
+        return matchedChartTypes;
     }
 
-    public void setScalarOne(String fieldName) {
-        a1FieldName = fieldName;
+    private Boolean isLexical(SqlDataType dataType) {
+        switch(dataType) {
+            case CHAR:
+            case VARCHAR:
+            case TEXT:
+                return true;
+            default:
+                return false;
+        }
     }
 
     // Add a method to match visualisations to the pattern here.

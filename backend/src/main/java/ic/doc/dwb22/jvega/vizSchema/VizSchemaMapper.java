@@ -44,9 +44,9 @@ public class VizSchemaMapper {
         DatabaseEntity basicEntity = entities.get(0);
         for (DatabaseAttribute attr : basicEntity.getEntityAttributes()) {
             if (attr.getIsPrimary()) {   // Later iteration can add or is unique (which will need DB query)
-                vizSchema.setKeyOne(attr.getAttributeName());
+                vizSchema.setKeyOne(attr);
             } else if (isScalarDataType(attr.getDataType())) {
-                vizSchema.setScalarOne(attr.getAttributeName());
+                vizSchema.setScalarOne(attr);
             }
         }
         this.sqlQuery = generateSql();

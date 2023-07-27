@@ -90,7 +90,6 @@ public class JVegaApplication {
 //		spec.setData(Arrays.asList(dataset));
 //
 //		System.out.println(spec.toJson().toPrettyString());
-
 	}
 
 	@GetMapping("/")

@@ -15,7 +15,7 @@ function App() {
 
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
   const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
-  const [chartType, setChartType] = useState<string>("");
+  //const [chartType, setChartType] = useState<string>("");
   const [specList, setSpecList] = useState<any[]>([]);
 
   const handleSelectItem = (item: string) => {
@@ -47,7 +47,7 @@ function App() {
       .post("http://localhost:8080/api/v1/specs/specFromSchema", payload)
       .then((response) => {
         console.log(JSON.stringify(response.data));
-        setChartType(response.data.chartType);
+        //setChartType(response.data.chartType);
         setSpecList(response.data.spec);
       });
     //.then((response) => setVegaSpec(response.data.spec[0]));
@@ -89,7 +89,7 @@ function App() {
       />*/}
       {specList.map((spec: any, index: number) => (
         <button key={index} onClick={() => setVegaSpec(spec)}>
-          {chartType}
+          {spec.description}
         </button>
       ))}
       <Vega spec={vegaSpec} actions={false} />

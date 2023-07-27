@@ -71,7 +71,7 @@ public class VegaSpecService {
 
 		VizSchema vizSchema = mapper.generateVizSchema();
 
-		//VegaSpec spec = VegaSpec.barChartTemplate();
+        System.out.println(vizSchema.matchChartTypes());
 
         VegaSpec spec = specTemplatesByChartType(true, Arrays.asList("Bar Chart")).get(0).getSpec().get(0);
 
