@@ -64,39 +64,47 @@ public class VegaSpecService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-		VizSchemaMapper mapper = new VizSchemaMapper(
-				schema,
-				System.getenv("POSTGRES_USER"),
-				System.getenv("POSTGRES_PASSWORD"));
+        VizSchemaMapper mapper = new VizSchemaMapper(
+                schema,
+                System.getenv("POSTGRES_USER"),
+                System.getenv("POSTGRES_PASSWORD"));
 
-		VizSchema vizSchema = mapper.generateVizSchema();
+        VizSchema vizSchema = mapper.generateVizSchema();
 
-        System.out.println(vizSchema.matchChartTypes());
+        // System.out.println(vizSchema.matchChartTypes());
 
-        VegaSpec spec = specTemplatesByChartType(true, Arrays.asList("Bar Chart")).get(0).getSpec().get(0);
+        List<VegaSpec> specs = new ArrayList<>();
 
-		VegaDataset dataset = new VegaDataset.BuildDataset()
-				.withName("rawData")
-				.withValues(mapper.getSqlData())
-				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "barLabel"))
-				.withTransform(FormulaTransform.simpleFormula("parseInt(datum." + vizSchema.getA1FieldName() + ")", "barHeight"))
-				.withTransform(CollectTransform.simpleSort("barHeight", "descending"))
-				.build();
+        for(String chartType: vizSchema.matchChartTypes()) {
+            if(chartType == "Bar Chart") {
+                VegaSpec barSpec = specTemplatesByChartType(true, Arrays.asList("Bar Chart")).get(0).getSpec().get(0);
 
-        //VegaSpec spec = VegaSpec.fromString(templateString);
+                VegaDataset dataset = new VegaDataset.BuildDataset()
+                        .withName("rawData")
+                        .withValues(mapper.getSqlData())
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "barLabel"))
+                        .withTransform(FormulaTransform.simpleFormula("parseInt(datum." + vizSchema.getA1FieldName() + ")", "barHeight"))
+                        .withTransform(CollectTransform.simpleSort("barHeight", "descending"))
+                        .build();
+                barSpec.setData(Arrays.asList(dataset));
+                specs.add(barSpec);
+            }
+            else if(chartType == "Word Cloud") {
+                VegaSpec wordCloudSpec = specTemplatesByChartType(true, Arrays.asList("Word Cloud")).get(0).getSpec().get(0);
 
-//        VegaSpec spec = specTemplatesByChartType(true, Arrays.asList("Word Cloud")).get(0).getSpec();
+                VegaDataset dataset = new VegaDataset.BuildDataset()
+                        .withName("rawData")
+                        .withValues(mapper.getSqlData())
+                        .withTransform(FormulaTransform.simpleFormula("[-45, 0, 45][~~(random() * 3)]", "angle"))
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "wordField"))
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1FieldName(), "wordSizeField"))
+                        .build();
+                wordCloudSpec.setData(Arrays.asList(dataset));
+                specs.add(wordCloudSpec);
+            }
+        }
 
-//        VegaDataset dataset = new VegaDataset.BuildDataset()
-//                .withName("rawData")
-//                .withValues(mapper.getSqlData())
-//                .withTransform(FormulaTransform.simpleFormula("[-45, 0, 45][~~(random() * 3)]", "angle"))
-//                .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "wordField"))
-//                .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1FieldName(), "wordSizeField"))
-//                .build();
-
-		spec.setData(Arrays.asList(dataset));
-        VizSpecPayload payload = new VizSpecPayload(spec, "Bar Chart", false);
+        VizSpecPayload payload = new VizSpecPayload(specs);
         String id = payload.getVizId();
         vegaSpecRepository.insert(payload);
         return vegaSpecRepository.findSpecByVizId(id);

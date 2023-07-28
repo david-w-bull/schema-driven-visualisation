@@ -51,7 +51,6 @@ public class VizSpecPayload {
         this.chartType = chartType;
         this.isTemplate = false;
         this.spec = new ArrayList<>(Arrays.asList(spec));
-        this.spec.add(spec);
     }
 
     public VizSpecPayload(VegaSpec spec, String chartType, Boolean isTemplate) {
@@ -59,6 +58,13 @@ public class VizSpecPayload {
         this.chartType = chartType;
         this.isTemplate = isTemplate;
         this.spec = new ArrayList<>(Arrays.asList(spec));
+    }
+
+    public VizSpecPayload(List<VegaSpec> specs) {
+        this.vizId = UUID.randomUUID().toString();
+        this.chartType = null;
+        this.isTemplate = false;
+        this.spec = specs;
     }
 
     public void addSpec(VegaSpec spec) {
