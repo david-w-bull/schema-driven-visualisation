@@ -70,7 +70,9 @@ public class JVegaApplication {
 //
 //		System.out.println(schema.toJson().toPrettyString());
 
-		SpringApplication.run(JVegaApplication.class, args);
+		testSchemaMapping("oneToManySchema.json");
+
+		//SpringApplication.run(JVegaApplication.class, args);
 
 	}
 
@@ -88,9 +90,34 @@ public class JVegaApplication {
 		System.out.println(finalString);
 	}
 
-	public static void testTemplateFile(String projectFileName) {
+	public static void testSchemaMapping(String schemaFileName) {
+		JsonNode json = readJsonFileToJsonNode(schemaFileName);
 
-		JsonNode json = readJsonFileToJsonNode("basicSchema.json");
+		String schemaString = json.toString();
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		DatabaseSchema schema;
+		try {
+			schema = objectMapper.readValue(schemaString, DatabaseSchema.class);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+
+		//System.out.println(schema.toJson().toPrettyString());
+
+		VizSchemaMapper mapper = new VizSchemaMapper(schema, System.getenv("POSTGRES_USER"), System.getenv("POSTGRES_PASSWORD"));
+
+		VizSchema vizSchema = mapper.generateVizSchema();
+
+		System.out.println(vizSchema.getK1Field().getAttributeName());
+		System.out.println(vizSchema.getK2Field().getAttributeName());
+		System.out.println(vizSchema.getA1Field().getAttributeName());
+	}
+
+
+	public static void testTemplateFile(String templateFileName, String schemaFileName) {
+
+		JsonNode json = readJsonFileToJsonNode(schemaFileName);
 //
 		String schemaString = json.toString();
 
@@ -109,7 +136,7 @@ public class JVegaApplication {
 		VizSchema vizSchema = mapper.generateVizSchema();
 
 		//System.out.println(JsonData.readJsonFileToJsonNode(projectFileName).toPrettyString());
-		String templateString = JsonData.readJsonFileToJsonNode(projectFileName).toString();
+		String templateString = JsonData.readJsonFileToJsonNode(templateFileName).toString();
 
 		VegaSpec testSpec = VegaSpec.fromString(templateString);
 

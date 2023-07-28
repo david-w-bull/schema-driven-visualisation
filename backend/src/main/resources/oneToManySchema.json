@@ -1,0 +1,97 @@
+{
+  "schemaId": 1,
+  "name": "public",
+  "connectionString": "jdbc:postgresql://localhost:5432/jvegatest",
+  "entityList": [
+    {
+      "entityID": 3,
+      "entityName": "island",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "entityAttributes": [
+        {
+          "attributeId": 13,
+          "attributeName": "name",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": true,
+          "isChecked": true
+        },
+        {
+          "attributeId": 15,
+          "attributeName": "area",
+          "mandatory": false,
+          "optional": true,
+          "multiValued": false,
+          "dataType": "NUMERIC",
+          "isPrimary": false,
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "fkName": "island_in_waterbody",
+          "fkTableName": "island",
+          "fkColumnNames": [
+            "in_waterbody"
+          ],
+          "pkTableName": "waterbody",
+          "pkColumnNames": [
+            "name"
+          ]
+        }
+      ]
+    },
+    {
+      "entityID": 4,
+      "entityName": "waterbody",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "entityAttributes": [
+        {
+          "attributeId": 18,
+          "attributeName": "name",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": true,
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": []
+    }
+  ],
+  "relationshipList": [
+    {
+      "relationshipId": 8,
+      "relationshipName": "island_waterbody",
+      "isWeakRelationship": false,
+      "entityA": "island",
+      "entityACardinality": "One",
+      "entityB": "waterbody",
+      "entityBCardinality": "Many",
+      "overallCardinality": "OneToMany",
+      "relationships": [
+        {
+          "edgeId": 15,
+          "relationshipId": 8,
+          "entityId": 3,
+          "entityName": "island",
+          "cardinality": "OneToOne",
+          "isKey": false
+        },
+        {
+          "edgeId": 16,
+          "relationshipId": 8,
+          "entityId": 4,
+          "entityName": "waterbody",
+          "cardinality": "OneToMany",
+          "isKey": false
+        }
+      ]
+    }
+  ]
+}

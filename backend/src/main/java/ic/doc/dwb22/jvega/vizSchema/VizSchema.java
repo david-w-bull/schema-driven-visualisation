@@ -11,6 +11,7 @@ import java.util.List;
 public class VizSchema {
     private VizSchemaType type;
     private DatabaseAttribute k1Field;
+    private DatabaseAttribute k2Field;
     private DatabaseAttribute a1Field;
 
     public VizSchema(VizSchemaType type) {
@@ -19,10 +20,15 @@ public class VizSchema {
     public void setKeyOne(DatabaseAttribute k1Field) {
         this.k1Field = k1Field;
     }
+
+    public void setKeyTwo(DatabaseAttribute k2Field) {
+        this.k2Field = k2Field;
+    }
     public void setScalarOne(DatabaseAttribute a1Field) {
         this.a1Field = a1Field;
     }
     public String getK1FieldName() { return k1Field.getAttributeName(); }
+    public String getK2FieldName() { return k2Field.getAttributeName(); }
     public String getA1FieldName() { return a1Field.getAttributeName(); }
 
     public List<String> matchChartTypes() {
