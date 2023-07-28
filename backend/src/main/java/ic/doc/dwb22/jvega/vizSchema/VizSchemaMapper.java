@@ -2,10 +2,7 @@ package ic.doc.dwb22.jvega.vizSchema;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import ic.doc.dwb22.jvega.schema.DatabaseAttribute;
-import ic.doc.dwb22.jvega.schema.DatabaseEntity;
-import ic.doc.dwb22.jvega.schema.DatabaseSchema;
-import ic.doc.dwb22.jvega.schema.SqlDataType;
+import ic.doc.dwb22.jvega.schema.*;
 import ic.doc.dwb22.jvega.utils.JsonData;
 import lombok.Getter;
 
@@ -32,7 +29,7 @@ public class VizSchemaMapper {
     }
 
     public VizSchema generateVizSchema() {
-        if (entities.size() == 1) {
+        if (entities.size() == 1 && entities.get(0).getEntityType() == DatabaseEntityType.STRONG) {
             return generateBasicEntitySchema();
         } else {
             return new VizSchema(VizSchemaType.NONE);
