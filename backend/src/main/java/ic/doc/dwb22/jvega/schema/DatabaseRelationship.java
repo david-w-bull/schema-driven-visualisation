@@ -16,14 +16,37 @@ public class DatabaseRelationship {
 
     private Long relationshipId;
     private String relationshipName;
+    private Boolean isWeakRelationship = false;
+    private String entityA;
+    private String entityACardinality;
+    private String entityB;
+    private String entityBCardinality;
+    private String overallCardinality;
     private List<DatabaseEdge> relationships = new ArrayList<>();
 
 
     public DatabaseRelationship(Relationship relationship) {
         this.relationshipId = relationship.getID();
         this.relationshipName = relationship.getName();
-        for(RelationshipEdge edge: relationship.getEdgeList()) {
+        List<RelationshipEdge> edges = relationship.getEdgeList();
+        for(RelationshipEdge edge: edges) {
             relationships.add(new DatabaseEdge(edge));
         }
+
+        if (relationships.size() != 2) {
+            throw new IllegalArgumentException("Each relationship must only involve two entities");
+        }
+
+        this.entityA = relationships.get(0).getEntityName();
+        this.entityACardinality = relationships.get(0).getCardinality().toString().split("To")[1];
+        this.entityB = relationships.get(1).getEntityName();
+        this.entityBCardinality = relationships.get(1).getCardinality().toString().split("To")[1];
+        this.overallCardinality = this.entityACardinality + "To" + this.entityBCardinality;
+
+        // isKey from the Amazing-ER library is true when an entity is weak and relies on another entity
+        if(relationships.get(0).getIsKey() || relationships.get(1).getIsKey()) {
+            this.isWeakRelationship = true;
+        }
+
     }
 }

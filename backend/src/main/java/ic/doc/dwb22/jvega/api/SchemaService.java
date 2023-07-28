@@ -31,9 +31,9 @@ public class SchemaService {
         DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
                 "localhost",
                 "5432",
-                "jvegatest",
-                "david",
-                "dReD@pgs5b!",
+                System.getenv("POSTGRES_DATABASE"),
+                System.getenv("POSTGRES_USER"),
+                System.getenv("POSTGRES_PASSWORD"),
                 testId);
         DatabaseSchema payload = schemaRepository.insert(db.getDatabaseSchema());
         return payload;

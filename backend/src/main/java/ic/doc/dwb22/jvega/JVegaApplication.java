@@ -59,37 +59,19 @@ public class JVegaApplication {
 
 		//testTemplateFile("barChartTemplate.json");
 
+//		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
+//				"localhost",
+//				"5432",
+//				System.getenv("POSTGRES_DATABASE"),
+//				System.getenv("POSTGRES_USER"),
+//				System.getenv("POSTGRES_PASSWORD"),
+//				0);
+//		DatabaseSchema schema = db.getDatabaseSchema();
+//
+//		System.out.println(schema.toJson().toPrettyString());
+
 		SpringApplication.run(JVegaApplication.class, args);
 
-		/* Code to produce a barspec with custom data injected */
-
-//		JsonNode json = readJsonFileToJsonNode("basicSchema.json");
-//
-//		String jsonString = json.toString();
-//
-//		ObjectMapper objectMapper = new ObjectMapper();
-//
-//		DatabaseSchema schema = objectMapper.readValue(jsonString, DatabaseSchema.class);
-//		VizSchemaMapper mapper = new VizSchemaMapper(
-//				schema,
-//				System.getenv("POSTGRES_USER"),
-//				System.getenv("POSTGRES_PASSWORD"));
-//
-//		VizSchema vizSchema = mapper.generateVizSchema();
-//
-//		VegaSpec spec = VegaSpec.barChartTemplate();
-//
-//		VegaDataset dataset = new VegaDataset.BuildDataset()
-//				.withName("rawData")
-//				.withValues(mapper.getSqlData())
-//				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "barLabel"))
-//				.withTransform(FormulaTransform.simpleFormula("parseInt(datum." + vizSchema.getA1FieldName() + ")", "barHeight"))
-//				.withTransform(CollectTransform.simpleSort("barHeight", "descending"))
-//				.build();
-//
-//		spec.setData(Arrays.asList(dataset));
-//
-//		System.out.println(spec.toJson().toPrettyString());
 	}
 
 	@GetMapping("/")
@@ -408,7 +390,7 @@ public class JVegaApplication {
 		String databaseType = "postgresql";
 		String host = "localhost";
 		String port = "5432";
-		String databaseName = "jvegatest";
+		String databaseName = System.getenv("POSTGRES_DATABASE");
 		// String schemaName = "mondial_fragment";
 
 		String connectionString = "jdbc:"
@@ -419,8 +401,8 @@ public class JVegaApplication {
 				+ port
 				+ "/"
 				+ databaseName;;
-		String user = "david";
-		String pw = "dReD@pgs5b!";
+		String user = System.getenv("POSTGRES_USER");
+		String pw = System.getenv("POSTGRES_PASSWORD");
 		List<String> dbTables = new ArrayList<String>();
 		try {
 			Connection conn = DriverManager.getConnection(connectionString, user, pw);

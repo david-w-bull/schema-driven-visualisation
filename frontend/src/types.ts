@@ -1,3 +1,5 @@
+import { BooleanValue } from "vega";
+
 export type Attribute = {
   attributeId: number;
   attributeName: string;
@@ -37,6 +39,12 @@ export type RelationshipEdge = {
 export type Relationship = {
   relationshipId: number;
   relationshipName: string;
+  isWeakRelationship: boolean;
+  entityA: string;
+  entityACardinality: string;
+  entityB: string;
+  entityBCardinality: string;
+  overallCardinality: string;
   relationships: RelationshipEdge[];
 };
 

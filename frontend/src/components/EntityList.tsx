@@ -75,34 +75,54 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
       relationshipList: [] as Relationship[],
     };
 
-    const entityIdsWithCheckedAttributes: number[] = []; // Keep track of entity IDs
+    const entityIdsWithCheckedAttributes: number[] = [];
+    const entitiesWithCheckedAttributes: Entity[] = [];
 
     for (const entity of data.entityList) {
-      const selectedAttributes = entity.entityAttributes.filter(
-        (attr) => attr.isChecked
-      );
+      const selectedAttributes =
+        entity.entityAttributes?.filter((attr) => attr.isChecked) || [];
 
       if (selectedAttributes.length > 0) {
-        entityIdsWithCheckedAttributes.push(entity.entityID); // Add entity ID to list
-        selectedData.entityList.push({
+        entityIdsWithCheckedAttributes.push(entity.entityID);
+        entitiesWithCheckedAttributes.push({
           ...entity,
           entityAttributes: selectedAttributes,
         });
       }
     }
 
-    // Include relationships that contain entities with checked attributes
+    // Add entity names with checked attributes to a separate array
+    const entityNamesWithCheckedAttributes = entitiesWithCheckedAttributes.map(
+      (entity) => entity.entityName
+    );
+
+    // Filter foreign keys for each entity with selected attributes
+    for (const entity of entitiesWithCheckedAttributes) {
+      const selectedForeignKeys =
+        entity.foreignKeys?.filter((fk) =>
+          entityNamesWithCheckedAttributes.includes(fk.pkTableName)
+        ) || [];
+
+      selectedData.entityList.push({
+        ...entity,
+        foreignKeys: selectedForeignKeys,
+      });
+    }
+
     for (const relationship of data.relationshipList) {
-      if (
-        relationship.relationships.some((relationshipEdge) =>
-          entityIdsWithCheckedAttributes.includes(relationshipEdge.entityId)
-        )
-      ) {
+      const relatedEntityIds = relationship.relationships.map(
+        (relationshipEdge) => relationshipEdge.entityId
+      );
+
+      const entitiesInRelationshipAreChecked = relatedEntityIds.every((id) =>
+        entityIdsWithCheckedAttributes.includes(id)
+      );
+
+      if (entitiesInRelationshipAreChecked) {
         selectedData.relationshipList.push(relationship);
       }
     }
 
-    //console.log(JSON.stringify(selectedData));
     onSelectedData(selectedData);
   };
 
