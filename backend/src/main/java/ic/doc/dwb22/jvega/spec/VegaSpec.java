@@ -31,6 +31,7 @@ public class VegaSpec {
     private Integer width;
     private Integer height;
     private Integer padding;
+    private String autosize;
     private List<VegaDataset> data;
     private List<Signal> signals;
     private List<Scale> scales;
@@ -66,12 +67,25 @@ public class VegaSpec {
         this.data.get(0).setValues(dataValues);
     }
 
+    public void addDataset(VegaDataset dataset, boolean front) {
+        if(data == null) {
+            data = new ArrayList<>();
+        }
+        // When adding a source dataset on which other Vega datasets depend, the dataset must be the first defined
+        if(front) {
+            data.add(0,dataset);
+        } else {
+            data.add(dataset);
+        }
+    }
+
     @JsonPOJOBuilder(withPrefix = "set", buildMethodName = "createVegaSpec")
     public static class BuildSpec {
         private String description;
         private Integer width;
         private Integer height;
         private Integer padding;
+        private String autosize;
         private List<VegaDataset> data;
         private List<Signal> signals;
         private List<Scale> scales;
@@ -96,6 +110,11 @@ public class VegaSpec {
 
         public BuildSpec setPadding(Integer padding) {
             this.padding = padding;
+            return this;
+        }
+
+        public BuildSpec setAutosize(String autosize) {
+            this.autosize = autosize;
             return this;
         }
 
@@ -188,6 +207,7 @@ public class VegaSpec {
                     width,
                     height,
                     padding,
+                    autosize,
                     data,
                     signals,
                     scales,

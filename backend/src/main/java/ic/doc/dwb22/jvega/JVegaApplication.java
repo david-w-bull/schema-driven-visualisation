@@ -70,9 +70,9 @@ public class JVegaApplication {
 //
 //		System.out.println(schema.toJson().toPrettyString());
 
-		testSchemaMapping("oneToManySchema.json");
+//		testSchemaMapping("oneToManySchema.json");
 
-		//SpringApplication.run(JVegaApplication.class, args);
+	SpringApplication.run(JVegaApplication.class, args);
 
 	}
 
@@ -108,6 +108,10 @@ public class JVegaApplication {
 		VizSchemaMapper mapper = new VizSchemaMapper(schema, System.getenv("POSTGRES_USER"), System.getenv("POSTGRES_PASSWORD"));
 
 		VizSchema vizSchema = mapper.generateVizSchema();
+
+		System.out.println(mapper.getSqlQuery());
+
+		System.out.println(mapper.getSqlData().toPrettyString());
 
 		System.out.println(vizSchema.getK1Field().getAttributeName());
 		System.out.println(vizSchema.getK2Field().getAttributeName());

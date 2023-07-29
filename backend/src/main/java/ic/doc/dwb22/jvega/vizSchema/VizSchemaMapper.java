@@ -7,6 +7,7 @@ import ic.doc.dwb22.jvega.utils.JsonData;
 import lombok.Getter;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.Attributes;
 import java.util.stream.Collectors;
@@ -81,6 +82,7 @@ public class VizSchemaMapper {
             }
         }
         this.sqlQuery = generateSql();
+        this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
 
         return vizSchema;
     }
@@ -138,18 +140,18 @@ public class VizSchemaMapper {
         }
 
         else if(entities.size() == 2) {
-            String join = "";
+            List<String> selectAttributes = new ArrayList<>();
+            String select = "";
             String from = "";
+            String join = "";
             String on = "";
-
-            // Safer implementation may be to pick the FIRST entity with foreign keys and store its name.
-            // Then use getEntityByName to distinguish the from entity and the join entity
-            // Otherwise logic will break where entities have two different relationships.
 
             for(DatabaseEntity entity: entities) {
                 if(entity.getForeignKeys() != null && entity.getForeignKeys().size() > 0) {
                     from = entity.getEntityName();
-                    ForeignKey foreignKeyInfo = entity.getForeignKeys().get(0); // Based on assumption that only two-entity relationships are in scope
+
+                    // Based on assumption that only two-entity relationships are in scope
+                    ForeignKey foreignKeyInfo = entity.getForeignKeys().get(0);
 
                     List<String> fkColumnNames = foreignKeyInfo.getFkColumnNames();
                     List<String> pkColumnNames = foreignKeyInfo.getPkColumnNames();
@@ -172,14 +174,31 @@ public class VizSchemaMapper {
                             .mapToObj(i -> fkJoinFieldsAliased.get(i) + " = " + pkJoinFieldsAliased.get(i))
                             .collect(Collectors.joining(" AND "));
                 }
-                else {
-                    join = entity.getEntityName(); // Logic would need to be updated to handle entities with relationship in both directions
+            }
+
+            // Needs to be done this way in case there are two relationships between two entities with fks on both sides
+            for(DatabaseEntity entity: entities) {
+                String entityName = entity.getEntityName();
+                if(entityName != from) {
+                    join = entityName;
+                }
+                for(DatabaseAttribute attribute: entity.getEntityAttributes()) {
+                    String attributeName = attribute.getAttributeName();
+                    String aliasedName = entityName + "." + attributeName
+                            + " AS " + entityName + "_" + attributeName;
+                    selectAttributes.add(aliasedName);
                 }
             }
-            System.out.println("FROM " + from );
-            System.out.println("JOIN " + join );
-            System.out.println("ON " + on );
 
+            select = selectAttributes.stream()
+                    .collect(Collectors.joining(", "));
+
+
+            return "SELECT " + select
+                    + " FROM " + from
+                    + " JOIN " + join
+                    + " ON " + on
+                    + " LIMIT 50";
         }
 
         return "Invalid SQL";

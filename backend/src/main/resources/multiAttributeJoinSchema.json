@@ -1,0 +1,91 @@
+{
+  "schemaId": 1,
+  "name": "public",
+  "connectionString": "jdbc:postgresql://localhost:5432/jvegatest",
+  "entityList": [
+    {
+      "entityID": 1,
+      "entityName": "airport",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "entityAttributes": [
+        {
+          "attributeId": 1,
+          "attributeName": "iata_code",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": true,
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "fkName": "airport_city_fk",
+          "fkTableName": "airport",
+          "fkColumnNames": [
+            "city",
+            "province",
+            "country"
+          ],
+          "pkTableName": "city",
+          "pkColumnNames": [
+            "name",
+            "province",
+            "country"
+          ]
+        }
+      ]
+    },
+    {
+      "entityID": 7,
+      "entityName": "city",
+      "entityType": "WEAK",
+      "relatedStrongEntity": null,
+      "entityAttributes": [
+        {
+          "attributeId": 27,
+          "attributeName": "name",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": true,
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": []
+    }
+  ],
+  "relationshipList": [
+    {
+      "relationshipId": 6,
+      "relationshipName": "airport_city",
+      "isWeakRelationship": false,
+      "entityA": "airport",
+      "entityACardinality": "One",
+      "entityB": "city",
+      "entityBCardinality": "Many",
+      "overallCardinality": "OneToMany",
+      "relationships": [
+        {
+          "edgeId": 11,
+          "relationshipId": 6,
+          "entityId": 1,
+          "entityName": "airport",
+          "cardinality": "ZeroToOne",
+          "isKey": false
+        },
+        {
+          "edgeId": 12,
+          "relationshipId": 6,
+          "entityId": 7,
+          "entityName": "city",
+          "cardinality": "OneToMany",
+          "isKey": false
+        }
+      ]
+    }
+  ]
+}

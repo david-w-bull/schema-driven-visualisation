@@ -25,8 +25,6 @@ public class VegaDataset {
     private List<Transform> transform;
     private List<Map<String, Object>> values;
 
-
-
     public static VegaDataset urlDataset(String name, String url) {
         VegaDataset data = new BuildDataset().build();
         data.name = name;

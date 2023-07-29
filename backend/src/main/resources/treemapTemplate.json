@@ -1,0 +1,120 @@
+{
+  "description": "Treemap",
+  "width": 960,
+  "height": 500,
+  "padding": 2.5,
+  "autosize": "none",
+  "data": [
+    {
+      "name": "parents",
+      "source": "rawData",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": ["parent"],
+          "as": ["count"]
+        },
+        {
+          "type": "project",
+          "fields": ["parent"],
+          "as": ["name"]
+        },
+        {
+          "type": "formula",
+          "expr": "'root'",
+          "as": "parent"
+        }
+      ]
+    },
+    {
+      "name": "rootNode",
+      "values": [
+        {
+          "name": "root"
+        }
+      ]
+    },
+    {
+      "name": "hierarchyDataset",
+      "source": ["rawData", "rootNode", "parents"]
+    },
+    {
+      "name": "tree",
+      "source": "hierarchyDataset",
+      "transform": [
+        {
+          "type": "stratify",
+          "key": "name",
+          "parentKey": "parent"
+        },
+        {
+          "type": "treemap",
+          "field": "size",
+          "sort": {"field": "value"},
+          "round": true,
+          "method": "binary",
+          "ratio": 1.6,
+          "size": [{"signal": "width"}, {"signal": "height"}]
+        }
+      ]
+    },
+    {
+      "name": "nodes",
+      "source": "tree",
+      "transform": [{ "type": "filter", "expr": "datum.children" }]
+    },
+    {
+      "name": "leaves",
+      "source": "tree",
+      "transform": [{ "type": "filter", "expr": "!datum.children" }]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "leaves", "field": "parent"},
+      "range": {"scheme": "tableau20"}
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "nodes"},
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "fill": {"scale": "color", "field": "name"}
+        },
+        "update": {
+          "x": {"field": "x0"},
+          "y": {"field": "y0"},
+          "x2": {"field": "x1"},
+          "y2": {"field": "y1"}
+        }
+      }
+    },
+    {
+      "type": "rect",
+      "from": {"data": "leaves"},
+      "encode": {
+        "enter": {
+          "stroke": {"value": "#fff"},
+          "fillOpacity": {"value": 1}
+        },
+        "update": {
+          "x": {"field": "x0"},
+          "y": {"field": "y0"},
+          "x2": {"field": "x1"},
+          "y2": {"field": "y1"},
+          "fill": {"value": "transparent"}
+        },
+        "hover": {
+          "fill": {"value": "purple"}
+        }
+      }
+    }
+  ]
+}
