@@ -39,6 +39,14 @@ public class VizSchema {
             if(k1Field != null && a1Field != null && isLexical(k1Field.getDataType())) {
                 matchedChartTypes.add("Word Cloud");
             }
+        } else if(type == VizSchemaType.ONETOMANY) {
+            if(k1Field != null && k2Field != null) {
+                if (a1Field == null) {
+                    matchedChartTypes.add("Hierarchy Tree");
+                } else {
+                    matchedChartTypes.add("Treemap");
+                }
+            }
         }
         return matchedChartTypes;
     }
@@ -53,6 +61,4 @@ public class VizSchema {
                 return false;
         }
     }
-
-    // Add a method to match visualisations to the pattern here.
 }

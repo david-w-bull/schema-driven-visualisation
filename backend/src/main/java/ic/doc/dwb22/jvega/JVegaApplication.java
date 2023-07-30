@@ -73,9 +73,9 @@ public class JVegaApplication {
 
 //		testSchemaMapping("oneToManySchema.json");
 
-		testTemplateFile( "treemapTemplate.json", "oneToManySchema.json");
+//		testTemplateFile( "treemapTemplate.json", "oneToManySchema.json");
 
-//	SpringApplication.run(JVegaApplication.class, args);
+	SpringApplication.run(JVegaApplication.class, args);
 
 	}
 

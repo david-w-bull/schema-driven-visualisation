@@ -102,6 +102,28 @@ public class VegaSpecService {
                 wordCloudSpec.setData(Arrays.asList(dataset));
                 specs.add(wordCloudSpec);
             }
+            else if(chartType == "Treemap") {
+                VegaSpec treemapSpec = specTemplatesByChartType(true, Arrays.asList("Treemap")).get(0).getSpec().get(0);
+
+                List<String> fieldsToRename = Arrays.asList(
+                        vizSchema.getK2Field().getParentEntityName() + "_" + vizSchema.getK2FieldName(),
+                        vizSchema.getA1Field().getParentEntityName() + "_" + vizSchema.getA1FieldName(),
+                        vizSchema.getK1Field().getParentEntityName() + "_" + vizSchema.getK1FieldName());
+
+                List<String> fieldAliases = Arrays.asList("name", "size", "parent");
+
+                VegaDataset dataset = new VegaDataset.BuildDataset()
+                        .withName("rawData")
+                        .withValues(mapper.getSqlData())
+                        .withTransform(ProjectTransform.simpleProject(fieldsToRename, fieldAliases))
+                        .withTransform(FormulaTransform.simpleFormula("parseInt(datum.size)", "size"))
+                        .build();
+
+                treemapSpec.addDataset(dataset, true);
+
+                specs.add(treemapSpec);
+            }
+
         }
 
         VizSpecPayload payload = new VizSpecPayload(specs);
