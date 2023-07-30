@@ -20,6 +20,7 @@ public class DatabaseAttribute {
     private Boolean multiValued = false;
     private SqlDataType dataType;
     private Boolean isPrimary;
+    private String parentEntityName;
     public DatabaseAttribute(Attribute attribute) {
         this.attributeId = attribute.getID();
         this.attributeName = attribute.getName();
@@ -42,5 +43,10 @@ public class DatabaseAttribute {
             case Both -> {this.optional = true; this.multiValued = true;}
             default -> {this.optional = false; this.multiValued = false; this.mandatory = false;}
         }
+    }
+
+    public DatabaseAttribute(Attribute attribute, String parentEntityName) {
+        this(attribute);
+        this.parentEntityName = parentEntityName;
     }
 }

@@ -20,7 +20,6 @@ public class VizSchema {
     public void setKeyOne(DatabaseAttribute k1Field) {
         this.k1Field = k1Field;
     }
-
     public void setKeyTwo(DatabaseAttribute k2Field) {
         this.k2Field = k2Field;
     }

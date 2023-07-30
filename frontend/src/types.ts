@@ -8,6 +8,7 @@ export type Attribute = {
   multiValued: boolean;
   dataType: string;
   isPrimary: boolean;
+  parentEntityName: string;
   isChecked?: boolean;
 };
 

@@ -35,7 +35,7 @@ public class DatabaseEntity {
             this.relatedStrongEntity = new DatabaseEntity(entity.getBelongStrongEntity());
         }
         for(Attribute attribute: entity.getAttributeList()) {
-            this.entityAttributes.add(new DatabaseAttribute(attribute));
+            this.entityAttributes.add(new DatabaseAttribute(attribute, this.entityName));
         }
         this.foreignKeys = new ArrayList<>(); // Blank list if none passed to constructor
     }

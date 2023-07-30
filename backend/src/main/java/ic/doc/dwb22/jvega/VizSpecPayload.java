@@ -67,6 +67,16 @@ public class VizSpecPayload {
         this.spec = specs;
     }
 
+    public VizSpecPayload(VegaSpec spec) {
+        this.vizId = UUID.randomUUID().toString();
+        this.chartType = null;
+        this.isTemplate = false;
+        if(this.spec == null) {
+            this.spec = new ArrayList<>();
+        }
+        this.spec.add(spec);
+    }
+
     public void addSpec(VegaSpec spec) {
         if(this.spec == null) {
             this.spec = new ArrayList<>();

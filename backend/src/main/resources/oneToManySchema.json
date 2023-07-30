@@ -17,6 +17,7 @@
           "multiValued": false,
           "dataType": "VARCHAR",
           "isPrimary": true,
+          "parentEntityName": "island",
           "isChecked": true
         },
         {
@@ -27,6 +28,7 @@
           "multiValued": false,
           "dataType": "NUMERIC",
           "isPrimary": false,
+          "parentEntityName": "island",
           "isChecked": true
         }
       ],
@@ -58,6 +60,7 @@
           "multiValued": false,
           "dataType": "VARCHAR",
           "isPrimary": true,
+          "parentEntityName": "waterbody",
           "isChecked": true
         }
       ],

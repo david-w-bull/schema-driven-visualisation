@@ -15,6 +15,7 @@ import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
 import ic.doc.dwb22.jvega.spec.transforms.CollectTransform;
 import ic.doc.dwb22.jvega.spec.transforms.FormulaTransform;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
+import ic.doc.dwb22.jvega.spec.transforms.ProjectTransform;
 import ic.doc.dwb22.jvega.utils.GenericMap;
 import ic.doc.dwb22.jvega.utils.JsonData;
 import ic.doc.dwb22.jvega.utils.VegaSpecTemplateCreator;
@@ -72,7 +73,9 @@ public class JVegaApplication {
 
 //		testSchemaMapping("oneToManySchema.json");
 
-	SpringApplication.run(JVegaApplication.class, args);
+		testTemplateFile( "treemapTemplate.json", "oneToManySchema.json");
+
+//	SpringApplication.run(JVegaApplication.class, args);
 
 	}
 
@@ -144,21 +147,25 @@ public class JVegaApplication {
 
 		VegaSpec testSpec = VegaSpec.fromString(templateString);
 
-//		VegaDataset dataset = new VegaDataset.BuildDataset()
-//				.withName("rawData")
-//				.withValues(mapper.getSqlData())
-//				.withTransform(FormulaTransform.simpleFormula("[-45, 0, 45][~~(random() * 3)]", "angle"))
-//				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "wordField"))
-//				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1FieldName(), "wordSizeField"))
-//				.build();
-//
-//		testSpec.setData(Arrays.asList(dataset));
+		List<String> fieldsToRename = Arrays.asList(
+				vizSchema.getK2Field().getParentEntityName() + "_" + vizSchema.getK2FieldName(),
+				vizSchema.getA1Field().getParentEntityName() + "_" + vizSchema.getA1FieldName(),
+				vizSchema.getK1Field().getParentEntityName() + "_" + vizSchema.getK1FieldName());
 
-		VizSpecPayload test = new VizSpecPayload(testSpec, "Bar Chart", true);
+		List<String> fieldAliases = Arrays.asList("name", "size", "parent");
 
-		test.addSpec(testSpec);
+		VegaDataset dataset = new VegaDataset.BuildDataset()
+				.withName("rawData")
+				.withValues(mapper.getSqlData())
+				.withTransform(ProjectTransform.simpleProject(fieldsToRename, fieldAliases))
+				.withTransform(FormulaTransform.simpleFormula("parseInt(datum.size)", "size"))
+				.build();
 
-		System.out.println(test.toString());
+		testSpec.addDataset(dataset, true);
+
+		System.out.println(testSpec.toJson().toPrettyString());
+
+		VizSpecPayload test = new VizSpecPayload(testSpec);
 
 		//specTester(testSpec);
 
