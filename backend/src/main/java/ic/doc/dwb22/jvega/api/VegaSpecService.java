@@ -125,7 +125,6 @@ public class VegaSpecService {
             }
 
         }
-
         VizSpecPayload payload = new VizSpecPayload(specs);
         String id = payload.getVizId();
         vegaSpecRepository.insert(payload);

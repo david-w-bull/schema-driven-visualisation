@@ -105,7 +105,6 @@ public class DatabaseProfiler {
                             entityForeignKeyMap.get(tableName).get(fkName).addForeignKeyColumn(fkColumnName);
                             entityForeignKeyMap.get(tableName).get(fkName).addPrimaryKeyColumn(pkColumnName);
                         }
-
                     }
                 }
             }

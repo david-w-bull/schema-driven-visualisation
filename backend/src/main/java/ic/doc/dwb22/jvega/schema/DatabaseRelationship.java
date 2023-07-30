@@ -1,5 +1,6 @@
 package ic.doc.dwb22.jvega.schema;
 
+import io.github.MigadaTang.Attribute;
 import io.github.MigadaTang.Relationship;
 import io.github.MigadaTang.RelationshipEdge;
 import lombok.Getter;
@@ -23,6 +24,8 @@ public class DatabaseRelationship {
     private String entityBCardinality;
     private String overallCardinality;
     private List<DatabaseEdge> relationships = new ArrayList<>();
+    private List<DatabaseAttribute> relationshipAttributes = new ArrayList<>();
+    private List<ForeignKey> foreignKeys = new ArrayList<>();
 
 
     public DatabaseRelationship(Relationship relationship) {
@@ -31,6 +34,13 @@ public class DatabaseRelationship {
         List<RelationshipEdge> edges = relationship.getEdgeList();
         for(RelationshipEdge edge: edges) {
             relationships.add(new DatabaseEdge(edge));
+        }
+
+        List<Attribute> attributes = relationship.getAttributeList();
+        if(attributes != null && attributes.size() > 0) {
+            for (Attribute attribute : attributes) {
+                this.relationshipAttributes.add(new DatabaseAttribute(attribute, this.relationshipName));
+            }
         }
 
         if (relationships.size() != 2) {
@@ -48,5 +58,12 @@ public class DatabaseRelationship {
             this.isWeakRelationship = true;
         }
 
+    }
+
+    public DatabaseRelationship(Relationship relationship,  List<ForeignKey> foreignKeys) {
+        this(relationship);
+        if(foreignKeys != null && foreignKeys.size() > 0) {
+            this.foreignKeys = foreignKeys;
+        }
     }
 }

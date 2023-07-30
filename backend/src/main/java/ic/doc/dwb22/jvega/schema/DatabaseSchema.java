@@ -39,7 +39,7 @@ public class DatabaseSchema {
             this.entityList.add(dbEntity);
         }
         for(Relationship relationship: schema.getRelationshipList()) {
-            this.relationshipList.add(new DatabaseRelationship(relationship));
+            this.relationshipList.add(new DatabaseRelationship(relationship, entityForeignKeys.get(relationship.getName())));
         }
     }
     public DatabaseSchema(Schema schema, String connectionString, Map<String, List<ForeignKey>> entityForeignKeys, Integer testId) {
