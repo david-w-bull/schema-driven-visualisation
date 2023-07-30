@@ -32,8 +32,8 @@ interface EntityProps {
 const EntityComponent = ({ entity, onAttributeChange }: EntityProps) => {
   return (
     <div>
-      <h2>{entity.entityName}</h2>
-      {entity.entityAttributes.map((attribute, attributeIndex) => (
+      <h2>{entity.name}</h2>
+      {entity.attributes.map((attribute, attributeIndex) => (
         <AttributeList
           key={attribute.attributeId}
           attribute={attribute}
@@ -62,7 +62,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     checked: boolean
   ) => {
     let newData = [...data.entityList];
-    newData[entityIndex].entityAttributes[attributeIndex].isChecked = checked;
+    newData[entityIndex].attributes[attributeIndex].isChecked = checked;
     setData({ ...data, entityList: newData });
   };
 
@@ -80,20 +80,20 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
 
     for (const entity of data.entityList) {
       const selectedAttributes =
-        entity.entityAttributes?.filter((attr) => attr.isChecked) || [];
+        entity.attributes?.filter((attr) => attr.isChecked) || [];
 
       if (selectedAttributes.length > 0) {
-        entityIdsWithCheckedAttributes.push(entity.entityID);
+        entityIdsWithCheckedAttributes.push(entity.id);
         entitiesWithCheckedAttributes.push({
           ...entity,
-          entityAttributes: selectedAttributes,
+          attributes: selectedAttributes,
         });
       }
     }
 
     // Add entity names with checked attributes to a separate array
     const entityNamesWithCheckedAttributes = entitiesWithCheckedAttributes.map(
-      (entity) => entity.entityName
+      (entity) => entity.name
     );
 
     // Filter foreign keys for each entity with selected attributes
@@ -130,7 +130,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     <div>
       {data.entityList.map((entity, entityIndex) => (
         <EntityComponent
-          key={entity.entityID}
+          key={entity.id}
           entity={entity}
           onAttributeChange={(attributeIndex, checked) =>
             handleAttributeChange(entityIndex, attributeIndex, checked)

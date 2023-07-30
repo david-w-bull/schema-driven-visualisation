@@ -15,8 +15,8 @@ import java.util.List;
 @Setter
 public class DatabaseRelationship {
 
-    private Long relationshipId;
-    private String relationshipName;
+    private Long id;
+    private String name;
     private Boolean isWeakRelationship = false;
     private String entityA;
     private String entityACardinality;
@@ -24,13 +24,13 @@ public class DatabaseRelationship {
     private String entityBCardinality;
     private String overallCardinality;
     private List<DatabaseEdge> relationships = new ArrayList<>();
-    private List<DatabaseAttribute> relationshipAttributes = new ArrayList<>();
+    private List<DatabaseAttribute> attributes = new ArrayList<>();
     private List<ForeignKey> foreignKeys = new ArrayList<>();
 
 
     public DatabaseRelationship(Relationship relationship) {
-        this.relationshipId = relationship.getID();
-        this.relationshipName = relationship.getName();
+        this.id = relationship.getID();
+        this.name = relationship.getName();
         List<RelationshipEdge> edges = relationship.getEdgeList();
         for(RelationshipEdge edge: edges) {
             relationships.add(new DatabaseEdge(edge));
@@ -39,7 +39,7 @@ public class DatabaseRelationship {
         List<Attribute> attributes = relationship.getAttributeList();
         if(attributes != null && attributes.size() > 0) {
             for (Attribute attribute : attributes) {
-                this.relationshipAttributes.add(new DatabaseAttribute(attribute, this.relationshipName));
+                this.attributes.add(new DatabaseAttribute(attribute, this.name));
             }
         }
 

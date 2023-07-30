@@ -14,16 +14,16 @@ import java.util.List;
 @Setter
 public class DatabaseEntity {
 
-    private Long entityID;
-    private String entityName;
+    private Long id;
+    private String name;
     private DatabaseEntityType entityType;
     private DatabaseEntity relatedStrongEntity;
-    private List<DatabaseAttribute> entityAttributes = new ArrayList<>();
+    private List<DatabaseAttribute> attributes = new ArrayList<>();
     private List<ForeignKey> foreignKeys;
 
     public DatabaseEntity(Entity entity) {
-        this.entityID = entity.getID();
-        this.entityName = entity.getName();
+        this.id = entity.getID();
+        this.name = entity.getName();
         this.entityType = switch(entity.getEntityType()) {
             case WEAK -> DatabaseEntityType.WEAK;
             case STRONG -> DatabaseEntityType.STRONG;
@@ -35,7 +35,7 @@ public class DatabaseEntity {
             this.relatedStrongEntity = new DatabaseEntity(entity.getBelongStrongEntity());
         }
         for(Attribute attribute: entity.getAttributeList()) {
-            this.entityAttributes.add(new DatabaseAttribute(attribute, this.entityName));
+            this.attributes.add(new DatabaseAttribute(attribute, this.name));
         }
         this.foreignKeys = new ArrayList<>(); // Blank list if none passed to constructor
     }

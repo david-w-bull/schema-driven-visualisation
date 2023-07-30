@@ -20,11 +20,25 @@ export type ForeignKey = {
 };
 
 export type Entity = {
-  entityID: number;
-  entityName: string;
+  id: number;
+  name: string;
   entityType: string;
   relatedStrongEntity: null;
-  entityAttributes: Attribute[];
+  attributes: Attribute[];
+  foreignKeys: ForeignKey[];
+};
+
+export type Relationship = {
+  id: number;
+  name: string;
+  isWeakRelationship: boolean;
+  entityA: string;
+  entityACardinality: string;
+  entityB: string;
+  entityBCardinality: string;
+  overallCardinality: string;
+  relationships: RelationshipEdge[];
+  attributes: Attribute[];
   foreignKeys: ForeignKey[];
 };
 
@@ -35,18 +49,6 @@ export type RelationshipEdge = {
   entityName: string;
   isKey: boolean;
   relationshipId: number;
-};
-
-export type Relationship = {
-  relationshipId: number;
-  relationshipName: string;
-  isWeakRelationship: boolean;
-  entityA: string;
-  entityACardinality: string;
-  entityB: string;
-  entityBCardinality: string;
-  overallCardinality: string;
-  relationships: RelationshipEdge[];
 };
 
 export type Data = {

@@ -1,6 +1,5 @@
 package ic.doc.dwb22.jvega.vizSchema;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import ic.doc.dwb22.jvega.schema.*;
 import ic.doc.dwb22.jvega.utils.JsonData;
@@ -9,7 +8,6 @@ import lombok.Getter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Attributes;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -68,7 +66,7 @@ public class VizSchemaMapper {
 
         // This allocation of k1, k2, a1 is according to the diagrams set out in "Towards Data Visualisation based
         // on Conceptual Modelling" paper - p.6
-        for(DatabaseAttribute attr: oneEntity.getEntityAttributes()) {
+        for(DatabaseAttribute attr: oneEntity.getAttributes()) {
             if (attr.getIsPrimary()) {   // Later iteration can add or is unique (which will need DB query)
                 vizSchema.setKeyTwo(attr);
             } else if (isScalarDataType(attr.getDataType())) {
@@ -76,7 +74,7 @@ public class VizSchemaMapper {
             }
         }
 
-        for(DatabaseAttribute attr: manyEntity.getEntityAttributes()) {
+        for(DatabaseAttribute attr: manyEntity.getAttributes()) {
             if (attr.getIsPrimary()) {   // Later iteration can add or is unique (which will need DB query)
                 vizSchema.setKeyOne(attr);
             }
@@ -90,7 +88,7 @@ public class VizSchemaMapper {
     private VizSchema generateBasicEntitySchema() {
         VizSchema vizSchema = new VizSchema(VizSchemaType.BASIC);
         DatabaseEntity basicEntity = entities.get(0);
-        for (DatabaseAttribute attr : basicEntity.getEntityAttributes()) {
+        for (DatabaseAttribute attr : basicEntity.getAttributes()) {
             if (attr.getIsPrimary()) {   // Later iteration can add or is unique (which will need DB query)
                 vizSchema.setKeyOne(attr);
             } else if (isScalarDataType(attr.getDataType())) {
@@ -127,14 +125,14 @@ public class VizSchemaMapper {
     public String generateSql() {
         if(entities.size() == 1) {
             DatabaseEntity entity = entities.get(0);
-            List<DatabaseAttribute> attributes = entity.getEntityAttributes();
+            List<DatabaseAttribute> attributes = entity.getAttributes();
             String attributeList = attributes.stream()
-                    .map(s -> entity.getEntityName() + "." + s.getAttributeName())
+                    .map(s -> entity.getName() + "." + s.getAttributeName())
                     .collect(Collectors.joining(", "));
             return "SELECT "
                     + attributeList
                     + " FROM "
-                    + entity.getEntityName()
+                    + entity.getName()
                     + " LIMIT 30"
                     ; // Limit needs to be removed once a better solution can be found
         }
@@ -148,7 +146,7 @@ public class VizSchemaMapper {
 
             for(DatabaseEntity entity: entities) {
                 if(entity.getForeignKeys() != null && entity.getForeignKeys().size() > 0) {
-                    from = entity.getEntityName();
+                    from = entity.getName();
 
                     // Based on assumption that only two-entity relationships are in scope
                     ForeignKey foreignKeyInfo = entity.getForeignKeys().get(0);
@@ -178,11 +176,11 @@ public class VizSchemaMapper {
 
             // Needs to be done this way in case there are two relationships between two entities with fks on both sides
             for(DatabaseEntity entity: entities) {
-                String entityName = entity.getEntityName();
+                String entityName = entity.getName();
                 if(entityName != from) {
                     join = entityName;
                 }
-                for(DatabaseAttribute attribute: entity.getEntityAttributes()) {
+                for(DatabaseAttribute attribute: entity.getAttributes()) {
                     String attributeName = attribute.getAttributeName();
                     String aliasedName = entityName + "." + attributeName
                             + " AS " + entityName + "_" + attributeName;
@@ -222,7 +220,7 @@ public class VizSchemaMapper {
 
     private DatabaseEntity getEntityByName(String entityName) {
         for(DatabaseEntity entity: this.entities) {
-            if(entityName.equals(entity.getEntityName())) {
+            if(entityName.equals(entity.getName())) {
                 return entity;
             }
         }

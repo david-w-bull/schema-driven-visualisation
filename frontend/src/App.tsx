@@ -6,7 +6,7 @@ import { Vega, VegaLite, VisualizationSpec } from "react-vega";
 import ListGroup from "./components/ListGroup";
 import { Data, Entity, Attribute } from "./types";
 import { BLANKSPEC, BLANKSCHEMA } from "./constants";
-import EntityList from "./components/EntityList";
+import EntityListTest from "./components/EntityListTest";
 import DatabaseSelector from "./components/DatabaseSelector";
 import ERDiagram from "./components/ERDiagram";
 
@@ -77,10 +77,10 @@ function App() {
   return (
     <>
       <DatabaseSelector onSelectDatabase={handleSelectDatabase} />
-      <EntityList
+      <EntityListTest
         data={schemaInfo}
         onSelectedData={handleSelectedData}
-      ></EntityList>
+      ></EntityListTest>
       {/* <ERDiagram nodes={nodes} links={links} /> */}
       {/* <ListGroup
         items={items}
