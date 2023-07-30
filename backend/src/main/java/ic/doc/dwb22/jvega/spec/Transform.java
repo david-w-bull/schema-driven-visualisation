@@ -2,6 +2,7 @@ package ic.doc.dwb22.jvega.spec;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.sun.source.tree.Tree;
 import ic.doc.dwb22.jvega.spec.transforms.*;
 
 @JsonTypeInfo(
@@ -19,6 +20,9 @@ import ic.doc.dwb22.jvega.spec.transforms.*;
         @JsonSubTypes.Type(value = LinkPathTransform.class, name = "linkpath"),
         @JsonSubTypes.Type(value = CollectTransform.class, name = "collect"),
         @JsonSubTypes.Type(value = WordCloudTransform.class, name = "wordcloud"),
+        @JsonSubTypes.Type(value = ProjectTransform.class, name = "project"),
+        @JsonSubTypes.Type(value = StratifyTransform.class, name = "stratify"),
+        @JsonSubTypes.Type(value = TreemapTransform.class, name = "treemap"),
 })
 public interface Transform {
     // This interface is used only as a marker to provide a general type.
