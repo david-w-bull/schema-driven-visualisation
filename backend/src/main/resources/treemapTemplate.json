@@ -7,7 +7,7 @@
   "data": [
     {
       "name": "parents",
-      "source": "rawData",
+      "source": ["rawData"],
       "transform": [
         {
           "type": "aggregate",
@@ -40,7 +40,7 @@
     },
     {
       "name": "tree",
-      "source": "hierarchyDataset",
+      "source": ["hierarchyDataset"],
       "transform": [
         {
           "type": "stratify",
@@ -50,7 +50,7 @@
         {
           "type": "treemap",
           "field": "size",
-          "sort": {"field": "value"},
+          "sort": {"field": ["value"]},
           "round": true,
           "method": "binary",
           "ratio": 1.6,
@@ -60,12 +60,12 @@
     },
     {
       "name": "nodes",
-      "source": "tree",
+      "source": ["tree"],
       "transform": [{ "type": "filter", "expr": "datum.children" }]
     },
     {
       "name": "leaves",
-      "source": "tree",
+      "source": ["tree"],
       "transform": [{ "type": "filter", "expr": "!datum.children" }]
     }
   ],
@@ -86,13 +86,15 @@
       "interactive": false,
       "encode": {
         "enter": {
-          "fill": {"scale": "color", "field": "name"}
+          "_type": "rect",
+          "fill": [{"scale": "color", "field": "name"}]
         },
         "update": {
-          "x": {"field": "x0"},
-          "y": {"field": "y0"},
-          "x2": {"field": "x1"},
-          "y2": {"field": "y1"}
+          "_type": "rect",
+          "x": [{"field": "x0"}],
+          "y": [{"field": "y0"}],
+          "x2": [{"field": "x1"}],
+          "y2": [{"field": "y1"}]
         }
       }
     },
@@ -101,18 +103,21 @@
       "from": {"data": "leaves"},
       "encode": {
         "enter": {
-          "stroke": {"value": "#fff"},
-          "fillOpacity": {"value": 1}
+          "_type": "rect",
+          "stroke": [{"value": "#fff"}],
+          "fillOpacity": [{"value": 1}]
         },
         "update": {
-          "x": {"field": "x0"},
-          "y": {"field": "y0"},
-          "x2": {"field": "x1"},
-          "y2": {"field": "y1"},
-          "fill": {"value": "transparent"}
+          "_type": "rect",
+          "x": [{"field": "x0"}],
+          "y": [{"field": "y0"}],
+          "x2": [{"field": "x1"}],
+          "y2": [{"field": "y1"}],
+          "fill": [{"value": "transparent"}]
         },
         "hover": {
-          "fill": {"value": "purple"}
+          "_type": "rect",
+          "fill": [{"value": "purple"}]
         }
       }
     }

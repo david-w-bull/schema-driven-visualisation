@@ -17,7 +17,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class AggregateTransform implements Transform {
     private String type = "aggregate";
-    private List<Object> groupBy;   // May contain a string or a 'field' object
+    private List<Object> groupby;   // May contain a string or a 'field' object
     private List<Object> fields;    // May contain a string or a 'field' object
     private List<String> ops;
     private List<String> as;
@@ -27,7 +27,7 @@ public class AggregateTransform implements Transform {
 
     public static class BuildTransform {
         private String type = "aggregate";
-        private List<Object> groupBy;   // May contain a string or a 'field' object
+        private List<Object> groupby;   // May contain a string or a 'field' object
         private List<Object> fields;    // May contain a string or a 'field' object
         private List<String> ops;
         private List<String> as;
@@ -37,7 +37,7 @@ public class AggregateTransform implements Transform {
 
 
         public BuildTransform withGroupBy(List<Object> groupBy) {
-            this.groupBy = groupBy;
+            this.groupby = groupBy;
             return this;
         }
 
@@ -77,7 +77,7 @@ public class AggregateTransform implements Transform {
 
         public AggregateTransform build() {
             return new AggregateTransform(type,
-                    groupBy,
+                    groupby,
                     fields,
                     ops,
                     as,

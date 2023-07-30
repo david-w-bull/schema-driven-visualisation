@@ -18,7 +18,7 @@ import java.util.List;
 public class ProjectTransform implements Transform {
     private String type = "project";
     private List<String> fields;
-    private List<String> aliases;
+    private List<String> as;
 
     public static ProjectTransform simpleProject(List<String> fields, List<String> aliases) {
         ProjectTransform transform = new ProjectTransform.BuildTransform()
@@ -31,7 +31,7 @@ public class ProjectTransform implements Transform {
     public static class BuildTransform {
         private String type = "project";
         private List<String> fields;
-        private List<String> aliases;
+        private List<String> as;
 
         public BuildTransform withType(String type) {
             this.type = type;
@@ -52,20 +52,20 @@ public class ProjectTransform implements Transform {
         }
 
         public BuildTransform withAliases(List<String> aliases) {
-            this.aliases = aliases;
+            this.as = aliases;
             return this;
         }
 
         public BuildTransform withAlias(String alias) {
-            if(this.aliases == null) {
-                this.aliases = new ArrayList<>();
+            if(this.as == null) {
+                this.as = new ArrayList<>();
             }
-            this.aliases.add(alias);
+            this.as.add(alias);
             return this;
         }
 
         public ProjectTransform build() {
-            return new ProjectTransform(type, fields, aliases);
+            return new ProjectTransform(type, fields, as);
         }
     }
 }

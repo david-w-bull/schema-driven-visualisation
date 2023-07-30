@@ -21,7 +21,7 @@ public class VegaDataset {
 
     private String name;
     private String url;
-    private String source;
+    private List<String> source;
     private List<Transform> transform;
     private List<Map<String, Object>> values;
 
@@ -41,7 +41,7 @@ public class VegaDataset {
     public static class BuildDataset {
         private String name;
         private String url;
-        private String source;
+        private List<String> source;
         private List<Transform> transform;
         private List<Map<String, Object>> values;
 
@@ -56,7 +56,15 @@ public class VegaDataset {
         }
 
         public BuildDataset withSource(String source) {
-            this.source = source;
+            if(this.source == null) {
+                this.source = new ArrayList<>();
+            }
+            this.source.add(source);
+            return this;
+        }
+
+        public BuildDataset withSources(List<String> sources) {
+            this.source = sources;
             return this;
         }
 

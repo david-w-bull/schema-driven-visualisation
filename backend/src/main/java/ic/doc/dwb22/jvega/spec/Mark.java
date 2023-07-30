@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Mark {
-    private String type; // Move type to constructor and then switch encode object based on type?
+    private String type;
     private String name;
     private Boolean interactive;
     private Object from;
