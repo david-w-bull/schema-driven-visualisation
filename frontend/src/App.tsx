@@ -6,6 +6,7 @@ import { Vega, VegaLite, VisualizationSpec } from "react-vega";
 import ListGroup from "./components/ListGroup";
 import { Data, Entity, Attribute } from "./types";
 import { BLANKSPEC, BLANKSCHEMA } from "./constants";
+import EntityList from "./components/EntityList";
 import EntityListTest from "./components/EntityListTest";
 import DatabaseSelector from "./components/DatabaseSelector";
 import ERDiagram from "./components/ERDiagram";

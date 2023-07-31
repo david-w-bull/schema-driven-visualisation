@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Data, Entity, Attribute, Relationship } from "../types";
+import {
+  Data,
+  Entity,
+  Attribute,
+  Relationship,
+  ForeignKey,
+  EntityOrRelationship,
+} from "../types";
 
 interface AttributeProps {
   attribute: Attribute;
@@ -24,25 +31,19 @@ const AttributeList = ({ attribute, onChange }: AttributeProps) => {
 };
 
 interface EntityProps {
-  entity: Entity | Relationship;
-  onAttributeChange: (
-    entityIndex: number,
-    attributeIndex: number,
-    checked: boolean
-  ) => void;
+  item: EntityOrRelationship;
+  onAttributeChange: (attributeIndex: number, checked: boolean) => void;
 }
 
-const EntityComponent = ({ entity, onAttributeChange }: EntityProps) => {
+const EntityComponent = ({ item, onAttributeChange }: EntityProps) => {
   return (
     <div>
-      <h2>{entity.name}</h2>
-      {entity.attributes?.map((attribute, attributeIndex) => (
+      <h2>{item.name}</h2>
+      {item.attributes.map((attribute, attributeIndex) => (
         <AttributeList
           key={attribute.attributeId}
           attribute={attribute}
-          onChange={(checked) =>
-            onAttributeChange(entity.id, attributeIndex, checked)
-          }
+          onChange={(checked) => onAttributeChange(attributeIndex, checked)}
         />
       ))}
     </div>
@@ -54,10 +55,7 @@ interface EntityListProps {
   onSelectedData: (selectedData: Data) => void;
 }
 
-const EntityListTest = ({
-  data: initialData,
-  onSelectedData,
-}: EntityListProps) => {
+const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   const [data, setData] = useState(initialData);
 
   useEffect(() => {
@@ -65,75 +63,136 @@ const EntityListTest = ({
   }, [initialData]);
 
   const handleAttributeChange = (
-    entityIndex: number,
+    isEntity: boolean,
+    itemIndex: number,
     attributeIndex: number,
     checked: boolean
   ) => {
     let newData = { ...data };
-    newData.entityList = [...data.entityList];
-    newData.relationshipList = [...data.relationshipList];
-
-    const entityOrRelationship =
-      newData.entityList.find((entity) => entity.id === entityIndex) ||
-      newData.relationshipList.find(
-        (relationship) => relationship.id === entityIndex
-      );
-
-    if (entityOrRelationship) {
-      entityOrRelationship.attributes[attributeIndex].isChecked = checked;
-      setData(newData);
+    if (isEntity) {
+      newData.entityList[itemIndex].attributes[attributeIndex].isChecked =
+        checked;
+    } else {
+      newData.relationshipList[itemIndex].attributes[attributeIndex].isChecked =
+        checked;
     }
+    setData(newData);
   };
 
   const handleSubmit = () => {
-    // Filter entities with selected attributes
-    const selectedEntities = data.entityList.filter(
-      (entity) =>
-        entity.attributes && entity.attributes.some((attr) => attr.isChecked)
-    );
-
-    // Filter relationships with selected attributes
-    const selectedRelationships = data.relationshipList.filter(
-      (relationship) =>
-        relationship.attributes &&
-        relationship.attributes.some((attr) => attr.isChecked)
-    );
-
-    const selectedData: Data = {
+    const selectedData = {
       schemaId: data.schemaId,
       name: data.name,
       connectionString: data.connectionString,
-      entityList: selectedEntities,
-      relationshipList: selectedRelationships,
+      entityList: [] as Entity[],
+      relationshipList: [] as Relationship[],
     };
+
+    const entityIdsWithCheckedAttributes: number[] = [];
+    const entitiesWithCheckedAttributes: Entity[] = [];
+    const relationshipsWithCheckedAttributes: Relationship[] = [];
+
+    for (const entity of data.entityList) {
+      const selectedAttributes =
+        entity.attributes?.filter((attr) => attr.isChecked) || [];
+
+      if (selectedAttributes.length > 0) {
+        entityIdsWithCheckedAttributes.push(entity.id);
+        entitiesWithCheckedAttributes.push({
+          ...entity,
+          attributes: selectedAttributes,
+        });
+      }
+    }
+
+    for (const relationship of data.relationshipList) {
+      const selectedAttributes =
+        relationship.attributes?.filter((attr) => attr.isChecked) || [];
+
+      if (selectedAttributes.length > 0) {
+        relationshipsWithCheckedAttributes.push({
+          ...relationship,
+          attributes: selectedAttributes,
+        });
+      }
+    }
+
+    // Add entity names with checked attributes to a separate array
+    const entityNamesWithCheckedAttributes = entitiesWithCheckedAttributes.map(
+      (entity) => entity.name
+    );
+
+    // Filter foreign keys for each entity with selected attributes
+    for (const entity of entitiesWithCheckedAttributes) {
+      const selectedForeignKeys =
+        entity.foreignKeys?.filter((fk) =>
+          entityNamesWithCheckedAttributes.includes(fk.pkTableName)
+        ) || [];
+
+      selectedData.entityList.push({
+        ...entity,
+        foreignKeys: selectedForeignKeys,
+      });
+    }
+
+    for (const relationship of data.relationshipList) {
+      const relatedEntityIds = relationship.relationships.map(
+        (relationshipEdge) => relationshipEdge.entityId
+      );
+
+      const entitiesInRelationshipAreChecked = relatedEntityIds.every((id) =>
+        entityIdsWithCheckedAttributes.includes(id)
+      );
+
+      if (
+        entitiesInRelationshipAreChecked ||
+        relationshipsWithCheckedAttributes.some(
+          (checkedRelationship) => checkedRelationship.id === relationship.id
+        )
+      ) {
+        // Only include attributes where isChecked is true
+        const selectedAttributes =
+          relationship.attributes?.filter((attr) => attr.isChecked) || [];
+
+        // Push the modified relationship object
+        selectedData.relationshipList.push({
+          ...relationship,
+          attributes: selectedAttributes,
+        });
+      }
+    }
 
     onSelectedData(selectedData);
   };
 
   return (
     <div>
-      {data.entityList.map((entity) => (
+      {data.entityList.map((entity, entityIndex) => (
         <EntityComponent
           key={entity.id}
-          entity={entity}
-          onAttributeChange={handleAttributeChange}
+          item={entity}
+          onAttributeChange={(attributeIndex, checked) =>
+            handleAttributeChange(true, entityIndex, attributeIndex, checked)
+          }
         />
       ))}
-      {data.relationshipList
-        .filter(
-          (relationship) =>
-            relationship.attributes && relationship.attributes.length > 0
-        )
-        .map((relationship) => (
-          <EntityComponent
-            key={relationship.id}
-            entity={relationship}
-            onAttributeChange={handleAttributeChange}
-          />
-        ))}
+      {data.relationshipList.map((relationship, relationshipIndex) => (
+        <EntityComponent
+          key={relationship.id}
+          item={relationship}
+          onAttributeChange={(attributeIndex, checked) =>
+            handleAttributeChange(
+              false,
+              relationshipIndex,
+              attributeIndex,
+              checked
+            )
+          }
+        />
+      ))}
       <button onClick={handleSubmit}>Submit</button>
     </div>
   );
 };
 
-export default EntityListTest;
+export default EntityList;

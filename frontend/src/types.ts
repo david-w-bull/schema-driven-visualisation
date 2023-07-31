@@ -42,6 +42,8 @@ export type Relationship = {
   foreignKeys: ForeignKey[];
 };
 
+export type EntityOrRelationship = Entity | Relationship;
+
 export type RelationshipEdge = {
   cardinality: string;
   edgeId: number;

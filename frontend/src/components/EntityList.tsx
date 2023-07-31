@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Data, Entity, Attribute, Relationship, ForeignKey } from "../types";
-import { BLANKSCHEMA } from "../constants";
 
 interface AttributeProps {
   attribute: Attribute;
