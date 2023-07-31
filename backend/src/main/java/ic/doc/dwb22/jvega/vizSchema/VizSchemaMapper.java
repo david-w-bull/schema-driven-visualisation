@@ -3,8 +3,10 @@ package ic.doc.dwb22.jvega.vizSchema;
 import com.fasterxml.jackson.databind.JsonNode;
 import ic.doc.dwb22.jvega.schema.*;
 import ic.doc.dwb22.jvega.utils.JsonData;
+import io.github.MigadaTang.Relationship;
 import lombok.Getter;
 
+import javax.management.relation.Relation;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +33,56 @@ public class VizSchemaMapper {
     }
 
     public VizSchema generateVizSchema() {
-        if (entities.size() == 1 && entities.get(0).getEntityType() == DatabaseEntityType.STRONG) {
-            return generateBasicEntitySchema();
-        } else if(entities.size() == 2
-                && relationships.size() == 1
-                && (relationships.get(0).getOverallCardinality().equals("OneToMany")
-                    || relationships.get(0).getOverallCardinality().equals("ManyToOne"))
-                && !relationships.get(0).getIsWeakRelationship()) {
-            return generateOneToManySchema();
-        } else {
-            return new VizSchema(VizSchemaType.NONE);
+
+        // In data passed from the frontend any relationships relating to selected tables are retained
+        // This means that a reflexive relationship will always be returned from a single entity selection
+        // A basic entity can be differentiated from a reflexive many-to-many by whether relationship attributes are selected
+
+        Boolean reflexive = false;
+        for(DatabaseRelationship relationship: relationships) {
+            if(relationship.getOverallCardinality().equals("ManyToMany")
+                    && relationship.getEntityA().equals(relationship.getEntityB())) {
+                if(relationship.getAttributes().size() == 0) {
+                    reflexive = false;
+                    relationships.remove(relationship); // remove redundant reflexive relationships for basic entities
+                } else {
+                    reflexive = true;
+                }
+            }
         }
+
+        if (entities.size() == 1 && entities.get(0).getEntityType() == DatabaseEntityType.STRONG) {
+            if(!reflexive) {
+                return generateBasicEntitySchema();
+            } else {
+                return generateManyToManySchema(); // consider adding a parameter for reflexive m:m
+            }
+
+        } else if(entities.size() == 2 && relationships.size() == 1) {
+                if(relationships.get(0).getIsWeakRelationship()) {
+                    return generateWeakEntitySchema();
+                } else if (relationships.get(0).getOverallCardinality().equals("OneToMany")
+                    || relationships.get(0).getOverallCardinality().equals("ManyToOne")) {
+                    return generateOneToManySchema();
+                } else if (relationships.get(0).getOverallCardinality().equals("ManyToMany")) {
+                    return generateManyToManySchema();
+                }
+        }
+
+        return new VizSchema(VizSchemaType.NONE);
+
+    }
+
+    private VizSchema generateWeakEntitySchema() {
+        VizSchema vizSchema = new VizSchema(VizSchemaType.WEAK);
+
+        return vizSchema;
+    }
+
+    private VizSchema generateManyToManySchema() {
+        VizSchema vizSchema = new VizSchema(VizSchemaType.MANYTOMANY);
+        System.out.println("Many to many!");
+        return vizSchema;
     }
 
     private VizSchema generateOneToManySchema() {

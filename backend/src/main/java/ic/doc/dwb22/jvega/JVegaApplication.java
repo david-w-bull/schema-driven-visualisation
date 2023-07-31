@@ -71,11 +71,11 @@ public class JVegaApplication {
 //
 //		System.out.println(schema.toJson().toPrettyString());
 
-//		testSchemaMapping("oneToManySchema.json");
+		testSchemaMapping("manyToManySchemaReflexive.json");
 
 //		testTemplateFile( "treemapTemplate.json", "oneToManySchema.json");
 
-	SpringApplication.run(JVegaApplication.class, args);
+//	SpringApplication.run(JVegaApplication.class, args);
 
 	}
 
@@ -112,13 +112,13 @@ public class JVegaApplication {
 
 		VizSchema vizSchema = mapper.generateVizSchema();
 
-		System.out.println(mapper.getSqlQuery());
-
-		System.out.println(mapper.getSqlData().toPrettyString());
-
-		System.out.println(vizSchema.getK1Field().getAttributeName());
-		System.out.println(vizSchema.getK2Field().getAttributeName());
-		System.out.println(vizSchema.getA1Field().getAttributeName());
+//		System.out.println(mapper.getSqlQuery());
+//
+//		System.out.println(mapper.getSqlData().toPrettyString());
+//
+//		System.out.println(vizSchema.getK1Field().getAttributeName());
+//		System.out.println(vizSchema.getK2Field().getAttributeName());
+//		System.out.println(vizSchema.getA1Field().getAttributeName());
 	}
 
 

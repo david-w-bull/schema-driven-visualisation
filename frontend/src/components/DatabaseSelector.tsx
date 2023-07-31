@@ -20,7 +20,7 @@ const DatabaseSelector = ({ onSelectDatabase }: DatabaseSelectorProps) => {
   };
 
   const values = [
-    { value: "64c6a0b0c078197638e7bd14", label: "Mondial Fragment" },
+    { value: "64c71431f6ac9e55aad579f8", label: "Mondial Fragment" },
   ];
 
   return (

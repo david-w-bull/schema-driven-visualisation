@@ -1,0 +1,94 @@
+{
+  "schemaId": 1,
+  "name": "public",
+  "connectionString": "jdbc:postgresql://localhost:5432/jvegatest",
+  "entityList": [
+    {
+      "id": 3,
+      "name": "country",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "attributes": [
+        {
+          "attributeId": 10,
+          "attributeName": "code",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": true,
+          "parentEntityName": "country",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": []
+    }
+  ],
+  "relationshipList": [
+    {
+      "id": 5,
+      "name": "borders",
+      "isWeakRelationship": false,
+      "entityA": "country",
+      "entityACardinality": "Many",
+      "entityB": "country",
+      "entityBCardinality": "Many",
+      "overallCardinality": "ManyToMany",
+      "relationships": [
+        {
+          "edgeId": 9,
+          "relationshipId": 5,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        },
+        {
+          "edgeId": 10,
+          "relationshipId": 5,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        }
+      ],
+      "attributes": [
+        {
+          "attributeId": 36,
+          "attributeName": "length",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "NUMERIC",
+          "isPrimary": false,
+          "parentEntityName": "borders",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "fkName": "border_country_b_fk",
+          "fkTableName": "borders",
+          "fkColumnNames": [
+            "country2"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        },
+        {
+          "fkName": "border_country_a_fk",
+          "fkTableName": "borders",
+          "fkColumnNames": [
+            "country1"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        }
+      ]
+    }
+  ]
+}

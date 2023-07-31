@@ -1,0 +1,167 @@
+{
+  "schemaId": 1,
+  "name": "public",
+  "connectionString": "jdbc:postgresql://localhost:5432/jvegatest",
+  "entityList": [
+    {
+      "id": 2,
+      "name": "continent",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "attributes": [
+        {
+          "attributeId": 7,
+          "attributeName": "name",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": true,
+          "parentEntityName": "continent",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": []
+    },
+    {
+      "id": 3,
+      "name": "country",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "attributes": [
+        {
+          "attributeId": 10,
+          "attributeName": "code",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": true,
+          "parentEntityName": "country",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": []
+    }
+  ],
+  "relationshipList": [
+    {
+      "id": 5,
+      "name": "borders",
+      "isWeakRelationship": false,
+      "entityA": "country",
+      "entityACardinality": "Many",
+      "entityB": "country",
+      "entityBCardinality": "Many",
+      "overallCardinality": "ManyToMany",
+      "relationships": [
+        {
+          "edgeId": 9,
+          "relationshipId": 5,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        },
+        {
+          "edgeId": 10,
+          "relationshipId": 5,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        }
+      ],
+      "attributes": [],
+      "foreignKeys": [
+        {
+          "fkName": "border_country_b_fk",
+          "fkTableName": "borders",
+          "fkColumnNames": [
+            "country2"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        },
+        {
+          "fkName": "border_country_a_fk",
+          "fkTableName": "borders",
+          "fkColumnNames": [
+            "country1"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "encompasses",
+      "isWeakRelationship": false,
+      "entityA": "country",
+      "entityACardinality": "Many",
+      "entityB": "continent",
+      "entityBCardinality": "Many",
+      "overallCardinality": "ManyToMany",
+      "relationships": [
+        {
+          "edgeId": 11,
+          "relationshipId": 6,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        },
+        {
+          "edgeId": 12,
+          "relationshipId": 6,
+          "entityId": 2,
+          "entityName": "continent",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        }
+      ],
+      "attributes": [
+        {
+          "attributeId": 37,
+          "attributeName": "percentage",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "NUMERIC",
+          "isPrimary": false,
+          "parentEntityName": "encompasses",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "fkName": "encompasses_continent_fk",
+          "fkTableName": "encompasses",
+          "fkColumnNames": [
+            "continent"
+          ],
+          "pkTableName": "continent",
+          "pkColumnNames": [
+            "name"
+          ]
+        },
+        {
+          "fkName": "encompasses_country_fk",
+          "fkTableName": "encompasses",
+          "fkColumnNames": [
+            "country"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        }
+      ]
+    }
+  ]
+}

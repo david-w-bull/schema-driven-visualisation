@@ -4,13 +4,13 @@
   "connectionString": "jdbc:postgresql://localhost:5432/jvegatest",
   "entityList": [
     {
-      "entityID": 3,
-      "entityName": "island",
+      "id": 4,
+      "name": "island",
       "entityType": "STRONG",
       "relatedStrongEntity": null,
-      "entityAttributes": [
+      "attributes": [
         {
-          "attributeId": 13,
+          "attributeId": 15,
           "attributeName": "name",
           "mandatory": true,
           "optional": false,
@@ -21,7 +21,7 @@
           "isChecked": true
         },
         {
-          "attributeId": 15,
+          "attributeId": 17,
           "attributeName": "area",
           "mandatory": false,
           "optional": true,
@@ -47,13 +47,13 @@
       ]
     },
     {
-      "entityID": 4,
-      "entityName": "waterbody",
+      "id": 5,
+      "name": "waterbody",
       "entityType": "STRONG",
       "relatedStrongEntity": null,
-      "entityAttributes": [
+      "attributes": [
         {
-          "attributeId": 18,
+          "attributeId": 20,
           "attributeName": "name",
           "mandatory": true,
           "optional": false,
@@ -69,8 +69,8 @@
   ],
   "relationshipList": [
     {
-      "relationshipId": 8,
-      "relationshipName": "island_waterbody",
+      "id": 9,
+      "name": "island_waterbody",
       "isWeakRelationship": false,
       "entityA": "island",
       "entityACardinality": "One",
@@ -79,22 +79,24 @@
       "overallCardinality": "OneToMany",
       "relationships": [
         {
-          "edgeId": 15,
-          "relationshipId": 8,
-          "entityId": 3,
+          "edgeId": 17,
+          "relationshipId": 9,
+          "entityId": 4,
           "entityName": "island",
           "cardinality": "OneToOne",
           "isKey": false
         },
         {
-          "edgeId": 16,
-          "relationshipId": 8,
-          "entityId": 4,
+          "edgeId": 18,
+          "relationshipId": 9,
+          "entityId": 5,
           "entityName": "waterbody",
           "cardinality": "OneToMany",
           "isKey": false
         }
-      ]
+      ],
+      "attributes": [],
+      "foreignKeys": []
     }
   ]
 }
