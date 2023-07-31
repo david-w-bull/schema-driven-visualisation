@@ -32,18 +32,20 @@ const AttributeList = ({ attribute, onChange }: AttributeProps) => {
 
 interface EntityProps {
   item: EntityOrRelationship;
-  onAttributeChange: (attributeIndex: number, checked: boolean) => void;
+  onAttributeChange: (attributeId: number, checked: boolean) => void;
 }
 
 const EntityComponent = ({ item, onAttributeChange }: EntityProps) => {
   return (
     <div>
       <h2>{item.name}</h2>
-      {item.attributes.map((attribute, attributeIndex) => (
+      {item.attributes.map((attribute) => (
         <AttributeList
           key={attribute.attributeId}
           attribute={attribute}
-          onChange={(checked) => onAttributeChange(attributeIndex, checked)}
+          onChange={(checked) =>
+            onAttributeChange(attribute.attributeId, checked)
+          }
         />
       ))}
     </div>
@@ -65,28 +67,40 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   const handleAttributeChange = (
     isEntity: boolean,
     itemId: number,
-    attributeIndex: number,
+    attributeId: number,
     checked: boolean
   ) => {
     let newData = { ...data };
+
+    const updateAttributeCheckedStatus = (attributes: Attribute[]) => {
+      const attributeIndex = attributes.findIndex(
+        (attribute) => attribute.attributeId === attributeId
+      );
+      if (attributeIndex !== -1) {
+        attributes[attributeIndex].isChecked = checked;
+      }
+    };
+
     if (isEntity) {
       const entityIndex = newData.entityList.findIndex(
         (entity) => entity.id === itemId
       );
       if (entityIndex !== -1) {
-        newData.entityList[entityIndex].attributes[attributeIndex].isChecked =
-          checked;
+        updateAttributeCheckedStatus(
+          newData.entityList[entityIndex].attributes
+        );
       }
     } else {
       const relationshipIndex = newData.relationshipList.findIndex(
         (relationship) => relationship.id === itemId
       );
       if (relationshipIndex !== -1) {
-        newData.relationshipList[relationshipIndex].attributes[
-          attributeIndex
-        ].isChecked = checked;
+        updateAttributeCheckedStatus(
+          newData.relationshipList[relationshipIndex].attributes
+        );
       }
     }
+
     setData(newData);
   };
 
@@ -182,8 +196,8 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
         <EntityComponent
           key={entity.id}
           item={entity}
-          onAttributeChange={(attributeIndex, checked) =>
-            handleAttributeChange(true, entity.id, attributeIndex, checked)
+          onAttributeChange={(attributeId, checked) =>
+            handleAttributeChange(true, entity.id, attributeId, checked)
           }
         />
       ))}
@@ -196,11 +210,11 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
           <EntityComponent
             key={relationship.id}
             item={relationship}
-            onAttributeChange={(attributeIndex, checked) =>
+            onAttributeChange={(attributeId, checked) =>
               handleAttributeChange(
                 false,
                 relationship.id,
-                attributeIndex,
+                attributeId,
                 checked
               )
             }
