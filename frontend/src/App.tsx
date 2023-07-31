@@ -7,7 +7,6 @@ import ListGroup from "./components/ListGroup";
 import { Data, Entity, Attribute } from "./types";
 import { BLANKSPEC, BLANKSCHEMA } from "./constants";
 import EntityList from "./components/EntityList";
-import EntityListTest from "./components/EntityListTest";
 import DatabaseSelector from "./components/DatabaseSelector";
 import ERDiagram from "./components/ERDiagram";
 
@@ -78,10 +77,10 @@ function App() {
   return (
     <>
       <DatabaseSelector onSelectDatabase={handleSelectDatabase} />
-      <EntityListTest
+      <EntityList
         data={schemaInfo}
         onSelectedData={handleSelectedData}
-      ></EntityListTest>
+      ></EntityList>
       {/* <ERDiagram nodes={nodes} links={links} /> */}
       {/* <ListGroup
         items={items}
