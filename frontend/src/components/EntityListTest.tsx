@@ -64,17 +64,28 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
 
   const handleAttributeChange = (
     isEntity: boolean,
-    itemIndex: number,
+    itemId: number,
     attributeIndex: number,
     checked: boolean
   ) => {
     let newData = { ...data };
     if (isEntity) {
-      newData.entityList[itemIndex].attributes[attributeIndex].isChecked =
-        checked;
+      const entityIndex = newData.entityList.findIndex(
+        (entity) => entity.id === itemId
+      );
+      if (entityIndex !== -1) {
+        newData.entityList[entityIndex].attributes[attributeIndex].isChecked =
+          checked;
+      }
     } else {
-      newData.relationshipList[itemIndex].attributes[attributeIndex].isChecked =
-        checked;
+      const relationshipIndex = newData.relationshipList.findIndex(
+        (relationship) => relationship.id === itemId
+      );
+      if (relationshipIndex !== -1) {
+        newData.relationshipList[relationshipIndex].attributes[
+          attributeIndex
+        ].isChecked = checked;
+      }
     }
     setData(newData);
   };
@@ -167,29 +178,34 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
 
   return (
     <div>
-      {data.entityList.map((entity, entityIndex) => (
+      {data.entityList.map((entity) => (
         <EntityComponent
           key={entity.id}
           item={entity}
           onAttributeChange={(attributeIndex, checked) =>
-            handleAttributeChange(true, entityIndex, attributeIndex, checked)
+            handleAttributeChange(true, entity.id, attributeIndex, checked)
           }
         />
       ))}
-      {data.relationshipList.map((relationship, relationshipIndex) => (
-        <EntityComponent
-          key={relationship.id}
-          item={relationship}
-          onAttributeChange={(attributeIndex, checked) =>
-            handleAttributeChange(
-              false,
-              relationshipIndex,
-              attributeIndex,
-              checked
-            )
-          }
-        />
-      ))}
+      {data.relationshipList
+        .filter(
+          (relationship) =>
+            relationship.attributes && relationship.attributes.length > 0
+        )
+        .map((relationship) => (
+          <EntityComponent
+            key={relationship.id}
+            item={relationship}
+            onAttributeChange={(attributeIndex, checked) =>
+              handleAttributeChange(
+                false,
+                relationship.id,
+                attributeIndex,
+                checked
+              )
+            }
+          />
+        ))}
       <button onClick={handleSubmit}>Submit</button>
     </div>
   );
