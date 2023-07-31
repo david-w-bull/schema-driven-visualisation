@@ -55,7 +55,7 @@ public class VizSchemaMapper {
             if(!reflexive) {
                 return generateBasicEntitySchema();
             } else {
-                return generateManyToManySchema(); // consider adding a parameter for reflexive m:m
+                return generateManyToManySchema(reflexive); // consider adding a parameter for reflexive m:m
             }
 
         } else if(entities.size() == 2 && relationships.size() == 1) {
@@ -65,7 +65,7 @@ public class VizSchemaMapper {
                     || relationships.get(0).getOverallCardinality().equals("ManyToOne")) {
                     return generateOneToManySchema();
                 } else if (relationships.get(0).getOverallCardinality().equals("ManyToMany")) {
-                    return generateManyToManySchema();
+                    return generateManyToManySchema(reflexive);
                 }
         }
 
@@ -79,9 +79,38 @@ public class VizSchemaMapper {
         return vizSchema;
     }
 
-    private VizSchema generateManyToManySchema() {
+    private VizSchema generateManyToManySchema(Boolean reflexive) {
         VizSchema vizSchema = new VizSchema(VizSchemaType.MANYTOMANY);
-        System.out.println("Many to many!");
+        DatabaseRelationship relationship = relationships.get(0);
+        if(!reflexive) {
+
+            // The attribution to A and B, and therefore also to K1 and K2 is arbitrary
+            String entityAName = relationship.getEntityA();
+            String entityBName = relationship.getEntityB();
+
+            DatabaseEntity entityA = getEntityByName(entityAName);
+            DatabaseEntity entityB = getEntityByName(entityBName);
+
+            // According there should only be one attribute selected, but the loop handles edge cases
+            for(DatabaseAttribute attribute: entityA.getAttributes()) {
+                if(attribute.getIsPrimary()) {
+                    vizSchema.setKeyOne(attribute);
+                }
+            }
+
+            for(DatabaseAttribute attribute: entityB.getAttributes()) {
+                if(attribute.getIsPrimary()) {
+                    vizSchema.setKeyTwo(attribute);
+                }
+            }
+
+            for(DatabaseAttribute attribute: relationships.get(0).getAttributes()) {
+                if(isScalarDataType(attribute.getDataType())) {
+                    vizSchema.setScalarOne(attribute);
+                }
+            }
+        }
+        this.sqlQuery = generateSql(VizSchemaType.MANYTOMANY);
         return vizSchema;
     }
 
@@ -120,7 +149,7 @@ public class VizSchemaMapper {
                 vizSchema.setKeyOne(attr);
             }
         }
-        this.sqlQuery = generateSql();
+        this.sqlQuery = generateSql(VizSchemaType.ONETOMANY);
         this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
 
         return vizSchema;
@@ -136,7 +165,7 @@ public class VizSchemaMapper {
                 vizSchema.setScalarOne(attr);
             }
         }
-        this.sqlQuery = generateSql();
+        this.sqlQuery = generateSql(VizSchemaType.BASIC);
         this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
         return vizSchema;
     }
@@ -163,8 +192,8 @@ public class VizSchemaMapper {
         return jsonNode;
 }
 
-    public String generateSql() {
-        if(entities.size() == 1) {
+    public String generateSql(VizSchemaType type) {
+        if(type == VizSchemaType.BASIC) {
             DatabaseEntity entity = entities.get(0);
             List<DatabaseAttribute> attributes = entity.getAttributes();
             String attributeList = attributes.stream()
@@ -178,7 +207,7 @@ public class VizSchemaMapper {
                     ; // Limit needs to be removed once a better solution can be found
         }
 
-        else if(entities.size() == 2) {
+        else if(type == VizSchemaType.ONETOMANY) {
             List<String> selectAttributes = new ArrayList<>();
             String select = "";
             String from = "";
@@ -240,8 +269,78 @@ public class VizSchemaMapper {
                     + " LIMIT 50";
         }
 
+        else if(type == VizSchemaType.MANYTOMANY) {
+            List<String> selectAttributes = new ArrayList<>();
+            String select = "";
+            String from = relationships.get(0).getName();
+            String join = "";
+            String on = "";
+
+            // Need to update to account for joins to two tables
+            for(DatabaseRelationship relationship: relationships) {
+                if(relationship.getForeignKeys() != null && relationship.getForeignKeys().size() > 0) {
+
+                    // Based on assumption that only two-entity relationships are in scope
+                    ForeignKey foreignKeyInfo = relationship.getForeignKeys().get(0);
+
+                    List<String> fkColumnNames = foreignKeyInfo.getFkColumnNames();
+                    List<String> pkColumnNames = foreignKeyInfo.getPkColumnNames();
+
+                    if(fkColumnNames.size() != pkColumnNames.size()){
+                        throw new IllegalArgumentException("Arrays are not the same size");
+                    }
+
+                    List<String> fkJoinFieldsAliased = fkColumnNames.stream()
+                            .map(field -> foreignKeyInfo.getFkTableName() + "." + field)
+                            .collect(Collectors.toList());
+
+
+                    List<String> pkJoinFieldsAliased = pkColumnNames.stream()
+                            .map(field -> foreignKeyInfo.getPkTableName() + "." + field)
+                            .collect(Collectors.toList());
+
+
+                    on = IntStream.range(0, fkColumnNames.size())
+                            .mapToObj(i -> fkJoinFieldsAliased.get(i) + " = " + pkJoinFieldsAliased.get(i))
+                            .collect(Collectors.joining(" AND "));
+                }
+            }
+
+            // Needs to be done this way in case there are two relationships between two entities with fks on both sides
+            for(DatabaseEntity entity: entities) {
+                String entityName = entity.getName();
+                for(DatabaseAttribute attribute: entity.getAttributes()) {
+                    String attributeName = attribute.getAttributeName();
+                    String aliasedName = entityName + "." + attributeName
+                            + " AS " + entityName + "_" + attributeName;
+                    selectAttributes.add(aliasedName);
+                }
+            }
+
+            for(DatabaseRelationship relationship: relationships) {
+                String relationshipName = relationship.getName();
+                for(DatabaseAttribute attribute: relationship.getAttributes()) {
+                    String attributeName = attribute.getAttributeName();
+                    String aliasedName = relationshipName + "." + attributeName
+                            + " AS " + relationshipName + "_" + attributeName;
+                    selectAttributes.add(aliasedName);
+                }
+            }
+
+            select = selectAttributes.stream()
+                    .collect(Collectors.joining(", "));
+
+
+            return "SELECT " + select
+                    + " FROM " + from
+                    + " JOIN " + join
+                    + " ON " + on
+                    + " LIMIT 50";
+        }
+
         return "Invalid SQL";
     }
+
 
     private Boolean isScalarDataType(SqlDataType dataType) {
         switch(dataType) {
