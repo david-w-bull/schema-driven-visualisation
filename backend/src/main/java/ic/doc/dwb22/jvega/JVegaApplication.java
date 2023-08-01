@@ -159,16 +159,17 @@ public class JVegaApplication {
 //
 //		List<String> fieldAliases = Arrays.asList("name", "size", "parent");
 //
-//		VegaDataset dataset = new VegaDataset.BuildDataset()
-//				.withName("rawData")
-//				.withValues(mapper.getSqlData())
-//				.withTransform(ProjectTransform.simpleProject(fieldsToRename, fieldAliases))
-//				.withTransform(FormulaTransform.simpleFormula("parseInt(datum.size)", "size"))
-//				.build();
-//
-//		testSpec.addDataset(dataset, true);
-//
-//		System.out.println(testSpec.toJson().toPrettyString());
+		VegaDataset dataset = new VegaDataset.BuildDataset()
+				.withName("rawData")
+				.withValues(mapper.getSqlData())
+				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1Alias(), "stk1"))
+				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK2Alias(), "stk2"))
+				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1Alias(), "size"))
+				.build();
+
+		testSpec.addDataset(dataset, true);
+
+		System.out.println(testSpec.toJson().toPrettyString());
 //
 //		VizSpecPayload test = new VizSpecPayload(testSpec);
 

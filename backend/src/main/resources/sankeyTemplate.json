@@ -395,11 +395,11 @@
       "value": {},
       "on": [
         {
-          "events": ["@groupMark:mouseover"],
+          "events": "@groupMark:mouseover",
           "update": "{stk1:datum.stack=='stk1' && datum.grpId, stk2:datum.stack=='stk2' && datum.grpId}"
         },
         {
-          "events": ["mouseout"],
+          "events": "mouseout",
           "update": "{}"
         }
       ]
@@ -409,7 +409,7 @@
       "value": false,
       "on": [
         {
-          "events": ["@groupMark:click!"],
+          "events": "@groupMark:click!",
           "update": "{stack:datum.stack, stk1:datum.stack=='stk1' && datum.grpId, stk2:datum.stack=='stk2' && datum.grpId}"
         },
         {
