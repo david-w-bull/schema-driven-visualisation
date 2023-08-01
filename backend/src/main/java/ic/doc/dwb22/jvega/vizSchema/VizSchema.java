@@ -11,8 +11,11 @@ import java.util.List;
 public class VizSchema {
     private VizSchemaType type;
     private DatabaseAttribute k1Field;
+    private String k1Alias;
     private DatabaseAttribute k2Field;
+    private String k2Alias;
     private DatabaseAttribute a1Field;
+    private String a1Alias;
 
     public VizSchema(VizSchemaType type) {
         this.type = type;
@@ -20,11 +23,23 @@ public class VizSchema {
     public void setKeyOne(DatabaseAttribute k1Field) {
         this.k1Field = k1Field;
     }
+
+    public void setKeyOneAlias(String k1Alias) {
+        this.k1Alias = k1Alias;
+    }
     public void setKeyTwo(DatabaseAttribute k2Field) {
         this.k2Field = k2Field;
     }
+
+    public void setKeyTwoAlias(String k2Alias) {
+        this.k2Alias = k2Alias;
+    }
     public void setScalarOne(DatabaseAttribute a1Field) {
         this.a1Field = a1Field;
+    }
+
+    public void setScalarOneAlias(String a1Alias) {
+        this.a1Alias = a1Alias;
     }
     public String getK1FieldName() { return k1Field.getAttributeName(); }
     public String getK2FieldName() { return k2Field.getAttributeName(); }
