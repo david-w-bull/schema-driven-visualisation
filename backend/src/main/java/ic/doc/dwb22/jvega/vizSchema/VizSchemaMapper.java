@@ -189,7 +189,7 @@ public class VizSchemaMapper {
         }
 
         this.sqlQuery = generateSql(VizSchemaType.MANYTOMANY, reflexive);
-        //this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
+        this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
         return vizSchema;
     }
 

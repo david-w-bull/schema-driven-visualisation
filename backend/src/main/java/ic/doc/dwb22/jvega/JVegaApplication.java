@@ -114,14 +114,14 @@ public class JVegaApplication {
 
 		System.out.println(mapper.getSqlQuery());
 
-		//System.out.println(mapper.getSqlData().toPrettyString());
+		System.out.println(mapper.getSqlData().toPrettyString());
 
-		System.out.println(vizSchema.getK1FieldName());
-		System.out.println(vizSchema.getK1Alias());
-		System.out.println(vizSchema.getK2FieldName());
-		System.out.println(vizSchema.getK2Alias());
-		System.out.println(vizSchema.getA1FieldName());
-		System.out.println(vizSchema.getA1Alias());
+//		System.out.println(vizSchema.getK1FieldName());
+//		System.out.println(vizSchema.getK1Alias());
+//		System.out.println(vizSchema.getK2FieldName());
+//		System.out.println(vizSchema.getK2Alias());
+//		System.out.println(vizSchema.getA1FieldName());
+//		System.out.println(vizSchema.getA1Alias());
 	}
 
 
