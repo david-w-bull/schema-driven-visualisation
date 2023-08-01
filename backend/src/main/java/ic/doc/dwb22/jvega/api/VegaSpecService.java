@@ -123,6 +123,21 @@ public class VegaSpecService {
 
                 specs.add(treemapSpec);
             }
+            else if(chartType == "Sankey Diagram") {
+                VegaSpec sankeySpec = specTemplatesByChartType(true, Arrays.asList("Sankey Diagram")).get(0).getSpec().get(0);
+
+                VegaDataset dataset = new VegaDataset.BuildDataset()
+                        .withName("rawData")
+                        .withValues(mapper.getSqlData())
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1Alias(), "stk1"))
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK2Alias(), "stk2"))
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1Alias(), "size"))
+                        .build();
+
+                sankeySpec.addDataset(dataset, true);
+
+                specs.add(sankeySpec);
+            }
 
         }
         VizSpecPayload payload = new VizSpecPayload(specs);

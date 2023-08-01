@@ -176,7 +176,7 @@ public class VizSchemaMapper {
                 if(reflexive) {
                     vizSchema.setKeyTwoAlias(entityBAlias + "_" + attribute.getAttributeName());
                 } else {
-                    vizSchema.setKeyTwoAlias(entityAName + "_" + attribute.getAttributeName());
+                    vizSchema.setKeyTwoAlias(entityBName + "_" + attribute.getAttributeName());
                 }
             }
         }

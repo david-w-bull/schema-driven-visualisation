@@ -62,6 +62,10 @@ public class VizSchema {
                     matchedChartTypes.add("Treemap");
                 }
             }
+        } else if(type == VizSchemaType.MANYTOMANY) {
+            if(k1Field != null && k2Field != null && a1Field != null) {
+                matchedChartTypes.add("Sankey Diagram");
+            }
         }
         return matchedChartTypes;
     }

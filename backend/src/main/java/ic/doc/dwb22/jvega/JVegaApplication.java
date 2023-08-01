@@ -71,11 +71,11 @@ public class JVegaApplication {
 //
 //		System.out.println(schema.toJson().toPrettyString());
 
-//		testSchemaMapping("manyToManySchemaReflexive.json");
+//		testSchemaMapping("manyToManySchema.json");
 
-		testTemplateFile( "sankeyTemplate.json", "manyToManySchemaReflexive.json");
+//		testTemplateFile( "sankeyTemplate.json", "manyToManySchema.json");
 
-//	SpringApplication.run(JVegaApplication.class, args);
+	SpringApplication.run(JVegaApplication.class, args);
 
 	}
 
@@ -114,14 +114,14 @@ public class JVegaApplication {
 
 		System.out.println(mapper.getSqlQuery());
 
-		System.out.println(mapper.getSqlData().toPrettyString());
+		//System.out.println(mapper.getSqlData().toPrettyString());
 
-//		System.out.println(vizSchema.getK1FieldName());
-//		System.out.println(vizSchema.getK1Alias());
-//		System.out.println(vizSchema.getK2FieldName());
-//		System.out.println(vizSchema.getK2Alias());
-//		System.out.println(vizSchema.getA1FieldName());
-//		System.out.println(vizSchema.getA1Alias());
+		System.out.println(vizSchema.getK1FieldName());
+		System.out.println(vizSchema.getK1Alias());
+		System.out.println(vizSchema.getK2FieldName());
+		System.out.println(vizSchema.getK2Alias());
+		System.out.println(vizSchema.getA1FieldName());
+		System.out.println(vizSchema.getA1Alias());
 	}
 
 
@@ -152,13 +152,6 @@ public class JVegaApplication {
 
 		System.out.println(testSpec.toJson().toPrettyString());
 
-//		List<String> fieldsToRename = Arrays.asList(
-//				vizSchema.getK2Field().getParentEntityName() + "_" + vizSchema.getK2FieldName(),
-//				vizSchema.getA1Field().getParentEntityName() + "_" + vizSchema.getA1FieldName(),
-//				vizSchema.getK1Field().getParentEntityName() + "_" + vizSchema.getK1FieldName());
-//
-//		List<String> fieldAliases = Arrays.asList("name", "size", "parent");
-//
 		VegaDataset dataset = new VegaDataset.BuildDataset()
 				.withName("rawData")
 				.withValues(mapper.getSqlData())
