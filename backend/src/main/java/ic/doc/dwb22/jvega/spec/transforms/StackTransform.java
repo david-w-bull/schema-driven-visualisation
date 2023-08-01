@@ -1,7 +1,6 @@
 package ic.doc.dwb22.jvega.spec.transforms;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import ic.doc.dwb22.jvega.utils.GenericMap;
 import ic.doc.dwb22.jvega.spec.Transform;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +18,7 @@ import java.util.Map;
 public class StackTransform implements Transform {
     private String type = "stack";
     private Object field;           // May either be a string or a Vega 'field' object
-    private List<Object> groupBy;   // May either be a list of strings or Vega 'field' objects
+    private List<Object> groupby;   // May either be a list of strings or Vega 'field' objects
     private Map<String, Object> sort;            // Requires a Vega 'Compare' object. Not yet modelled. GenericMap class can be used instead
     private String offset;
     private List<String> as;

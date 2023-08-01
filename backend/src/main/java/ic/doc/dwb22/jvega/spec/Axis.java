@@ -20,6 +20,7 @@ public class Axis {
     private Boolean ticks;
     private Integer tickCount;
     private Integer tickSize;
+    private Boolean labels;
     private Integer labelPadding;
     private Integer zindex;
 
@@ -43,8 +44,10 @@ public class Axis {
         private Boolean ticks;
         private Integer tickCount;
         private Integer tickSize;
+        private Boolean labels;
         private Integer labelPadding;
         private Integer zindex;
+        private Encoding encode;
 //        private Map<String, Object> additionalProperties;
 
         public BuildAxis setScale(String scale) {
@@ -92,6 +95,10 @@ public class Axis {
             return this;
         }
 
+        public BuildAxis setLabels(Boolean labels) {
+            this.labels = labels;
+            return this;
+        }
         public BuildAxis setLabelPadding(Integer labelPadding) {
             this.labelPadding = labelPadding;
             return this;
@@ -121,6 +128,7 @@ public class Axis {
                     ticks,
                     tickCount,
                     tickSize,
+                    labels,
                     labelPadding,
                     zindex);
         }
