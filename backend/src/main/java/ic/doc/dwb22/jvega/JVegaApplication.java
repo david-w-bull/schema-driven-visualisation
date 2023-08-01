@@ -1,6 +1,7 @@
 package ic.doc.dwb22.jvega;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ic.doc.dwb22.jvega.schema.DatabaseProfiler;
@@ -16,6 +17,7 @@ import ic.doc.dwb22.jvega.spec.transforms.CollectTransform;
 import ic.doc.dwb22.jvega.spec.transforms.FormulaTransform;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
 import ic.doc.dwb22.jvega.spec.transforms.ProjectTransform;
+import ic.doc.dwb22.jvega.utils.ChordDataTransform;
 import ic.doc.dwb22.jvega.utils.GenericMap;
 import ic.doc.dwb22.jvega.utils.JsonData;
 import ic.doc.dwb22.jvega.utils.VegaSpecTemplateCreator;
@@ -71,11 +73,62 @@ public class JVegaApplication {
 //
 //		System.out.println(schema.toJson().toPrettyString());
 
-//		testSchemaMapping("manyToManySchema.json");
+//		testSchemaMapping("manyToManySchemaReflexive.json");
 
-//		testTemplateFile( "sankeyTemplate.json", "manyToManySchema.json");
+//testTemplateFile( "sankeyTemplate.json", "manyToManySchema.json");
 
-	SpringApplication.run(JVegaApplication.class, args);
+//		ChordDataTransform chordTest = new ChordDataTransform();
+//
+//		chordTest.generateChordMatrixFromJsonResultSet();
+
+
+		String smTestQuery = """
+				SELECT country2.code AS country2_code, country1.code AS country1_code, borders.length AS borders_length
+				FROM borders
+				JOIN country AS country2 ON borders.country2 = country2.code
+				JOIN country AS country1 ON borders.country1 = country1.code
+				    
+				JOIN encompasses ON (country2.code = encompasses.country OR country1.code = encompasses.country)
+				    
+				WHERE encompasses.continent = 'South America'
+				""";
+
+		String databaseType = "postgresql";
+		String host = "localhost";
+		String port = "5432";
+		String databaseName = System.getenv("POSTGRES_DATABASE");
+		// String schemaName = "mondial_fragment";
+
+		String connectionString = "jdbc:"
+				+ databaseType
+				+ "://"
+				+ host
+				+ ":"
+				+ port
+				+ "/"
+				+ databaseName;;
+		String user = System.getenv("POSTGRES_USER");
+		String pw = System.getenv("POSTGRES_PASSWORD");
+
+		JsonNode testData = JsonData.fetchSqlData(connectionString, user, pw, smTestQuery);
+
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonString;
+		List<Map<String, Object>> dataMap;
+		try {
+			jsonString = mapper.writeValueAsString(testData);
+			dataMap = mapper.readValue(jsonString, new TypeReference<>() {});
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+
+	System.out.println(dataMap.toString());
+
+	ChordDataTransform cdt = new ChordDataTransform();
+
+	cdt.generateChordMatrixFromJsonResultSet(dataMap);
+
+//	SpringApplication.run(JVegaApplication.class, args);
 
 	}
 
@@ -114,7 +167,7 @@ public class JVegaApplication {
 
 		System.out.println(mapper.getSqlQuery());
 
-		//System.out.println(mapper.getSqlData().toPrettyString());
+		System.out.println(mapper.getSqlData().toPrettyString());
 
 		System.out.println(vizSchema.getK1FieldName());
 		System.out.println(vizSchema.getK1Alias());

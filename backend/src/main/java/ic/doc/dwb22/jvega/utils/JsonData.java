@@ -26,6 +26,27 @@ public class JsonData {
         }
     }
 
+    public static JsonNode fetchSqlData(String connectionString, String username, String password, String sqlQuery) {
+
+        JsonNode jsonNode = null;
+
+        try (Connection conn = DriverManager.getConnection(connectionString, username, password);
+             Statement stmt = conn.createStatement()) {
+            String query = sqlQuery;
+            try (ResultSet resultSet = stmt.executeQuery(query)) {
+                try {
+                    jsonNode = JsonData.convertResultSetToJson(resultSet);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in connecting to the database");
+            e.printStackTrace();
+        }
+        return jsonNode;
+    }
+
     public static JsonNode convertResultSetToJson(ResultSet resultSet) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode arrayNode = mapper.createArrayNode();

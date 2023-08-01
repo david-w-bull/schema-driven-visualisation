@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./App.css";
 import Message from "./components/Message";
@@ -9,9 +9,61 @@ import { BLANKSPEC, BLANKSCHEMA } from "./constants";
 import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
 import ERDiagram from "./components/ERDiagram";
+import * as d3 from "d3";
 
 function App() {
   let items = ["Test Viz 1", "Test Viz 2", "Test Viz 3"];
+
+  const ref = useRef(null);
+
+  const svg = d3.select(ref.current);
+
+  let innerRadius = 200;
+
+  // let matrix = [
+  //   [11975, 5871, 8916, 2868],
+  //   [1951, 10048, 2060, 6171],
+  //   [8010, 16145, 8090, 8045],
+  //   [1013, 990, 940, 6907],
+  // ];
+
+  let matrix = [
+    [0, 172, 0, 0],
+    [172, 0, 282, 151],
+    [0, 282, 0, 0],
+    [0, 151, 0, 0],
+  ];
+
+  const chordGenerator = d3.chord().padAngle(0.05).sortSubgroups(d3.descending);
+  const chords = chordGenerator(matrix);
+
+  const ribbon = d3.ribbon().radius(innerRadius);
+
+  console.log(JSON.stringify(chords));
+  console.log(JSON.stringify(chords.groups));
+
+  const ribbons = chords.map((chord) => {
+    return {
+      source: {
+        startAngle: chord.source.startAngle,
+        endAngle: chord.source.endAngle,
+        radius: innerRadius,
+      },
+      target: {
+        startAngle: chord.target.startAngle,
+        endAngle: chord.target.endAngle,
+        radius: innerRadius,
+      },
+    };
+  });
+
+  console.log(
+    JSON.stringify(
+      ribbons.map((r) => {
+        return { path: ribbon(r) };
+      })
+    )
+  );
 
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
   const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
