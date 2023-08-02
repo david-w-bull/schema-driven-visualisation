@@ -82,53 +82,53 @@ public class JVegaApplication {
 //		chordTest.generateChordMatrixFromJsonResultSet();
 
 
-		String smTestQuery = """
-				SELECT country2.code AS country2_code, country1.code AS country1_code, borders.length AS borders_length
-				FROM borders
-				JOIN country AS country2 ON borders.country2 = country2.code
-				JOIN country AS country1 ON borders.country1 = country1.code
-				    
-				JOIN encompasses ON (country2.code = encompasses.country OR country1.code = encompasses.country)
-				    
-				WHERE encompasses.continent = 'South America'
-				""";
+//		String smTestQuery = """
+//				SELECT country2.code AS country2_code, country1.code AS country1_code, borders.length AS borders_length
+//				FROM borders
+//				JOIN country AS country2 ON borders.country2 = country2.code
+//				JOIN country AS country1 ON borders.country1 = country1.code
+//
+//				JOIN encompasses ON (country2.code = encompasses.country OR country1.code = encompasses.country)
+//
+//				WHERE encompasses.continent = 'South America'
+//				""";
+//
+//		String databaseType = "postgresql";
+//		String host = "localhost";
+//		String port = "5432";
+//		String databaseName = System.getenv("POSTGRES_DATABASE");
+//		// String schemaName = "mondial_fragment";
+//
+//		String connectionString = "jdbc:"
+//				+ databaseType
+//				+ "://"
+//				+ host
+//				+ ":"
+//				+ port
+//				+ "/"
+//				+ databaseName;;
+//		String user = System.getenv("POSTGRES_USER");
+//		String pw = System.getenv("POSTGRES_PASSWORD");
+//
+//		JsonNode testData = JsonData.fetchSqlData(connectionString, user, pw, smTestQuery);
+//
+//		ObjectMapper mapper = new ObjectMapper();
+//		String jsonString;
+//		List<Map<String, Object>> dataMap;
+//		try {
+//			jsonString = mapper.writeValueAsString(testData);
+//			dataMap = mapper.readValue(jsonString, new TypeReference<>() {});
+//		} catch (JsonProcessingException e) {
+//			throw new RuntimeException(e);
+//		}
+//
+//	System.out.println(dataMap.toString());
+//
+//	ChordDataTransform cdt = new ChordDataTransform();
+//
+//	cdt.generateChordMatrixFromJsonResultSet(dataMap);
 
-		String databaseType = "postgresql";
-		String host = "localhost";
-		String port = "5432";
-		String databaseName = System.getenv("POSTGRES_DATABASE");
-		// String schemaName = "mondial_fragment";
-
-		String connectionString = "jdbc:"
-				+ databaseType
-				+ "://"
-				+ host
-				+ ":"
-				+ port
-				+ "/"
-				+ databaseName;;
-		String user = System.getenv("POSTGRES_USER");
-		String pw = System.getenv("POSTGRES_PASSWORD");
-
-		JsonNode testData = JsonData.fetchSqlData(connectionString, user, pw, smTestQuery);
-
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonString;
-		List<Map<String, Object>> dataMap;
-		try {
-			jsonString = mapper.writeValueAsString(testData);
-			dataMap = mapper.readValue(jsonString, new TypeReference<>() {});
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
-
-	System.out.println(dataMap.toString());
-
-	ChordDataTransform cdt = new ChordDataTransform();
-
-	cdt.generateChordMatrixFromJsonResultSet(dataMap);
-
-//	SpringApplication.run(JVegaApplication.class, args);
+	SpringApplication.run(JVegaApplication.class, args);
 
 	}
 

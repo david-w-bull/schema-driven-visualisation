@@ -4,6 +4,9 @@ import java.util.*;
 
 public class ChordDataTransform {
 
+    private double[][] chordMatrix;
+    private List<String> labels;
+
     public void generateChordMatrixFromJsonResultSet(List<Map<String, Object>> data) {
 
         // Create a set of unique country codes

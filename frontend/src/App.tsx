@@ -28,10 +28,10 @@ function App() {
   // ];
 
   let matrix = [
-    [0, 172, 0, 0],
-    [172, 0, 282, 151],
-    [0, 282, 0, 0],
-    [0, 151, 0, 0],
+    [0.0, 172.1, 0.0, 0.0],
+    [172.0, 0.0, 282.0, 151.0],
+    [0.0, 282.0, 0.0, 0.0],
+    [0.0, 151.0, 0.0, 0.0],
   ];
 
   const chordGenerator = d3.chord().padAngle(0.05).sortSubgroups(d3.descending);
@@ -93,6 +93,7 @@ function App() {
   const [selectedData, setSelectedData] = useState<Data | null>(null);
 
   const handleSelectedData = (data: Data) => {
+    setVegaSpec(BLANKSPEC);
     setSelectedData(data);
     const payload = { schema: JSON.stringify(data) };
     axios

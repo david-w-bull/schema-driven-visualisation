@@ -113,7 +113,8 @@
           "y": [{"field": "y0"}],
           "x2": [{"field": "x1"}],
           "y2": [{"field": "y1"}],
-          "fill": [{"value": "transparent"}]
+          "fill": [{"value": "transparent"}],
+          "tooltip": [{"signal": "{'Parent': datum.parent,'Child': datum.name, 'Value': datum.size}"}]
         },
         "hover": {
           "_type": "rect",
