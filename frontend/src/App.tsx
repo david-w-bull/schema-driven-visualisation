@@ -9,6 +9,7 @@ import { BLANKSPEC, BLANKSCHEMA } from "./constants";
 import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
 import ERDiagram from "./components/ERDiagram";
+import ChordDiagram from "./components/ChordDiagram";
 import * as d3 from "d3";
 
 function App() {
@@ -127,6 +128,15 @@ function App() {
     // Add more relationships as needed...
   ];
 
+  const chordData = {
+    nodes: [{ id: "A" }, { id: "B" }, { id: "C" }],
+    edges: [
+      { source: "A", target: "B", value: 10 },
+      { source: "A", target: "C", value: 15 },
+      { source: "B", target: "C", value: 8 },
+    ],
+  };
+
   return (
     <>
       <DatabaseSelector onSelectDatabase={handleSelectDatabase} />
@@ -146,6 +156,10 @@ function App() {
         </button>
       ))}
       <Vega spec={vegaSpec} actions={false} />
+      <div>
+        <h1>Chord Diagram Example</h1>
+        <ChordDiagram />
+      </div>
     </>
   );
 }
