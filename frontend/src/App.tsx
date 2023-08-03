@@ -16,62 +16,28 @@ import * as d3 from "d3";
 function App() {
   let items = ["Test Viz 1", "Test Viz 2", "Test Viz 3"];
 
-  const ref = useRef(null);
-
-  const svg = d3.select(ref.current);
-
-  let innerRadius = 200;
-
-  // let matrix = [
-  //   [11975, 5871, 8916, 2868],
-  //   [1951, 10048, 2060, 6171],
-  //   [8010, 16145, 8090, 8045],
-  //   [1013, 990, 940, 6907],
-  // ];
-
-  let matrix = [
-    [0.0, 172.1, 0.0, 0.0],
-    [172.0, 0.0, 282.0, 151.0],
-    [0.0, 282.0, 0.0, 0.0],
-    [0.0, 151.0, 0.0, 0.0],
+  const nodes = [
+    {
+      key: "Entity1",
+      properties: "id: number\nname: string",
+      type: "entity" as const,
+    },
+    {
+      key: "Relationship1",
+      properties: "entity1: number\nentity2: number",
+      type: "relationship" as const,
+    },
+    // Add more entities and relationships as needed...
   ];
-
-  const chordGenerator = d3.chord().padAngle(0.05).sortSubgroups(d3.descending);
-  const chords = chordGenerator(matrix);
-
-  const ribbon = d3.ribbon().radius(innerRadius);
-
-  // console.log(JSON.stringify(chords));
-  // console.log(JSON.stringify(chords.groups));
-
-  const ribbons = chords.map((chord) => {
-    return {
-      source: {
-        startAngle: chord.source.startAngle,
-        endAngle: chord.source.endAngle,
-        radius: innerRadius,
-      },
-      target: {
-        startAngle: chord.target.startAngle,
-        endAngle: chord.target.endAngle,
-        radius: innerRadius,
-      },
-    };
-  });
-
-  // console.log(
-  //   JSON.stringify(
-  //     ribbons.map((r) => {
-  //       return { path: ribbon(r) };
-  //     })
-  //   )
-  // );
+  const links = [
+    { id: "1", from: "Entity1", to: "Relationship1", text: "1 - n" },
+    // Add more relationships as needed...
+  ];
 
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
   const [vegaActionMenu, setVegaActionMenu] = useState(false);
   const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
   //const [chartType, setChartType] = useState<string>("");
-  const [specList, setSpecList] = useState<any[]>([]);
 
   const handleSelectItem = (item: string) => {
     const payload = { viz: item };
@@ -93,7 +59,19 @@ function App() {
       });
   };
 
+  const chordData = {
+    nodes: [{ id: "A" }, { id: "B" }, { id: "C" }],
+    edges: [
+      { source: "A", target: "B", value: 10 },
+      { source: "A", target: "C", value: 15 },
+      { source: "B", target: "C", value: 8 },
+    ],
+  };
+
   const [selectedData, setSelectedData] = useState<Data | null>(null);
+  const [chartTypes, setChartTypes] = useState<string[]>([]);
+  const [selectedChart, setSelectedChart] = useState<string | null>(null);
+  const [specList, setSpecList] = useState<any[]>([]);
 
   const handleSelectedData = (data: Data) => {
     setVegaSpec(BLANKSPEC);
@@ -114,40 +92,22 @@ function App() {
             }
           });
         });
-        //setChartType(response.data.chartType);
+        setChartTypes(response.data.vizSchema.chartTypes);
         setSpecList(response.data.specs);
       });
-    //.then((response) => setVegaSpec(response.data.spec[0]));
-    //.then((response) => console.log(JSON.stringify(response.data.spec)));
 
     console.log(JSON.stringify(data));
   };
 
-  const nodes = [
-    {
-      key: "Entity1",
-      properties: "id: number\nname: string",
-      type: "entity" as const,
-    },
-    {
-      key: "Relationship1",
-      properties: "entity1: number\nentity2: number",
-      type: "relationship" as const,
-    },
-    // Add more entities and relationships as needed...
-  ];
-  const links = [
-    { id: "1", from: "Entity1", to: "Relationship1", text: "1 - n" },
-    // Add more relationships as needed...
-  ];
-
-  const chordData = {
-    nodes: [{ id: "A" }, { id: "B" }, { id: "C" }],
-    edges: [
-      { source: "A", target: "B", value: 10 },
-      { source: "A", target: "C", value: 15 },
-      { source: "B", target: "C", value: 8 },
-    ],
+  const renderChartComponent = (chartType: string) => {
+    switch (chartType) {
+      case "Chord Diagram":
+        //return <ChordDiagram vizInfo={vizInfo} />;
+        return <ChordDiagram />;
+      // ... add more cases for other chart types ...
+      default:
+        return null;
+    }
   };
 
   return (
@@ -163,26 +123,32 @@ function App() {
         heading="Test Options"
         onSelectItem={handleSelectItem}
       />*/}
-      {specList.map((spec: any, index: number) => (
-        <button
-          key={index}
-          onClick={() => {
-            // First action
-            setVegaSpec(spec);
-
-            // Second action
-            setVegaActionMenu(true);
-          }}
-        >
-          {spec.description}
-        </button>
-      ))}
-      <Vega spec={vegaSpec} actions={vegaActionMenu} />
-      <div>
-        {/* <h1>Chord Diagram Example</h1> */}
-        {/* <ChordDiagram /> */}
-        {/* <TreeMap /> */}
-      </div>
+      {chartTypes?.map((chartType: string, index: number) => {
+        const matchingSpec = specList.find(
+          (spec: any) => spec.description === chartType
+        );
+        return (
+          <button
+            key={index}
+            onClick={() => {
+              if (matchingSpec) {
+                setVegaSpec(matchingSpec);
+                setVegaActionMenu(true);
+                setSelectedChart(null);
+              } else {
+                setSelectedChart(chartType);
+              }
+            }}
+          >
+            {chartType}
+          </button>
+        );
+      })}
+      {selectedChart ? (
+        renderChartComponent(selectedChart)
+      ) : (
+        <Vega spec={vegaSpec} actions={vegaActionMenu} />
+      )}
     </>
   );
 }
