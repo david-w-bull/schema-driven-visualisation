@@ -1,72 +1,66 @@
 package ic.doc.dwb22.jvega.vizSchema;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import ic.doc.dwb22.jvega.schema.DatabaseAttribute;
 import ic.doc.dwb22.jvega.schema.SqlDataType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
+@Setter
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@AllArgsConstructor
+@NoArgsConstructor
 public class VizSchema {
     private VizSchemaType type;
-    private DatabaseAttribute k1Field;
-    private String k1Alias;
-    private DatabaseAttribute k2Field;
-    private String k2Alias;
-    private DatabaseAttribute a1Field;
-    private String a1Alias;
+    private DatabaseAttribute keyOne;
+    private String keyOneAlias;
+    private DatabaseAttribute keyTwo;
+    private String keyTwoAlias;
+    private DatabaseAttribute scalarOne;
+    private String scalarOneAlias;
+    private Boolean reflexive = false;
+    private List<Map<String, Object>> dataset;
+    private String sqlQuery;
+    private List<String> chartTypes;
+
 
     public VizSchema(VizSchemaType type) {
         this.type = type;
     }
-    public void setKeyOne(DatabaseAttribute k1Field) {
-        this.k1Field = k1Field;
-    }
-
-    public void setKeyOneAlias(String k1Alias) {
-        this.k1Alias = k1Alias;
-    }
-    public void setKeyTwo(DatabaseAttribute k2Field) {
-        this.k2Field = k2Field;
-    }
-
-    public void setKeyTwoAlias(String k2Alias) {
-        this.k2Alias = k2Alias;
-    }
-    public void setScalarOne(DatabaseAttribute a1Field) {
-        this.a1Field = a1Field;
-    }
-
-    public void setScalarOneAlias(String a1Alias) {
-        this.a1Alias = a1Alias;
-    }
-    public String getK1FieldName() { return k1Field.getAttributeName(); }
-    public String getK2FieldName() { return k2Field.getAttributeName(); }
-    public String getA1FieldName() { return a1Field.getAttributeName(); }
+    public String getK1FieldName() { return keyOne == null ? null : keyOne.getAttributeName(); }
+    public String getK2FieldName() { return keyTwo == null ? null : keyTwo.getAttributeName(); }
+    public String getA1FieldName() { return scalarOne == null ? null : scalarOne.getAttributeName(); }
 
     public List<String> matchChartTypes() {
         List<String> matchedChartTypes = new ArrayList<>();
         if (type == VizSchemaType.BASIC) {
-            if (k1Field != null && a1Field != null) {
+            if (keyOne != null && scalarOne != null) {
                 matchedChartTypes.add("Bar Chart");             //consider updating to enum
             }
-            if(k1Field != null && a1Field != null && isLexical(k1Field.getDataType())) {
+            if(keyOne != null && scalarOne != null && isLexical(keyOne.getDataType())) {
                 matchedChartTypes.add("Word Cloud");
             }
         } else if(type == VizSchemaType.ONETOMANY) {
-            if(k1Field != null && k2Field != null) {
-                if (a1Field == null) {
+            if(keyOne != null && keyTwo != null) {
+                if (scalarOne == null) {
                     matchedChartTypes.add("Hierarchy Tree");
                 } else {
                     matchedChartTypes.add("Treemap");
                 }
             }
         } else if(type == VizSchemaType.MANYTOMANY) {
-            if(k1Field != null && k2Field != null && a1Field != null) {
+            if(keyOne != null && keyTwo != null && scalarOne != null) {
                 matchedChartTypes.add("Sankey Diagram");
             }
         }
+        this.chartTypes = matchedChartTypes;
         return matchedChartTypes;
     }
 

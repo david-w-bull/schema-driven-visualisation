@@ -77,7 +77,7 @@ public class VegaSpecService {
 
         for(String chartType: vizSchema.matchChartTypes()) {
             if(chartType == "Bar Chart") {
-                VegaSpec barSpec = specTemplatesByChartType(true, Arrays.asList("Bar Chart")).get(0).getSpec().get(0);
+                VegaSpec barSpec = specTemplatesByChartType(true, Arrays.asList("Bar Chart")).get(0).getSpecs().get(0);
 
                 VegaDataset dataset = new VegaDataset.BuildDataset()
                         .withName("rawData")
@@ -91,7 +91,7 @@ public class VegaSpecService {
                 specs.add(barSpec);
             }
             else if(chartType == "Word Cloud") {
-                VegaSpec wordCloudSpec = specTemplatesByChartType(true, Arrays.asList("Word Cloud")).get(0).getSpec().get(0);
+                VegaSpec wordCloudSpec = specTemplatesByChartType(true, Arrays.asList("Word Cloud")).get(0).getSpecs().get(0);
 
                 VegaDataset dataset = new VegaDataset.BuildDataset()
                         .withName("rawData")
@@ -105,12 +105,12 @@ public class VegaSpecService {
                 specs.add(wordCloudSpec);
             }
             else if(chartType == "Treemap") {
-                VegaSpec treemapSpec = specTemplatesByChartType(true, Arrays.asList("Treemap")).get(0).getSpec().get(0);
+                VegaSpec treemapSpec = specTemplatesByChartType(true, Arrays.asList("Treemap")).get(0).getSpecs().get(0);
 
                 List<String> fieldsToRename = Arrays.asList(
-                        vizSchema.getK2Field().getParentEntityName() + "_" + vizSchema.getK2FieldName(),
-                        vizSchema.getA1Field().getParentEntityName() + "_" + vizSchema.getA1FieldName(),
-                        vizSchema.getK1Field().getParentEntityName() + "_" + vizSchema.getK1FieldName());
+                        vizSchema.getKeyTwo().getParentEntityName() + "_" + vizSchema.getK2FieldName(),
+                        vizSchema.getScalarOne().getParentEntityName() + "_" + vizSchema.getA1FieldName(),
+                        vizSchema.getKeyOne().getParentEntityName() + "_" + vizSchema.getK1FieldName());
 
                 List<String> fieldAliases = Arrays.asList("name", "size", "parent");
 
@@ -127,15 +127,15 @@ public class VegaSpecService {
                 specs.add(treemapSpec);
             }
             else if(chartType == "Sankey Diagram") {
-                VegaSpec sankeySpec = specTemplatesByChartType(true, Arrays.asList("Sankey Diagram")).get(0).getSpec().get(0);
+                VegaSpec sankeySpec = specTemplatesByChartType(true, Arrays.asList("Sankey Diagram")).get(0).getSpecs().get(0);
 
                 VegaDataset dataset = new VegaDataset.BuildDataset()
                         .withName("rawData")
                         //.withValues(mapper.getSqlData())
                         .withValues(new ArrayList<>()) // Passing empty array to be filled client side
-                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1Alias(), "stk1"))
-                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK2Alias(), "stk2"))
-                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1Alias(), "size"))
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getKeyOneAlias(), "stk1"))
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getKeyTwoAlias(), "stk2"))
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getScalarOneAlias(), "size"))
                         .build();
 
                 sankeySpec.addDataset(dataset, true);
@@ -145,7 +145,7 @@ public class VegaSpecService {
 
         }
 
-        VizSpecPayload payload = new VizSpecPayload(specs, JsonData.jsonNodeToMap(mapper.getSqlData()));
+        VizSpecPayload payload = new VizSpecPayload(specs, vizSchema);
         String id = payload.getVizId();
         vegaSpecRepository.insert(payload);
         return vegaSpecRepository.findSpecByVizId(id);

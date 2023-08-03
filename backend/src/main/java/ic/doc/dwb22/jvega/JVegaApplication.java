@@ -1,10 +1,8 @@
 package ic.doc.dwb22.jvega;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ic.doc.dwb22.jvega.schema.DatabaseProfiler;
 import ic.doc.dwb22.jvega.schema.DatabaseSchema;
 import ic.doc.dwb22.jvega.schema.ForeignKey;
 import ic.doc.dwb22.jvega.spec.*;
@@ -13,17 +11,12 @@ import ic.doc.dwb22.jvega.spec.encodings.*;
 import ic.doc.dwb22.jvega.spec.scales.BandScale;
 import ic.doc.dwb22.jvega.spec.scales.LinearScale;
 import ic.doc.dwb22.jvega.spec.scales.OrdinalScale;
-import ic.doc.dwb22.jvega.spec.transforms.CollectTransform;
 import ic.doc.dwb22.jvega.spec.transforms.FormulaTransform;
 import ic.doc.dwb22.jvega.spec.transforms.PieTransform;
-import ic.doc.dwb22.jvega.spec.transforms.ProjectTransform;
-import ic.doc.dwb22.jvega.utils.ChordDataTransform;
 import ic.doc.dwb22.jvega.utils.GenericMap;
 import ic.doc.dwb22.jvega.utils.JsonData;
-import ic.doc.dwb22.jvega.utils.VegaSpecTemplateCreator;
 import ic.doc.dwb22.jvega.vizSchema.VizSchema;
 import ic.doc.dwb22.jvega.vizSchema.VizSchemaMapper;
-import io.github.MigadaTang.common.RDBMSType;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -170,11 +163,11 @@ public class JVegaApplication {
 		System.out.println(mapper.getSqlData().toPrettyString());
 
 		System.out.println(vizSchema.getK1FieldName());
-		System.out.println(vizSchema.getK1Alias());
+		System.out.println(vizSchema.getKeyOneAlias());
 		System.out.println(vizSchema.getK2FieldName());
-		System.out.println(vizSchema.getK2Alias());
+		System.out.println(vizSchema.getKeyTwoAlias());
 		System.out.println(vizSchema.getA1FieldName());
-		System.out.println(vizSchema.getA1Alias());
+		System.out.println(vizSchema.getScalarOneAlias());
 	}
 
 
@@ -208,9 +201,9 @@ public class JVegaApplication {
 		VegaDataset dataset = new VegaDataset.BuildDataset()
 				.withName("rawData")
 				.withValues(mapper.getSqlData())
-				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1Alias(), "stk1"))
-				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK2Alias(), "stk2"))
-				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1Alias(), "size"))
+				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getKeyOneAlias(), "stk1"))
+				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getKeyTwoAlias(), "stk2"))
+				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getScalarOneAlias(), "size"))
 				.build();
 
 		testSpec.addDataset(dataset, true);

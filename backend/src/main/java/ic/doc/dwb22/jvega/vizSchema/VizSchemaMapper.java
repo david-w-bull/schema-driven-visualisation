@@ -86,6 +86,8 @@ public class VizSchemaMapper {
         }
         this.sqlQuery = generateSql(VizSchemaType.BASIC, false);
         this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
+        vizSchema.setSqlQuery(sqlQuery);
+        vizSchema.setDataset(JsonData.jsonNodeToMap(sqlData));
         return vizSchema;
     }
 
@@ -133,11 +135,14 @@ public class VizSchemaMapper {
         this.sqlQuery = generateSql(VizSchemaType.ONETOMANY, false);
         this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
 
+        vizSchema.setSqlQuery(sqlQuery);
+        vizSchema.setDataset(JsonData.jsonNodeToMap(sqlData));
         return vizSchema;
     }
 
     private VizSchema generateManyToManySchema(Boolean reflexive) {
         VizSchema vizSchema = new VizSchema(VizSchemaType.MANYTOMANY);
+        vizSchema.setReflexive(reflexive);
         DatabaseRelationship relationship = relationships.get(0);
 
         // The attribution to A and B, and therefore also to K1 and K2 is arbitrary
@@ -190,6 +195,9 @@ public class VizSchemaMapper {
 
         this.sqlQuery = generateSql(VizSchemaType.MANYTOMANY, reflexive);
         this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
+
+        vizSchema.setSqlQuery(sqlQuery);
+        vizSchema.setDataset(JsonData.jsonNodeToMap(sqlData));
         return vizSchema;
     }
 

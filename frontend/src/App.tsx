@@ -68,6 +68,7 @@ function App() {
   // );
 
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
+  const [vegaActionMenu, setVegaActionMenu] = useState(false);
   const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
   //const [chartType, setChartType] = useState<string>("");
   const [specList, setSpecList] = useState<any[]>([]);
@@ -96,24 +97,25 @@ function App() {
 
   const handleSelectedData = (data: Data) => {
     setVegaSpec(BLANKSPEC);
+    setVegaActionMenu(false);
     setSelectedData(data);
     const payload = { schema: JSON.stringify(data) };
     axios
       .post("http://localhost:8080/api/v1/specs/specFromSchema", payload)
       .then((response) => {
         console.log(JSON.stringify(response.data));
-        response.data.spec.forEach((specItem: any) => {
+        response.data.specs.forEach((specItem: any) => {
           // Iterate over each data item in the current 'spec' item
           specItem.data.forEach((dataItem: any) => {
             // Check if the 'name' field of the current data item is 'rawData'
             if (dataItem.name === "rawData") {
               // If the name is 'rawData', set the 'values' field of the current data item to the 'dataset' array
-              dataItem.values = response.data.dataset;
+              dataItem.values = response.data.vizSchema.dataset;
             }
           });
         });
         //setChartType(response.data.chartType);
-        setSpecList(response.data.spec);
+        setSpecList(response.data.specs);
       });
     //.then((response) => setVegaSpec(response.data.spec[0]));
     //.then((response) => console.log(JSON.stringify(response.data.spec)));
@@ -162,11 +164,20 @@ function App() {
         onSelectItem={handleSelectItem}
       />*/}
       {specList.map((spec: any, index: number) => (
-        <button key={index} onClick={() => setVegaSpec(spec)}>
+        <button
+          key={index}
+          onClick={() => {
+            // First action
+            setVegaSpec(spec);
+
+            // Second action
+            setVegaActionMenu(true);
+          }}
+        >
           {spec.description}
         </button>
       ))}
-      <Vega spec={vegaSpec} actions={false} />
+      <Vega spec={vegaSpec} actions={vegaActionMenu} />
       <div>
         {/* <h1>Chord Diagram Example</h1> */}
         {/* <ChordDiagram /> */}
