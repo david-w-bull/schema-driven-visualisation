@@ -1,8 +1,11 @@
 package ic.doc.dwb22.jvega.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import ic.doc.dwb22.jvega.spec.VegaDataset;
 import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -10,6 +13,8 @@ import java.sql.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 public class JsonData {
@@ -65,5 +70,18 @@ public class JsonData {
         }
 
         return arrayNode;
+    }
+
+    public static List<Map<String, Object>> jsonNodeToMap(JsonNode jsonValues) {
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString;
+        List<Map<String, Object>> dataMap;
+        try {
+            jsonString = mapper.writeValueAsString(jsonValues);
+            dataMap = mapper.readValue(jsonString, new TypeReference<>() {});
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return dataMap;
     }
 }

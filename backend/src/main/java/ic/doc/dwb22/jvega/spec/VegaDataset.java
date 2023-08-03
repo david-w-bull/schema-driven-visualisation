@@ -23,6 +23,7 @@ public class VegaDataset {
     private String url;
     private List<String> source;
     private List<Transform> transform;
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     private List<Map<String, Object>> values;
 
     public static VegaDataset urlDataset(String name, String url) {
@@ -86,6 +87,11 @@ public class VegaDataset {
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
+            this.values = dataMap;
+            return this;
+        }
+
+        public BuildDataset withValues(List<Map<String, Object>> dataMap) {
             this.values = dataMap;
             return this;
         }

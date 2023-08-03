@@ -81,7 +81,8 @@ public class VegaSpecService {
 
                 VegaDataset dataset = new VegaDataset.BuildDataset()
                         .withName("rawData")
-                        .withValues(mapper.getSqlData())
+                        //.withValues(mapper.getSqlData())
+                        .withValues(new ArrayList<>()) // Passing empty array to be filled client side
                         .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "barLabel"))
                         .withTransform(FormulaTransform.simpleFormula("parseInt(datum." + vizSchema.getA1FieldName() + ")", "barHeight"))
                         .withTransform(CollectTransform.simpleSort("barHeight", "descending"))
@@ -94,7 +95,8 @@ public class VegaSpecService {
 
                 VegaDataset dataset = new VegaDataset.BuildDataset()
                         .withName("rawData")
-                        .withValues(mapper.getSqlData())
+//                        .withValues(mapper.getSqlData())
+                        .withValues(new ArrayList<>()) // Passing empty array to be filled client side
                         .withTransform(FormulaTransform.simpleFormula("[-45, 0, 45][~~(random() * 3)]", "angle"))
                         .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "wordField"))
                         .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1FieldName(), "wordSizeField"))
@@ -114,7 +116,8 @@ public class VegaSpecService {
 
                 VegaDataset dataset = new VegaDataset.BuildDataset()
                         .withName("rawData")
-                        .withValues(mapper.getSqlData())
+                        //.withValues(mapper.getSqlData())
+                        .withValues(new ArrayList<>()) // Passing empty array to be filled client side
                         .withTransform(ProjectTransform.simpleProject(fieldsToRename, fieldAliases))
                         .withTransform(FormulaTransform.simpleFormula("parseInt(datum.size)", "size"))
                         .build();
@@ -128,7 +131,8 @@ public class VegaSpecService {
 
                 VegaDataset dataset = new VegaDataset.BuildDataset()
                         .withName("rawData")
-                        .withValues(mapper.getSqlData())
+                        //.withValues(mapper.getSqlData())
+                        .withValues(new ArrayList<>()) // Passing empty array to be filled client side
                         .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1Alias(), "stk1"))
                         .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK2Alias(), "stk2"))
                         .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1Alias(), "size"))
@@ -140,7 +144,8 @@ public class VegaSpecService {
             }
 
         }
-        VizSpecPayload payload = new VizSpecPayload(specs);
+
+        VizSpecPayload payload = new VizSpecPayload(specs, JsonData.jsonNodeToMap(mapper.getSqlData()));
         String id = payload.getVizId();
         vegaSpecRepository.insert(payload);
         return vegaSpecRepository.findSpecByVizId(id);

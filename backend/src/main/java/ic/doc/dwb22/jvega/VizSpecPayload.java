@@ -1,5 +1,6 @@
 package ic.doc.dwb22.jvega;
 
+import ic.doc.dwb22.jvega.spec.VegaDataset;
 import ic.doc.dwb22.jvega.spec.VegaSpec;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,10 +12,7 @@ import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Document(collection = "vega_specs")
 @Getter
@@ -27,14 +25,16 @@ public class VizSpecPayload {
     private Boolean isTemplate;
     private final String chartType;
     private int testId; // Need to remove this eventually
+    private List<Map<String, Object>> dataset;
     private List<VegaSpec> spec;
 
     @PersistenceConstructor
-    public VizSpecPayload(String vizId, Boolean isTemplate, String chartType, int testId, List<VegaSpec> spec) {
+    public VizSpecPayload(String vizId, Boolean isTemplate, String chartType, int testId, List<Map<String, Object>> dataset, List<VegaSpec> spec) {
         this.vizId = vizId;
         this.isTemplate = isTemplate;
         this.chartType = chartType;
         this.testId = testId;
+        this.dataset = dataset;
         this.spec = spec;
     }
 
@@ -65,6 +65,14 @@ public class VizSpecPayload {
         this.chartType = null;
         this.isTemplate = false;
         this.spec = specs;
+    }
+
+    public VizSpecPayload(List<VegaSpec> specs, List<Map<String, Object>> dataset) {
+        this.vizId = UUID.randomUUID().toString();
+        this.chartType = null;
+        this.isTemplate = false;
+        this.spec = specs;
+        this.dataset = dataset;
     }
 
     public VizSpecPayload(VegaSpec spec) {

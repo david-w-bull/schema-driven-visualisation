@@ -41,8 +41,8 @@ function App() {
 
   const ribbon = d3.ribbon().radius(innerRadius);
 
-  console.log(JSON.stringify(chords));
-  console.log(JSON.stringify(chords.groups));
+  // console.log(JSON.stringify(chords));
+  // console.log(JSON.stringify(chords.groups));
 
   const ribbons = chords.map((chord) => {
     return {
@@ -59,13 +59,13 @@ function App() {
     };
   });
 
-  console.log(
-    JSON.stringify(
-      ribbons.map((r) => {
-        return { path: ribbon(r) };
-      })
-    )
-  );
+  // console.log(
+  //   JSON.stringify(
+  //     ribbons.map((r) => {
+  //       return { path: ribbon(r) };
+  //     })
+  //   )
+  // );
 
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
   const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
@@ -102,6 +102,16 @@ function App() {
       .post("http://localhost:8080/api/v1/specs/specFromSchema", payload)
       .then((response) => {
         console.log(JSON.stringify(response.data));
+        response.data.spec.forEach((specItem: any) => {
+          // Iterate over each data item in the current 'spec' item
+          specItem.data.forEach((dataItem: any) => {
+            // Check if the 'name' field of the current data item is 'rawData'
+            if (dataItem.name === "rawData") {
+              // If the name is 'rawData', set the 'values' field of the current data item to the 'dataset' array
+              dataItem.values = response.data.dataset;
+            }
+          });
+        });
         //setChartType(response.data.chartType);
         setSpecList(response.data.spec);
       });
@@ -158,9 +168,9 @@ function App() {
       ))}
       <Vega spec={vegaSpec} actions={false} />
       <div>
-        <h1>Chord Diagram Example</h1>
-        <ChordDiagram />
-        <TreeMap />
+        {/* <h1>Chord Diagram Example</h1> */}
+        {/* <ChordDiagram /> */}
+        {/* <TreeMap /> */}
       </div>
     </>
   );
