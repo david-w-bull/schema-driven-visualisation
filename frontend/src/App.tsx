@@ -10,6 +10,7 @@ import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
 import ERDiagram from "./components/ERDiagram";
 import ChordDiagram from "./components/ChordDiagram";
+import TreeMap from "./components/TreeMap";
 import * as d3 from "d3";
 
 function App() {
@@ -159,6 +160,7 @@ function App() {
       <div>
         <h1>Chord Diagram Example</h1>
         <ChordDiagram />
+        <TreeMap />
       </div>
     </>
   );
