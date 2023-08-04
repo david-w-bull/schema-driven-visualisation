@@ -392,19 +392,19 @@ public class VizSchemaMapper {
             }
 
             select = selectAttributes.stream()
-                    .collect(Collectors.joining(", "));
+                    .collect(Collectors.joining(", \n\t"));
 
             StringBuilder sqlString = new StringBuilder();
 
-            sqlString.append("SELECT " + select);
-            sqlString.append(" FROM " + from);
+            sqlString.append("SELECT \n\t" + select + "\n\n");
+            sqlString.append("FROM " + from + "\n\n");
 
             for(int i=0; i<join.size(); i++) {
-                sqlString.append(" JOIN " + join.get(i));
-                sqlString.append(" ON " + on.get(i));
+                sqlString.append("JOIN " + join.get(i) + "\n");
+                sqlString.append("ON " + on.get(i) + "\n\n");
             }
 
-            sqlString.append(" LIMIT 50;");
+            sqlString.append("LIMIT 50;");
 
             return sqlString.toString();
         }

@@ -13,6 +13,7 @@ import ChordDiagram from "./components/ChordDiagram";
 import ChordDiagramTest from "./components/ChordDiagramTest";
 import TreeMap from "./components/TreeMap";
 import * as d3 from "d3";
+import SQLEditor from "./components/SQLEditor";
 
 function App() {
   let items = ["Test Viz 1", "Test Viz 2", "Test Viz 3"];
@@ -96,6 +97,7 @@ function App() {
           setChartTypes(response.data.vizSchema.chartTypes);
           setSpecList(response.data.specs);
           setVizSchema(response.data.vizSchema);
+          setSqlCode(response.data.vizSchema.sqlQuery);
           console.log("Logging vizSchema");
           console.log(response.data.vizSchema);
         });
@@ -114,6 +116,12 @@ function App() {
       default:
         return null;
     }
+  };
+
+  const [sqlCode, setSqlCode] = useState("SELECT * FROM users;");
+
+  const handleSqlSubmit = () => {
+    console.log("Submitted SQL Code:", sqlCode);
   };
 
   return (
@@ -155,6 +163,10 @@ function App() {
       ) : (
         <Vega spec={vegaSpec} actions={vegaActionMenu} />
       )}
+      <div>
+        <SQLEditor value={sqlCode} onChange={setSqlCode} />
+        <button onClick={handleSqlSubmit}>Update SQL</button>
+      </div>
     </>
   );
 }
