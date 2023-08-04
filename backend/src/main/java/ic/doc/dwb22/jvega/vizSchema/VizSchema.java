@@ -58,6 +58,9 @@ public class VizSchema {
         } else if(type == VizSchemaType.MANYTOMANY) {
             if(keyOne != null && keyTwo != null && scalarOne != null) {
                 matchedChartTypes.add("Sankey Diagram");
+                if(reflexive) {
+                    matchedChartTypes.add("Chord Diagram");
+                }
             }
         }
         this.chartTypes = matchedChartTypes;

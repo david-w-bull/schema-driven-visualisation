@@ -13,3 +13,7 @@ export const BLANKSCHEMA = {
   entityList: [],
   relationshipList: [],
 };
+
+export const BLANKVIZSCHEMA = {
+  type: "NONE",
+};

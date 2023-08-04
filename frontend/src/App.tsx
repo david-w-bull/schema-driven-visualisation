@@ -4,12 +4,13 @@ import "./App.css";
 import Message from "./components/Message";
 import { Vega, VegaLite, VisualizationSpec } from "react-vega";
 import ListGroup from "./components/ListGroup";
-import { Data, Entity, Attribute } from "./types";
-import { BLANKSPEC, BLANKSCHEMA } from "./constants";
+import { Data, Entity, Attribute, VizSchema } from "./types";
+import { BLANKSPEC, BLANKSCHEMA, BLANKVIZSCHEMA } from "./constants";
 import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
 import ERDiagram from "./components/ERDiagram";
 import ChordDiagram from "./components/ChordDiagram";
+import ChordDiagramTest from "./components/ChordDiagramTest";
 import TreeMap from "./components/TreeMap";
 import * as d3 from "d3";
 
@@ -72,6 +73,7 @@ function App() {
   const [chartTypes, setChartTypes] = useState<string[]>([]);
   const [selectedChart, setSelectedChart] = useState<string | null>(null);
   const [specList, setSpecList] = useState<any[]>([]);
+  const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
 
   const handleSelectedData = (data: Data) => {
     setVegaSpec(BLANKSPEC);
@@ -91,9 +93,12 @@ function App() {
               dataItem.values = response.data.vizSchema.dataset;
             }
           });
+          setChartTypes(response.data.vizSchema.chartTypes);
+          setSpecList(response.data.specs);
+          setVizSchema(response.data.vizSchema);
+          console.log("Logging vizSchema");
+          console.log(response.data.vizSchema);
         });
-        setChartTypes(response.data.vizSchema.chartTypes);
-        setSpecList(response.data.specs);
       });
 
     console.log(JSON.stringify(data));
@@ -103,7 +108,8 @@ function App() {
     switch (chartType) {
       case "Chord Diagram":
         //return <ChordDiagram vizInfo={vizInfo} />;
-        return <ChordDiagram />;
+        //return <ChordDiagram vizSchema={vizSchema} />;
+        return <ChordDiagramTest vizSchema={vizSchema} />;
       // ... add more cases for other chart types ...
       default:
         return null;

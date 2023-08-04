@@ -12,6 +12,20 @@ export type Attribute = {
   isChecked?: boolean;
 };
 
+export type VizSchema = {
+  type: string;
+  keyOne?: Attribute;
+  keyOneAlias?: string;
+  keyTwo?: Attribute;
+  keyTwoAlias?: string;
+  scalarOne?: Attribute;
+  scalarOneAlias?: string;
+  reflexive?: boolean;
+  dataset?: any[];
+  sqlQuery?: string;
+  chartTypes?: string[];
+};
+
 export type ForeignKey = {
   fkTableName: string;
   fkColumnNames: string[];
