@@ -14,6 +14,7 @@ import ChordDiagramTest from "./components/ChordDiagramTest";
 import TreeMap from "./components/TreeMap";
 import * as d3 from "d3";
 import SQLEditor from "./components/SQLEditor";
+import styled from "styled-components";
 
 function App() {
   let items = ["Test Viz 1", "Test Viz 2", "Test Viz 3"];
@@ -106,6 +107,8 @@ function App() {
     console.log(JSON.stringify(data));
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const renderChartComponent = (chartType: string) => {
     switch (chartType) {
       case "Chord Diagram":
@@ -152,16 +155,25 @@ function App() {
               } else {
                 setSelectedChart(chartType);
               }
+              setIsModalOpen(true);
             }}
           >
             {chartType}
           </button>
         );
       })}
-      {selectedChart ? (
-        renderChartComponent(selectedChart)
-      ) : (
-        <Vega spec={vegaSpec} actions={vegaActionMenu} />
+      {isModalOpen && (
+        <ModalContainer>
+          <ModalBackdrop />
+          <ModalContent>
+            <CloseIcon onClick={() => setIsModalOpen(false)}>×</CloseIcon>
+            {selectedChart ? (
+              renderChartComponent(selectedChart)
+            ) : (
+              <Vega spec={vegaSpec} actions={vegaActionMenu} />
+            )}
+          </ModalContent>
+        </ModalContainer>
       )}
       <div>
         <SQLEditor value={sqlCode} onChange={setSqlCode} />
@@ -172,3 +184,42 @@ function App() {
 }
 
 export default App;
+
+const ModalContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const ModalBackdrop = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+`;
+
+const ModalContent = styled.div`
+  position: relative;
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  z-index: 1001;
+`;
+
+const CloseIcon = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 24px;
+  color: #000;
+`;
