@@ -15,6 +15,7 @@ import TreeMap from "./components/TreeMap";
 import * as d3 from "d3";
 import SQLEditor from "./components/SQLEditor";
 import styled from "styled-components";
+import Split from "react-split";
 
 function App() {
   let items = ["Test Viz 1", "Test Viz 2", "Test Viz 3"];
@@ -99,8 +100,6 @@ function App() {
           setSpecList(response.data.specs);
           setVizSchema(response.data.vizSchema);
           setSqlCode(response.data.vizSchema.sqlQuery);
-          console.log("Logging vizSchema");
-          console.log(response.data.vizSchema);
         });
       });
 
@@ -124,44 +123,68 @@ function App() {
   const [sqlCode, setSqlCode] = useState("SELECT * FROM users;");
 
   const handleSqlSubmit = () => {
-    console.log("Submitted SQL Code:", sqlCode);
+    console.log(sqlCode);
   };
 
   return (
     <>
-      <DatabaseSelector onSelectDatabase={handleSelectDatabase} />
-      <EntityList
-        data={schemaInfo}
-        onSelectedData={handleSelectedData}
-      ></EntityList>
-      {/* <ERDiagram nodes={nodes} links={links} /> */}
-      {/* <ListGroup
-        items={items}
-        heading="Test Options"
-        onSelectItem={handleSelectItem}
-      />*/}
-      {chartTypes?.map((chartType: string, index: number) => {
-        const matchingSpec = specList.find(
-          (spec: any) => spec.description === chartType
-        );
-        return (
-          <button
-            key={index}
-            onClick={() => {
-              if (matchingSpec) {
-                setVegaSpec(matchingSpec);
-                setVegaActionMenu(true);
-                setSelectedChart(null);
-              } else {
-                setSelectedChart(chartType);
-              }
-              setIsModalOpen(true);
+      <div style={{ display: "flex", height: "100vh", width: "100%" }}>
+        <Split
+          className="split"
+          sizes={[20, 80]}
+          minSize={300}
+          expandToMin={true}
+          gutterSize={10}
+          gutterAlign="center"
+          snapOffset={30}
+          dragInterval={1}
+          direction="horizontal"
+          cursor="col-resize"
+          style={{ width: "100%" }}
+        >
+          <div
+            style={{
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            {chartType}
-          </button>
-        );
-      })}
+            <DatabaseSelector onSelectDatabase={handleSelectDatabase} />
+            <EntityList
+              data={schemaInfo}
+              onSelectedData={handleSelectedData}
+            ></EntityList>
+            {chartTypes?.map((chartType: string, index: number) => {
+              const matchingSpec = specList.find(
+                (spec: any) => spec.description === chartType
+              );
+              return (
+                <button
+                  key={index}
+                  onClick={() => {
+                    if (matchingSpec) {
+                      setVegaSpec(matchingSpec);
+                      setVegaActionMenu(true);
+                      setSelectedChart(null);
+                    } else {
+                      setSelectedChart(chartType);
+                    }
+                    setIsModalOpen(true);
+                  }}
+                >
+                  {chartType}
+                </button>
+              );
+            })}
+          </div>
+          <div>
+            <div>
+              <SQLEditor value={sqlCode} onChange={setSqlCode} />
+              <button onClick={handleSqlSubmit}>Update SQL</button>
+            </div>
+          </div>
+        </Split>
+      </div>
       {isModalOpen && (
         <ModalContainer>
           <ModalBackdrop />
@@ -175,10 +198,12 @@ function App() {
           </ModalContent>
         </ModalContainer>
       )}
-      <div>
-        <SQLEditor value={sqlCode} onChange={setSqlCode} />
-        <button onClick={handleSqlSubmit}>Update SQL</button>
-      </div>
+      {/* <ERDiagram nodes={nodes} links={links} /> */}
+      {/* <ListGroup
+        items={items}
+        heading="Test Options"
+        onSelectItem={handleSelectItem}
+      />*/}
     </>
   );
 }
