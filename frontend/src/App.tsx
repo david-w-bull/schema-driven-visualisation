@@ -122,6 +122,20 @@ function App() {
     }
   };
 
+  const updateRawDataInSpecList = (newVizSchemaDataset: any) => {
+    const updatedSpecList = specList.map((specItem) => {
+      const updatedData = specItem.data.map((dataItem: any) => {
+        if (dataItem.name === "rawData") {
+          return { ...dataItem, values: newVizSchemaDataset };
+        }
+        return dataItem;
+      });
+      return { ...specItem, data: updatedData };
+    });
+
+    setSpecList(updatedSpecList);
+  };
+
   const [sqlCode, setSqlCode] = useState("");
 
   const handleSqlSubmit = () => {
@@ -141,6 +155,7 @@ function App() {
         console.log("SQL Update response:");
         console.log(response.data);
         setVizSchema(response.data);
+        updateRawDataInSpecList(response.data.dataset);
       });
   };
 
