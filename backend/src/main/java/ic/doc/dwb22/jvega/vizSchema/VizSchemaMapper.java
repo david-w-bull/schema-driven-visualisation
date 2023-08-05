@@ -21,7 +21,7 @@ public class VizSchemaMapper {
     private List<DatabaseEntity> entities;
     private List<DatabaseRelationship> relationships;
     private String sqlQuery;
-    private JsonNode sqlData;
+    // private JsonNode sqlData;
     private String sqlUser;
     private String sqlPassword;
 
@@ -85,9 +85,11 @@ public class VizSchemaMapper {
             }
         }
         this.sqlQuery = generateSql(VizSchemaType.BASIC, false);
-        this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
+        // this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
         vizSchema.setSqlQuery(sqlQuery);
-        vizSchema.setDataset(JsonData.jsonNodeToMap(sqlData));
+        vizSchema.setConnectionString(databaseSchema.getConnectionString());
+        vizSchema.fetchSqlData(sqlUser, sqlPassword);
+        //vizSchema.setDataset(JsonData.jsonNodeToMap(sqlData));
         return vizSchema;
     }
 
@@ -133,10 +135,12 @@ public class VizSchemaMapper {
             }
         }
         this.sqlQuery = generateSql(VizSchemaType.ONETOMANY, false);
-        this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
+        //this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
 
         vizSchema.setSqlQuery(sqlQuery);
-        vizSchema.setDataset(JsonData.jsonNodeToMap(sqlData));
+        vizSchema.setConnectionString(databaseSchema.getConnectionString());
+        vizSchema.fetchSqlData(sqlUser, sqlPassword);
+        //vizSchema.setDataset(JsonData.jsonNodeToMap(sqlData));
         return vizSchema;
     }
 
@@ -194,34 +198,35 @@ public class VizSchemaMapper {
         }
 
         this.sqlQuery = generateSql(VizSchemaType.MANYTOMANY, reflexive);
-        this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
+        //this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
 
         vizSchema.setSqlQuery(sqlQuery);
-        vizSchema.setDataset(JsonData.jsonNodeToMap(sqlData));
+        vizSchema.setConnectionString(databaseSchema.getConnectionString());
+        vizSchema.fetchSqlData(sqlUser, sqlPassword);
         return vizSchema;
     }
 
-    private JsonNode fetchSqlData(String username, String password, String sqlQuery) {
-
-        String connectionString = databaseSchema.getConnectionString();
-        JsonNode jsonNode = null;
-
-        try (Connection conn = DriverManager.getConnection(connectionString, username, password);
-             Statement stmt = conn.createStatement()) {
-            String query = sqlQuery;
-            try (ResultSet resultSet = stmt.executeQuery(query)) {
-                try {
-                    jsonNode = JsonData.convertResultSetToJson(resultSet);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error in connecting to the database");
-            e.printStackTrace();
-        }
-        return jsonNode;
-}
+//    private JsonNode fetchSqlData(String username, String password, String sqlQuery) {
+//
+//        String connectionString = databaseSchema.getConnectionString();
+//        JsonNode jsonNode = null;
+//
+//        try (Connection conn = DriverManager.getConnection(connectionString, username, password);
+//             Statement stmt = conn.createStatement()) {
+//            String query = sqlQuery;
+//            try (ResultSet resultSet = stmt.executeQuery(query)) {
+//                try {
+//                    jsonNode = JsonData.convertResultSetToJson(resultSet);
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Error in connecting to the database");
+//            e.printStackTrace();
+//        }
+//        return jsonNode;
+//}
 
     public String generateSql(VizSchemaType type, Boolean reflexive) {
         if(type == VizSchemaType.BASIC) {

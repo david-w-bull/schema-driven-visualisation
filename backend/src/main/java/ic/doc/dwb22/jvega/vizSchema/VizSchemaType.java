@@ -5,5 +5,6 @@ public enum VizSchemaType {
     BASIC,
     WEAK,
     ONETOMANY,
-    MANYTOMANY
+    MANYTOMANY,
+    ERROR
 }

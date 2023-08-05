@@ -107,9 +107,13 @@ public class JVegaApplication {
 
 		VizSchema vizSchema = mapper.generateVizSchema();
 
+		vizSchema.fetchSqlData(System.getenv("POSTGRES_USER"), System.getenv("POSTGRES_PASSWORD"));
+
 		System.out.println(mapper.getSqlQuery());
 
-		System.out.println(mapper.getSqlData().toPrettyString());
+		System.out.println(vizSchema.getDataset());
+
+		//System.out.println(mapper.getSqlData().toPrettyString());
 
 		System.out.println(vizSchema.getK1FieldName());
 		System.out.println(vizSchema.getKeyOneAlias());
@@ -149,7 +153,7 @@ public class JVegaApplication {
 
 		VegaDataset dataset = new VegaDataset.BuildDataset()
 				.withName("rawData")
-				.withValues(mapper.getSqlData())
+				.withValues(vizSchema.getDataset())
 				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getKeyOneAlias(), "stk1"))
 				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getKeyTwoAlias(), "stk2"))
 				.withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getScalarOneAlias(), "size"))

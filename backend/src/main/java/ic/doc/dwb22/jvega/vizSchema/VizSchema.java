@@ -1,13 +1,16 @@
 package ic.doc.dwb22.jvega.vizSchema;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
 import ic.doc.dwb22.jvega.schema.DatabaseAttribute;
 import ic.doc.dwb22.jvega.schema.SqlDataType;
+import ic.doc.dwb22.jvega.utils.JsonData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +31,8 @@ public class VizSchema {
     private Boolean reflexive = false;
     private List<Map<String, Object>> dataset;
     private String sqlQuery;
+    private String connectionString;
     private List<String> chartTypes;
-
 
     public VizSchema(VizSchemaType type) {
         this.type = type;
@@ -76,5 +79,25 @@ public class VizSchema {
             default:
                 return false;
         }
+    }
+
+    public void fetchSqlData(String username, String password) {
+
+        JsonNode jsonNode = null;
+
+        try (Connection conn = DriverManager.getConnection(this.connectionString, username, password);
+             Statement stmt = conn.createStatement()) {
+            try (ResultSet resultSet = stmt.executeQuery(this.sqlQuery)) {
+                try {
+                    jsonNode = JsonData.convertResultSetToJson(resultSet);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in connecting to the database");
+            e.printStackTrace();
+        }
+        this.dataset = JsonData.jsonNodeToMap(jsonNode);
     }
 }
