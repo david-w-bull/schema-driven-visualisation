@@ -1,5 +1,6 @@
 import React from "react";
 import { Attribute, EntityOrRelationship } from "../types";
+import styled from "styled-components";
 
 interface AttributeProps {
   attribute: Attribute;
@@ -30,8 +31,9 @@ interface EntityProps {
 
 const EntityComponent = ({ item, onAttributeChange }: EntityProps) => {
   return (
-    <div>
-      <h2>{item.name}</h2>
+    <EntityContainer>
+      <EntityHeader>{item.name}</EntityHeader>
+      <Divider />
       {item.attributes.map((attribute) => (
         <AttributeList
           key={attribute.attributeId}
@@ -41,8 +43,31 @@ const EntityComponent = ({ item, onAttributeChange }: EntityProps) => {
           }
         />
       ))}
-    </div>
+    </EntityContainer>
   );
 };
 
 export default EntityComponent;
+
+const EntityContainer = styled.div`
+  position: relative;
+  width: 300px;
+  border-color: #f0f0f0;
+  border-weight: 1px;
+  padding: 10px;
+  margin: 30px 20px;
+  border-radius: 10px;
+`;
+
+const Divider = styled.div`
+  height: 1px;
+  background-color: #d9d9d9;
+  margin: 10px 0;
+`;
+
+const EntityHeader = styled.h1`
+  font-size: 26px;
+  color: #333;
+  margin: 0;
+  padding: 2px;
+`;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import EntityComponent from "./EntityComponent";
-
 import { Data, Entity, Attribute, Relationship } from "../types";
+import styled from "styled-components";
 
 interface EntityListProps {
   data: Data;
@@ -142,7 +142,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   };
 
   return (
-    <div>
+    <ComponentContainer>
       {data.entityList.map((entity) => (
         <EntityComponent
           key={entity.id}
@@ -172,8 +172,14 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
           />
         ))}
       <button onClick={handleSubmit}>Submit</button>
-    </div>
+    </ComponentContainer>
   );
 };
 
 export default EntityList;
+
+const ComponentContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start; /* You can use other values like 'space-between' or 'center' depending on your desired spacing */
+`;

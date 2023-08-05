@@ -133,7 +133,7 @@ function App() {
           className="split"
           sizes={[20, 80]}
           minSize={300}
-          expandToMin={true}
+          expandToMin={false}
           gutterSize={10}
           gutterAlign="center"
           snapOffset={30}
@@ -154,33 +154,35 @@ function App() {
               data={schemaInfo}
               onSelectedData={handleSelectedData}
             ></EntityList>
-            {chartTypes?.map((chartType: string, index: number) => {
-              const matchingSpec = specList.find(
-                (spec: any) => spec.description === chartType
-              );
-              return (
-                <button
-                  key={index}
-                  onClick={() => {
-                    if (matchingSpec) {
-                      setVegaSpec(matchingSpec);
-                      setVegaActionMenu(true);
-                      setSelectedChart(null);
-                    } else {
-                      setSelectedChart(chartType);
-                    }
-                    setIsModalOpen(true);
-                  }}
-                >
-                  {chartType}
-                </button>
-              );
-            })}
           </div>
           <div>
             <div>
               <SQLEditor value={sqlCode} onChange={setSqlCode} />
               <button onClick={handleSqlSubmit}>Update SQL</button>
+            </div>
+            <div>
+              {chartTypes?.map((chartType: string, index: number) => {
+                const matchingSpec = specList.find(
+                  (spec: any) => spec.description === chartType
+                );
+                return (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      if (matchingSpec) {
+                        setVegaSpec(matchingSpec);
+                        setVegaActionMenu(true);
+                        setSelectedChart(null);
+                      } else {
+                        setSelectedChart(chartType);
+                      }
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    {chartType}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </Split>
