@@ -67,6 +67,7 @@ export type RelationshipEdge = {
   relationshipId: number;
 };
 
+// this actually corresponds to the DatabaseSchema type in the backend
 export type Data = {
   id?: string | null;
   testId?: number;

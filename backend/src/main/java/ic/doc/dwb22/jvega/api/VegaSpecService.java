@@ -56,14 +56,14 @@ public class VegaSpecService {
         return vegaSpecRepository.findSpecByVizId(id);
     }
 
-    public Optional<VizSpecPayload> specFromSchema(String schemaString) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        DatabaseSchema schema;
-        try {
-            schema = objectMapper.readValue(schemaString, DatabaseSchema.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    public Optional<VizSpecPayload> specFromSchema(DatabaseSchema schema) {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        DatabaseSchema schema;
+//        try {
+//            schema = objectMapper.readValue(schemaString, DatabaseSchema.class);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
         VizSchemaMapper mapper = new VizSchemaMapper(
                 schema,
                 System.getenv("POSTGRES_USER"),
@@ -148,6 +148,20 @@ public class VegaSpecService {
         VizSpecPayload payload = new VizSpecPayload(specs, vizSchema);
         String id = payload.getVizId();
         vegaSpecRepository.insert(payload);
+        return vegaSpecRepository.findSpecByVizId(id);
+    }
+
+    public Optional<VizSpecPayload> updateSqlData(String vizSpecString) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        VizSpecPayload vizSpec;
+        try {
+            vizSpec = objectMapper.readValue(vizSpecString, VizSpecPayload.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        String id = UUID.randomUUID().toString();
+        vizSpec.setVizId(id);
+        vegaSpecRepository.insert(vizSpec);
         return vegaSpecRepository.findSpecByVizId(id);
     }
 
@@ -257,4 +271,5 @@ public class VegaSpecService {
         }
 
     }
+
 }

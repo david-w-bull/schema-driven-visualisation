@@ -13,6 +13,7 @@ const SQLEditor = ({ value, onChange }: SQLEditorProps) => {
   return (
     <AceEditor
       mode="sql"
+      placeholder="Select fields to generate SQL"
       theme="tomorrow"
       value={value}
       onChange={onChange}

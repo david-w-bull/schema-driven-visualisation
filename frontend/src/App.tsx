@@ -41,7 +41,7 @@ function App() {
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
   const [vegaActionMenu, setVegaActionMenu] = useState(false);
   const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
-  //const [chartType, setChartType] = useState<string>("");
+  const [schemaConnection, setSchemaConnection] = useState("No connection");
 
   const handleSelectItem = (item: string) => {
     const payload = { viz: item };
@@ -57,6 +57,8 @@ function App() {
       .then((response) => {
         console.log(response.data);
         setSchemaInfo(response.data);
+        setSchemaConnection(response.data.connectionString);
+        console.log(schemaConnection);
       })
       .catch((error) => {
         console.error("There was an error!", error);
@@ -77,14 +79,15 @@ function App() {
   const [selectedChart, setSelectedChart] = useState<string | null>(null);
   const [specList, setSpecList] = useState<any[]>([]);
   const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
+  const [currentDataId, setCurrentDataId] = useState<string>("");
 
   const handleSelectedData = (data: Data) => {
     setVegaSpec(BLANKSPEC);
     setVegaActionMenu(false);
-    setSelectedData(data);
-    const payload = { schema: JSON.stringify(data) };
+    //setSelectedData(data);
+    //const payload = { schema: JSON.stringify(data) };
     axios
-      .post("http://localhost:8080/api/v1/specs/specFromSchema", payload)
+      .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
       .then((response) => {
         console.log(JSON.stringify(response.data));
         response.data.specs.forEach((specItem: any) => {
@@ -96,6 +99,7 @@ function App() {
               dataItem.values = response.data.vizSchema.dataset;
             }
           });
+          setCurrentDataId(response.data.vizId);
           setChartTypes(response.data.vizSchema.chartTypes);
           setSpecList(response.data.specs);
           setVizSchema(response.data.vizSchema);
@@ -123,7 +127,18 @@ function App() {
   const [sqlCode, setSqlCode] = useState("SELECT * FROM users;");
 
   const handleSqlSubmit = () => {
+    const payload = {
+      dataId: currentDataId,
+      connectionString: schemaConnection,
+      vizSchemaInfo: JSON.stringify(vizSchema),
+      vegaSpecList: specList,
+    };
+    axios
+      .post("http://localhost:8080/api/v1/specs/updateSqlData", payload)
+      .then((response) => {});
+
     console.log(sqlCode);
+    console.log(vizSchema);
   };
 
   return (
@@ -132,7 +147,7 @@ function App() {
         <Split
           className="split"
           sizes={[20, 80]}
-          minSize={300}
+          minSize={[350, 700]}
           expandToMin={false}
           gutterSize={10}
           gutterAlign="center"

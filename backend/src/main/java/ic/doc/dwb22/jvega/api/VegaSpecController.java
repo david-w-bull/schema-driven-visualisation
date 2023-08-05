@@ -1,6 +1,7 @@
 package ic.doc.dwb22.jvega.api;
 
 import ic.doc.dwb22.jvega.VizSpecPayload;
+import ic.doc.dwb22.jvega.schema.DatabaseSchema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,10 +59,22 @@ public class VegaSpecController {
         return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.customSpec(payload.get("viz")), HttpStatus.CREATED);
     }
 
+//    @CrossOrigin
+//    @PostMapping("/specFromSchema")
+//    public ResponseEntity<Optional<VizSpecPayload>> createSpecFromSchema(@RequestBody Map<String, String> payload) {
+//        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specFromSchema(payload.get("schema")), HttpStatus.CREATED);
+//    }
+
     @CrossOrigin
     @PostMapping("/specFromSchema")
-    public ResponseEntity<Optional<VizSpecPayload>> createSpecFromSchema(@RequestBody Map<String, String> payload) {
-        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specFromSchema(payload.get("schema")), HttpStatus.CREATED);
+    public ResponseEntity<Optional<VizSpecPayload>> createSpecFromSchema(@RequestBody DatabaseSchema schema) {
+        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specFromSchema(schema), HttpStatus.CREATED);
+    }
+
+    @CrossOrigin
+    @PostMapping("/updateSqlData")
+    public ResponseEntity<Optional<VizSpecPayload>> updateVizSchemaSqlData(@RequestBody Map<String, String> payload) {
+        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.updateSqlData(payload.get("vizSpec")), HttpStatus.CREATED);
     }
 
 
