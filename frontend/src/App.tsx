@@ -85,17 +85,15 @@ function App() {
     setVegaSpec(BLANKSPEC);
     setVegaActionMenu(false);
     //setSelectedData(data);
-    //const payload = { schema: JSON.stringify(data) };
     axios
+      // the 'data' payload is a DatabaseSchema object filtered based on user selections
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
       .then((response) => {
         console.log(JSON.stringify(response.data));
+        // Copy the reference to the VizSchema data into any Vega specs as 'rawData'.
         response.data.specs.forEach((specItem: any) => {
-          // Iterate over each data item in the current 'spec' item
           specItem.data.forEach((dataItem: any) => {
-            // Check if the 'name' field of the current data item is 'rawData'
             if (dataItem.name === "rawData") {
-              // If the name is 'rawData', set the 'values' field of the current data item to the 'dataset' array
               dataItem.values = response.data.vizSchema.dataset;
             }
           });
@@ -124,21 +122,26 @@ function App() {
     }
   };
 
-  const [sqlCode, setSqlCode] = useState("SELECT * FROM users;");
+  const [sqlCode, setSqlCode] = useState("");
 
   const handleSqlSubmit = () => {
-    const payload = {
-      dataId: currentDataId,
-      connectionString: schemaConnection,
-      vizSchemaInfo: JSON.stringify(vizSchema),
-      vegaSpecList: specList,
-    };
-    axios
-      .post("http://localhost:8080/api/v1/specs/updateSqlData", payload)
-      .then((response) => {});
+    // Add code to revert to previous schema if the returned vizSchema is of type NONE or ERROR
 
-    console.log(sqlCode);
-    console.log(vizSchema);
+    const updatedVizSchema = {
+      ...vizSchema,
+      sqlQuery: sqlCode,
+    };
+
+    axios
+      .post(
+        "http://localhost:8080/api/v1/specs/updateSqlData",
+        updatedVizSchema
+      )
+      .then((response) => {
+        console.log("SQL Update response:");
+        console.log(response.data);
+        setVizSchema(response.data);
+      });
   };
 
   return (

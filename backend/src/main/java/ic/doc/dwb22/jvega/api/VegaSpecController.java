@@ -2,6 +2,7 @@ package ic.doc.dwb22.jvega.api;
 
 import ic.doc.dwb22.jvega.VizSpecPayload;
 import ic.doc.dwb22.jvega.schema.DatabaseSchema;
+import ic.doc.dwb22.jvega.vizSchema.VizSchema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,8 +74,8 @@ public class VegaSpecController {
 
     @CrossOrigin
     @PostMapping("/updateSqlData")
-    public ResponseEntity<Optional<VizSpecPayload>> updateVizSchemaSqlData(@RequestBody Map<String, String> payload) {
-        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.updateSqlData(payload.get("vizSpec")), HttpStatus.CREATED);
+    public ResponseEntity<VizSchema> updateVizSchemaSqlData(@RequestBody VizSchema vizSchema) {
+        return new ResponseEntity<VizSchema>(vegaSpecService.updateSqlData(vizSchema), HttpStatus.CREATED);
     }
 
 

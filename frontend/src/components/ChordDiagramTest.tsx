@@ -11,6 +11,8 @@ const ChordDiagramTest = ({ vizSchema }: ChordDiagramProps) => {
   //   return <div>Loading...</div>; // or return null;
   // }
 
+  console.log(vizSchema);
+
   const DATA = vizSchema.dataset.map((item: any) => ({
     source: item[vizSchema.keyOneAlias],
     target: item[vizSchema.keyTwoAlias],
