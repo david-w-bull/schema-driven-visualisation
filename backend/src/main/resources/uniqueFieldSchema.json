@@ -1,0 +1,39 @@
+{
+  "schemaId": 1,
+  "name": "public",
+  "connectionString": "jdbc:postgresql://localhost:5432/jvegatest",
+  "entityList": [
+    {
+      "id": 1,
+      "name": "airport",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "attributes": [
+        {
+          "attributeId": 2,
+          "attributeName": "name",
+          "mandatory": false,
+          "optional": true,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": false,
+          "parentEntityName": "airport",
+          "isChecked": true
+        },
+        {
+          "attributeId": 5,
+          "attributeName": "elevation",
+          "mandatory": false,
+          "optional": true,
+          "multiValued": false,
+          "dataType": "INT4",
+          "isPrimary": false,
+          "parentEntityName": "airport",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": []
+    }
+  ],
+  "relationshipList": []
+}

@@ -86,8 +86,8 @@ public class VizSchema {
         JsonNode jsonNode = null;
 
         try (Connection conn = DriverManager.getConnection(this.connectionString, username, password);
-             Statement stmt = conn.createStatement()) {
-            try (ResultSet resultSet = stmt.executeQuery(this.sqlQuery)) {
+             PreparedStatement stmt = conn.prepareStatement(this.sqlQuery)) {
+            try (ResultSet resultSet = stmt.executeQuery()) {
                 try {
                     jsonNode = JsonData.convertResultSetToJson(resultSet);
                 } catch (Exception e) {

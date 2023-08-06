@@ -21,7 +21,6 @@ public class VizSchemaMapper {
     private List<DatabaseEntity> entities;
     private List<DatabaseRelationship> relationships;
     private String sqlQuery;
-    // private JsonNode sqlData;
     private String sqlUser;
     private String sqlPassword;
 
@@ -78,18 +77,16 @@ public class VizSchemaMapper {
         VizSchema vizSchema = new VizSchema(VizSchemaType.BASIC);
         DatabaseEntity basicEntity = entities.get(0);
         for (DatabaseAttribute attr : basicEntity.getAttributes()) {
-            if (attr.getIsPrimary()) {   // Later iteration can add or is unique (which will need DB query)
+            if (attr.getIsPrimary() || isUnique(attr)) {
                 vizSchema.setKeyOne(attr);
             } else if (isScalarDataType(attr.getDataType())) {
                 vizSchema.setScalarOne(attr);
             }
         }
         this.sqlQuery = generateSql(VizSchemaType.BASIC, false);
-        // this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
         vizSchema.setSqlQuery(sqlQuery);
         vizSchema.setConnectionString(databaseSchema.getConnectionString());
         vizSchema.fetchSqlData(sqlUser, sqlPassword);
-        //vizSchema.setDataset(JsonData.jsonNodeToMap(sqlData));
         return vizSchema;
     }
 
@@ -122,7 +119,7 @@ public class VizSchemaMapper {
         // This allocation of k1, k2, a1 is according to the diagrams set out in "Towards Data Visualisation based
         // on Conceptual Modelling" paper - p.6
         for(DatabaseAttribute attr: oneEntity.getAttributes()) {
-            if (attr.getIsPrimary()) {   // Later iteration can add or is unique (which will need DB query)
+            if (attr.getIsPrimary() || isUnique(attr)) {
                 vizSchema.setKeyTwo(attr);
             } else if (isScalarDataType(attr.getDataType())) {
                 vizSchema.setScalarOne(attr);
@@ -130,17 +127,15 @@ public class VizSchemaMapper {
         }
 
         for(DatabaseAttribute attr: manyEntity.getAttributes()) {
-            if (attr.getIsPrimary()) {   // Later iteration can add or is unique (which will need DB query)
+            if (attr.getIsPrimary() || isUnique(attr)) {
                 vizSchema.setKeyOne(attr);
             }
         }
         this.sqlQuery = generateSql(VizSchemaType.ONETOMANY, false);
-        //this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
 
         vizSchema.setSqlQuery(sqlQuery);
         vizSchema.setConnectionString(databaseSchema.getConnectionString());
         vizSchema.fetchSqlData(sqlUser, sqlPassword);
-        //vizSchema.setDataset(JsonData.jsonNodeToMap(sqlData));
         return vizSchema;
     }
 
@@ -169,7 +164,7 @@ public class VizSchemaMapper {
 
         // According to the schema definition there should only be one attribute selected, but the loop handles edge cases
         for(DatabaseAttribute attribute: entityA.getAttributes()) {
-            if(attribute.getIsPrimary()) {
+            if(attribute.getIsPrimary() || isUnique(attribute)) {
                 vizSchema.setKeyOne(attribute);
                 if(reflexive) {
                     vizSchema.setKeyOneAlias(entityAAlias + "_" + attribute.getAttributeName());
@@ -180,7 +175,7 @@ public class VizSchemaMapper {
         }
 
         for(DatabaseAttribute attribute: entityB.getAttributes()) {
-            if(attribute.getIsPrimary()) {
+            if(attribute.getIsPrimary() || isUnique(attribute)) {
                 vizSchema.setKeyTwo(attribute);
                 if(reflexive) {
                     vizSchema.setKeyTwoAlias(entityBAlias + "_" + attribute.getAttributeName());
@@ -198,35 +193,11 @@ public class VizSchemaMapper {
         }
 
         this.sqlQuery = generateSql(VizSchemaType.MANYTOMANY, reflexive);
-        //this.sqlData = fetchSqlData(sqlUser, sqlPassword, sqlQuery);
-
         vizSchema.setSqlQuery(sqlQuery);
         vizSchema.setConnectionString(databaseSchema.getConnectionString());
         vizSchema.fetchSqlData(sqlUser, sqlPassword);
         return vizSchema;
     }
-
-//    private JsonNode fetchSqlData(String username, String password, String sqlQuery) {
-//
-//        String connectionString = databaseSchema.getConnectionString();
-//        JsonNode jsonNode = null;
-//
-//        try (Connection conn = DriverManager.getConnection(connectionString, username, password);
-//             Statement stmt = conn.createStatement()) {
-//            String query = sqlQuery;
-//            try (ResultSet resultSet = stmt.executeQuery(query)) {
-//                try {
-//                    jsonNode = JsonData.convertResultSetToJson(resultSet);
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            System.out.println("Error in connecting to the database");
-//            e.printStackTrace();
-//        }
-//        return jsonNode;
-//}
 
     public String generateSql(VizSchemaType type, Boolean reflexive) {
         if(type == VizSchemaType.BASIC) {
@@ -441,5 +412,28 @@ public class VizSchemaMapper {
             }
         }
         return null;
+    }
+
+    private Boolean isUnique(DatabaseAttribute attribute) {
+        try (Connection conn = DriverManager.getConnection(this.databaseSchema.getConnectionString(),
+                this.sqlUser,
+                this.sqlPassword);
+             PreparedStatement pstmt = conn.prepareStatement(
+                     "SELECT " + attribute.getAttributeName()
+                             + " FROM " + attribute.getParentEntityName()
+                             + " GROUP BY " + attribute.getAttributeName()
+                             + " HAVING count(1) > 1")) {
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (!rs.next()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

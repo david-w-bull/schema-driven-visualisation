@@ -66,7 +66,7 @@ public class JVegaApplication {
 //
 //		System.out.println(schema.toJson().toPrettyString());
 
-//		testSchemaMapping("manyToManySchemaReflexive.json");
+//		testSchemaMapping("uniqueFieldSchema.json");
 
 //testTemplateFile( "sankeyTemplate.json", "manyToManySchema.json");
 
