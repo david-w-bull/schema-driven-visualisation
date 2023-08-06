@@ -39,17 +39,20 @@ public class VizSchemaMapper {
         // A basic entity can be differentiated from a reflexive many-to-many by whether relationship attributes are selected
 
         Boolean reflexive = false;
+        List<DatabaseRelationship> toRemove = new ArrayList<>();
+
         for(DatabaseRelationship relationship: relationships) {
             if(relationship.getOverallCardinality().equals("ManyToMany")
                     && relationship.getEntityA().equals(relationship.getEntityB())) {
                 if(relationship.getAttributes().size() == 0) {
                     reflexive = false;
-                    relationships.remove(relationship); // remove redundant reflexive relationships for basic entities
+                    toRemove.add(relationship);
                 } else {
                     reflexive = true;
                 }
             }
         }
+        relationships.removeAll(toRemove); // remove redundant reflexive relationships for basic entities
 
         if (entities.size() == 1 && entities.get(0).getEntityType() == DatabaseEntityType.STRONG) {
             if(!reflexive) {
