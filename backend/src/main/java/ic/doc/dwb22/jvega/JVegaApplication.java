@@ -66,11 +66,11 @@ public class JVegaApplication {
 //
 //		System.out.println(schema.toJson().toPrettyString());
 
-		testSchemaMapping("weakEntitySchema.json");
+//		testSchemaMapping("weakEntitySchema.json");
 
 //testTemplateFile( "sankeyTemplate.json", "manyToManySchema.json");
 
-//	SpringApplication.run(JVegaApplication.class, args);
+	SpringApplication.run(JVegaApplication.class, args);
 
 	}
 
@@ -118,7 +118,6 @@ public class JVegaApplication {
 		System.out.println(vizSchema.getA1FieldName());
 		System.out.println(vizSchema.getScalarOneAlias());
 	}
-
 
 	public static void testTemplateFile(String templateFileName, String schemaFileName) {
 

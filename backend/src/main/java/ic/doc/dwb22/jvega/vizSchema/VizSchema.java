@@ -60,11 +60,16 @@ public class VizSchema {
             }
         } else if(type == VizSchemaType.MANYTOMANY) {
             if(keyOne != null && keyTwo != null && scalarOne != null) {
-                matchedChartTypes.add("Sankey Diagram");
                 if(reflexive) {
+                    // matchedChartTypes.add("Sankey Diagram");
                     matchedChartTypes.add("Chord Diagram");
+                } else {
+                    matchedChartTypes.add("Sankey Diagram");
                 }
             }
+        } else if(type == VizSchemaType.WEAK) {
+            matchedChartTypes.add("Grouped Bar Chart");
+            matchedChartTypes.add("Stacked Bar Chart");
         }
         this.chartTypes = matchedChartTypes;
         return matchedChartTypes;

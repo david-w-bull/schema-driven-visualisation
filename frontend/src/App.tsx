@@ -90,6 +90,11 @@ function App() {
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
       .then((response) => {
         console.log(JSON.stringify(response.data));
+        setCurrentDataId(response.data.vizId);
+        setChartTypes(response.data.vizSchema.chartTypes);
+        setVizSchema(response.data.vizSchema);
+        setSqlCode(response.data.vizSchema.sqlQuery);
+
         // Copy the reference to the VizSchema data into any Vega specs as 'rawData'.
         response.data.specs.forEach((specItem: any) => {
           specItem.data.forEach((dataItem: any) => {
@@ -97,12 +102,8 @@ function App() {
               dataItem.values = response.data.vizSchema.dataset;
             }
           });
-          setCurrentDataId(response.data.vizId);
-          setChartTypes(response.data.vizSchema.chartTypes);
-          setSpecList(response.data.specs);
-          setVizSchema(response.data.vizSchema);
-          setSqlCode(response.data.vizSchema.sqlQuery);
         });
+        setSpecList(response.data.specs);
       });
 
     console.log(JSON.stringify(data));
