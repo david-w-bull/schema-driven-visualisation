@@ -18,6 +18,7 @@ import * as d3 from "d3";
 import SQLEditor from "./components/SQLEditor";
 import styled from "styled-components";
 import Split from "react-split";
+import { Button } from "antd";
 
 function App() {
   let items = ["Test Viz 1", "Test Viz 2", "Test Viz 3"];
@@ -205,7 +206,8 @@ function App() {
                   (spec: any) => spec.description === chartType
                 );
                 return (
-                  <button
+                  <Button
+                    type="primary"
                     key={index}
                     onClick={() => {
                       if (matchingSpec) {
@@ -219,7 +221,7 @@ function App() {
                     }}
                   >
                     {chartType}
-                  </button>
+                  </Button>
                 );
               })}
             </div>

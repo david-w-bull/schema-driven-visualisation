@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Chord } from "@ant-design/plots";
-import { VizSchema } from "../types";
+import { VizSchema } from "../../types";
 
 interface ChordDiagramProps {
   vizSchema: any;
