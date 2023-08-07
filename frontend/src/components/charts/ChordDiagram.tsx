@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import DataSet from "@antv/data-set";
 import { Chart } from "@antv/g2";
-import { VizSchema } from "../types";
+import { VizSchema } from "../../types";
 
 interface ChordDiagramProps {
   vizSchema: VizSchema;

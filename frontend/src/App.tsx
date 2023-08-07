@@ -9,9 +9,11 @@ import { BLANKSPEC, BLANKSCHEMA, BLANKVIZSCHEMA } from "./constants";
 import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
 import ERDiagram from "./components/ERDiagram";
-import ChordDiagram from "./components/ChordDiagram";
-import ChordDiagramTest from "./components/ChordDiagramTest";
-import TreeMap from "./components/TreeMap";
+import ChordDiagram from "./components/charts/ChordDiagram";
+import ChordDiagramTest from "./components/charts/ChordDiagramTest";
+import GroupedBar from "./components/charts/GroupedBar";
+import StackedBar from "./components/charts/StackedBar";
+import TreeMap from "./components/charts/TreeMap";
 import * as d3 from "d3";
 import SQLEditor from "./components/SQLEditor";
 import styled from "styled-components";
@@ -117,7 +119,10 @@ function App() {
         //return <ChordDiagram vizInfo={vizInfo} />;
         //return <ChordDiagram vizSchema={vizSchema} />;
         return <ChordDiagramTest vizSchema={vizSchema} />;
-      // ... add more cases for other chart types ...
+      case "Grouped Bar Chart":
+        return <GroupedBar vizSchema={vizSchema} />;
+      case "Stacked Bar Chart":
+        return <StackedBar vizSchema={vizSchema} />;
       default:
         return null;
     }
@@ -273,6 +278,8 @@ const ModalContent = styled.div`
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
+  width: 80%;
+  height: 80%;
   z-index: 1001;
 `;
 
