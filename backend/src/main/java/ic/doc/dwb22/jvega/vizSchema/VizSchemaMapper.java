@@ -58,7 +58,7 @@ public class VizSchemaMapper {
             if(!reflexive) {
                 return generateBasicEntitySchema();
             } else {
-                return generateManyToManySchema(reflexive); // consider adding a parameter for reflexive m:m
+                return generateManyToManySchema(reflexive);
             }
 
         } else if(entities.size() == 2 && relationships.size() == 1) {
@@ -71,9 +71,7 @@ public class VizSchemaMapper {
                     return generateManyToManySchema(reflexive);
                 }
         }
-
         return new VizSchema(VizSchemaType.NONE);
-
     }
 
     private VizSchema generateBasicEntitySchema() {
@@ -95,7 +93,43 @@ public class VizSchemaMapper {
 
     private VizSchema generateWeakEntitySchema() {
         VizSchema vizSchema = new VizSchema(VizSchemaType.WEAK);
+        DatabaseRelationship relationship = relationships.get(0);
 
+        String weakEntityName = "";
+        String strongEntityName = "";
+
+        for(DatabaseEdge edge: relationship.getRelationships()) {
+            if(edge.getIsKey()) {
+                weakEntityName = edge.getEntityName();
+            } else if(!edge.getIsKey()) {
+                strongEntityName = edge.getEntityName();
+            }
+        }
+
+        DatabaseEntity weakEntity = getEntityByName(weakEntityName);
+        DatabaseEntity strongEntity = getEntityByName(strongEntityName);
+
+        for(DatabaseAttribute attr: strongEntity.getAttributes()) {
+            if (attr.getIsPrimary() || isUnique(attr)) {
+                vizSchema.setKeyOne(attr);
+                vizSchema.setKeyOneAlias(attr.getParentEntityName() + "_" + attr.getAttributeName());
+            }
+        }
+
+        for(DatabaseAttribute attr: weakEntity.getAttributes()) {
+            if (attr.getIsPrimary() || isUnique(attr)) {
+                vizSchema.setKeyTwo(attr);
+                vizSchema.setKeyTwoAlias(attr.getParentEntityName() + "_" + attr.getAttributeName());
+            } else if (isScalarDataType(attr.getDataType())) {
+                vizSchema.setScalarOne(attr);
+                vizSchema.setScalarOneAlias(attr.getParentEntityName() + "_" + attr.getAttributeName());
+            }
+        }
+
+        this.sqlQuery = generateSql(VizSchemaType.WEAK, false);
+        vizSchema.setSqlQuery(sqlQuery);
+        vizSchema.setConnectionString(databaseSchema.getConnectionString());
+        vizSchema.fetchSqlData(sqlUser, sqlPassword);
         return vizSchema;
     }
 
@@ -124,14 +158,17 @@ public class VizSchemaMapper {
         for(DatabaseAttribute attr: oneEntity.getAttributes()) {
             if (attr.getIsPrimary() || isUnique(attr)) {
                 vizSchema.setKeyTwo(attr);
+                vizSchema.setKeyTwoAlias(attr.getParentEntityName() + "_" + attr.getAttributeName());
             } else if (isScalarDataType(attr.getDataType())) {
                 vizSchema.setScalarOne(attr);
+                vizSchema.setScalarOneAlias(attr.getParentEntityName() + "_" + attr.getAttributeName());
             }
         }
 
         for(DatabaseAttribute attr: manyEntity.getAttributes()) {
             if (attr.getIsPrimary() || isUnique(attr)) {
                 vizSchema.setKeyOne(attr);
+                vizSchema.setKeyOneAlias(attr.getParentEntityName() + "_" + attr.getAttributeName());
             }
         }
         this.sqlQuery = generateSql(VizSchemaType.ONETOMANY, false);
@@ -217,7 +254,7 @@ public class VizSchemaMapper {
                     ; // Limit needs to be removed once a better solution can be found
         }
 
-        else if(type == VizSchemaType.ONETOMANY) {
+        else if(type == VizSchemaType.ONETOMANY || type == VizSchemaType.WEAK) {
             List<String> selectAttributes = new ArrayList<>();
             String select = "";
             String from = "";
@@ -418,9 +455,14 @@ public class VizSchemaMapper {
     }
 
     private Boolean isUnique(DatabaseAttribute attribute) {
+        // Scalar fields are likely to be unique but not in the sense that they can be treated as a key
+        if(isScalarDataType(attribute.getDataType())) {
+            return false;
+        }
         try (Connection conn = DriverManager.getConnection(this.databaseSchema.getConnectionString(),
                 this.sqlUser,
                 this.sqlPassword);
+
              PreparedStatement pstmt = conn.prepareStatement(
                      "SELECT " + attribute.getAttributeName()
                              + " FROM " + attribute.getParentEntityName()

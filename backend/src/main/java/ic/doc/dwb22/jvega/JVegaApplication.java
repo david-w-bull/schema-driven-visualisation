@@ -66,11 +66,11 @@ public class JVegaApplication {
 //
 //		System.out.println(schema.toJson().toPrettyString());
 
-//		testSchemaMapping("uniqueFieldSchema.json");
+		testSchemaMapping("weakEntitySchema.json");
 
 //testTemplateFile( "sankeyTemplate.json", "manyToManySchema.json");
 
-	SpringApplication.run(JVegaApplication.class, args);
+//	SpringApplication.run(JVegaApplication.class, args);
 
 	}
 
@@ -107,13 +107,9 @@ public class JVegaApplication {
 
 		VizSchema vizSchema = mapper.generateVizSchema();
 
-		vizSchema.fetchSqlData(System.getenv("POSTGRES_USER"), System.getenv("POSTGRES_PASSWORD"));
-
 		System.out.println(mapper.getSqlQuery());
 
 		System.out.println(vizSchema.getDataset());
-
-		//System.out.println(mapper.getSqlData().toPrettyString());
 
 		System.out.println(vizSchema.getK1FieldName());
 		System.out.println(vizSchema.getKeyOneAlias());

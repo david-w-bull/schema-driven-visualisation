@@ -1,0 +1,155 @@
+{
+  "schemaId": 1,
+  "name": "public",
+  "connectionString": "jdbc:postgresql://localhost:5432/jvegatest",
+  "entityList": [
+    {
+      "id": 3,
+      "name": "country",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "attributes": [
+        {
+          "attributeId": 10,
+          "attributeName": "code",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": true,
+          "parentEntityName": "country",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": []
+    },
+    {
+      "id": 6,
+      "name": "province",
+      "entityType": "WEAK",
+      "relatedStrongEntity": null,
+      "attributes": [
+        {
+          "attributeId": 22,
+          "attributeName": "name",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": true,
+          "parentEntityName": "province",
+          "isChecked": true
+        },
+        {
+          "attributeId": 23,
+          "attributeName": "population",
+          "mandatory": false,
+          "optional": true,
+          "multiValued": false,
+          "dataType": "INT4",
+          "isPrimary": false,
+          "parentEntityName": "province",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "fkName": "province_country_we",
+          "fkTableName": "province",
+          "fkColumnNames": [
+            "country"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        }
+      ]
+    }
+  ],
+  "relationshipList": [
+    {
+      "id": 1,
+      "name": "province_country",
+      "isWeakRelationship": true,
+      "entityA": "province",
+      "entityACardinality": "One",
+      "entityB": "country",
+      "entityBCardinality": "Many",
+      "overallCardinality": "OneToMany",
+      "relationships": [
+        {
+          "edgeId": 1,
+          "relationshipId": 1,
+          "entityId": 6,
+          "entityName": "province",
+          "cardinality": "OneToOne",
+          "isKey": true
+        },
+        {
+          "edgeId": 2,
+          "relationshipId": 1,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        }
+      ],
+      "attributes": [],
+      "foreignKeys": []
+    },
+    {
+      "id": 5,
+      "name": "borders",
+      "isWeakRelationship": false,
+      "entityA": "country",
+      "entityACardinality": "Many",
+      "entityB": "country",
+      "entityBCardinality": "Many",
+      "overallCardinality": "ManyToMany",
+      "relationships": [
+        {
+          "edgeId": 9,
+          "relationshipId": 5,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        },
+        {
+          "edgeId": 10,
+          "relationshipId": 5,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        }
+      ],
+      "attributes": [],
+      "foreignKeys": [
+        {
+          "fkName": "border_country_b_fk",
+          "fkTableName": "borders",
+          "fkColumnNames": [
+            "country2"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        },
+        {
+          "fkName": "border_country_a_fk",
+          "fkTableName": "borders",
+          "fkColumnNames": [
+            "country1"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        }
+      ]
+    }
+  ]
+}
