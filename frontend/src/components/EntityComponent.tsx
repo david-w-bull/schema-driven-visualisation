@@ -1,6 +1,7 @@
 import React from "react";
 import { Attribute, EntityOrRelationship } from "../types";
 import styled from "styled-components";
+import "../App.css";
 
 interface AttributeProps {
   attribute: Attribute;
@@ -13,13 +14,31 @@ const AttributeList = ({ attribute, onChange }: AttributeProps) => {
   };
 
   return (
-    <div>
+    <div
+      className="custom-control custom-checkbox"
+      style={{
+        display: "flex",
+        gap: "5px",
+      }}
+    >
       <input
         type="checkbox"
+        className="custom-control-input pr-3"
+        id={attribute.attributeId.toString()}
         checked={attribute.isChecked || false}
         onChange={handleCheckboxChange}
       />
-      <label>{attribute.attributeName}</label>
+      <label
+        className="custom-control-label"
+        htmlFor={attribute.attributeId.toString()}
+        style={{
+          fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+          fontWeight: 300,
+          // fontFamily: "'Rubik', sans-serif",
+        }}
+      >
+        {attribute.attributeName}
+      </label>
     </div>
   );
 };

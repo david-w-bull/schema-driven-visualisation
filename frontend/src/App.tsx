@@ -21,26 +21,6 @@ import Split from "react-split";
 import { Button } from "antd";
 
 function App() {
-  let items = ["Test Viz 1", "Test Viz 2", "Test Viz 3"];
-
-  const nodes = [
-    {
-      key: "Entity1",
-      properties: "id: number\nname: string",
-      type: "entity" as const,
-    },
-    {
-      key: "Relationship1",
-      properties: "entity1: number\nentity2: number",
-      type: "relationship" as const,
-    },
-    // Add more entities and relationships as needed...
-  ];
-  const links = [
-    { id: "1", from: "Entity1", to: "Relationship1", text: "1 - n" },
-    // Add more relationships as needed...
-  ];
-
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
   const [vegaActionMenu, setVegaActionMenu] = useState(false);
   const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
@@ -68,32 +48,19 @@ function App() {
       });
   };
 
-  const chordData = {
-    nodes: [{ id: "A" }, { id: "B" }, { id: "C" }],
-    edges: [
-      { source: "A", target: "B", value: 10 },
-      { source: "A", target: "C", value: 15 },
-      { source: "B", target: "C", value: 8 },
-    ],
-  };
-
-  const [selectedData, setSelectedData] = useState<Data | null>(null);
   const [chartTypes, setChartTypes] = useState<string[]>([]);
   const [selectedChart, setSelectedChart] = useState<string | null>(null);
   const [specList, setSpecList] = useState<any[]>([]);
   const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
-  const [currentDataId, setCurrentDataId] = useState<string>("");
 
   const handleSelectedData = (data: Data) => {
     setVegaSpec(BLANKSPEC);
     setVegaActionMenu(false);
-    //setSelectedData(data);
     axios
       // the 'data' payload is a DatabaseSchema object filtered based on user selections
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
       .then((response) => {
         console.log(JSON.stringify(response.data));
-        setCurrentDataId(response.data.vizId);
         setChartTypes(response.data.vizSchema.chartTypes);
         setVizSchema(response.data.vizSchema);
         setSqlCode(response.data.vizSchema.sqlQuery);
@@ -117,8 +84,6 @@ function App() {
   const renderChartComponent = (chartType: string) => {
     switch (chartType) {
       case "Chord Diagram":
-        //return <ChordDiagram vizInfo={vizInfo} />;
-        //return <ChordDiagram vizSchema={vizSchema} />;
         return <ChordDiagramTest vizSchema={vizSchema} />;
       case "Grouped Bar Chart":
         return <GroupedBar vizSchema={vizSchema} />;
@@ -147,7 +112,6 @@ function App() {
 
   const handleSqlSubmit = () => {
     // Add code to revert to previous schema if the returned vizSchema is of type NONE or ERROR
-
     const updatedVizSchema = {
       ...vizSchema,
       sqlQuery: sqlCode,
@@ -159,8 +123,6 @@ function App() {
         updatedVizSchema
       )
       .then((response) => {
-        console.log("SQL Update response:");
-        console.log(response.data);
         setVizSchema(response.data);
         updateRawDataInSpecList(response.data.dataset);
       });
@@ -195,7 +157,7 @@ function App() {
               onSelectedData={handleSelectedData}
             ></EntityList>
           </div>
-          <div>
+          <div style={{ backgroundColor: "#f0f0f1" }}>
             <div>
               <SQLEditor value={sqlCode} onChange={setSqlCode} />
               <button onClick={handleSqlSubmit}>Update SQL</button>
@@ -207,7 +169,7 @@ function App() {
                 );
                 return (
                   <Button
-                    type="primary"
+                    type="default"
                     key={index}
                     onClick={() => {
                       if (matchingSpec) {
@@ -241,12 +203,6 @@ function App() {
           </ModalContent>
         </ModalContainer>
       )}
-      {/* <ERDiagram nodes={nodes} links={links} /> */}
-      {/* <ListGroup
-        items={items}
-        heading="Test Options"
-        onSelectItem={handleSelectItem}
-      />*/}
     </>
   );
 }

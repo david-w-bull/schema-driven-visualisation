@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import EntityComponent from "./EntityComponent";
 import { Data, Entity, Attribute, Relationship } from "../types";
 import styled from "styled-components";
+// import { Button } from "antd";
+// import { RightCircleTwoTone } from "@ant-design/icons";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import AddchartIcon from "@mui/icons-material/Addchart";
 
 interface EntityListProps {
   data: Data;
@@ -10,10 +15,32 @@ interface EntityListProps {
 
 const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   const [data, setData] = useState(initialData);
+  const [isSelectionMade, setIsSelectionMade] = useState(false);
 
   useEffect(() => {
     setData(initialData);
+    setIsSelectionMade(checkAnyCheckboxChecked(initialData));
   }, [initialData]);
+
+  const checkAnyCheckboxChecked = (data: Data) => {
+    for (const entity of data.entityList) {
+      for (const attribute of entity.attributes || []) {
+        if (attribute.isChecked) {
+          return true;
+        }
+      }
+    }
+
+    for (const relationship of data.relationshipList) {
+      for (const attribute of relationship.attributes || []) {
+        if (attribute.isChecked) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
 
   const handleAttributeChange = (
     isEntity: boolean,
@@ -53,6 +80,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     }
 
     setData(newData);
+    setIsSelectionMade(checkAnyCheckboxChecked(newData));
   };
 
   const handleSubmit = () => {
@@ -142,37 +170,52 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   };
 
   return (
-    <ComponentContainer>
-      {data.entityList.map((entity) => (
-        <EntityComponent
-          key={entity.id}
-          item={entity}
-          onAttributeChange={(attributeId, checked) =>
-            handleAttributeChange(true, entity.id, attributeId, checked)
-          }
-        />
-      ))}
-      {data.relationshipList
-        .filter(
-          (relationship) =>
-            relationship.attributes && relationship.attributes.length > 0
-        )
-        .map((relationship) => (
+    <>
+      <Button
+        variant="contained"
+        endIcon={<AddchartIcon />}
+        onClick={() => {
+          handleSubmit();
+        }}
+        style={{
+          margin: "5px 20px 20px 20px",
+        }}
+        disabled={!isSelectionMade}
+      >
+        Visualise
+      </Button>
+      <ComponentContainer>
+        {data.entityList.map((entity) => (
           <EntityComponent
-            key={relationship.id}
-            item={relationship}
+            key={entity.id}
+            item={entity}
             onAttributeChange={(attributeId, checked) =>
-              handleAttributeChange(
-                false,
-                relationship.id,
-                attributeId,
-                checked
-              )
+              handleAttributeChange(true, entity.id, attributeId, checked)
             }
           />
         ))}
-      <button onClick={handleSubmit}>Submit</button>
-    </ComponentContainer>
+        {data.relationshipList
+          .filter(
+            (relationship) =>
+              relationship.attributes && relationship.attributes.length > 0
+          )
+          .map((relationship) => (
+            <EntityComponent
+              key={relationship.id}
+              item={relationship}
+              onAttributeChange={(attributeId, checked) =>
+                handleAttributeChange(
+                  false,
+                  relationship.id,
+                  attributeId,
+                  checked
+                )
+              }
+            />
+          ))}
+      </ComponentContainer>
+      {/* <button onClick={handleSubmit}>Submit</button> */}
+    </>
   );
 };
 
@@ -181,5 +224,5 @@ export default EntityList;
 const ComponentContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: start; /* You can use other values like 'space-between' or 'center' depending on your desired spacing */
+  justify-content: start;
 `;

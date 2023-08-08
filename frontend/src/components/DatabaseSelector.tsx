@@ -1,41 +1,49 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
+import { Select, FormControl, InputLabel, MenuItem } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material/Select";
 
 interface DatabaseSelectorProps {
   onSelectDatabase: (selectedValue: string) => void;
 }
 
 const DatabaseSelector = ({ onSelectDatabase }: DatabaseSelectorProps) => {
-  const [selectedValue, setSelectedValue] = useState<string>("");
+  const [selectedValue, setSelectedValue] = useState<string>(
+    "64c71431f6ac9e55aad579f8"
+  );
 
-  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    setSelectedValue(event.target.value);
+  const handleChange = (event: SelectChangeEvent<any>) => {
+    const newValue = event.target.value;
+    setSelectedValue(newValue);
+    onSelectDatabase(newValue);
   };
 
-  const handleSubmit = () => {
-    if (selectedValue !== "") {
-      onSelectDatabase(selectedValue);
-    } else {
-      alert("Please select a value");
-    }
-  };
-
-  const values = [
-    { value: "64c71431f6ac9e55aad579f8", label: "Mondial Fragment" },
-  ];
+  useEffect(() => {
+    onSelectDatabase(selectedValue);
+  }, []);
 
   return (
-    <div>
-      <select value={selectedValue} onChange={handleChange}>
-        <option value="" disabled>
-          Select a database
-        </option>
-        {values.map((item, index) => (
-          <option key={index} value={item.value}>
-            {item.label}
-          </option>
-        ))}
-      </select>
-      <button onClick={handleSubmit}>Select Database</button>
+    <div
+      style={{
+        margin: "20px 20px 5px 20px",
+      }}
+    >
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Database</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={selectedValue}
+          label="Database"
+          onChange={handleChange}
+        >
+          <MenuItem value={"64c71431f6ac9e55aad579f8"}>
+            Mondial Fragment
+          </MenuItem>
+          <MenuItem value={"64c6a0b0c078197638e7bd14"}>
+            Another database
+          </MenuItem>
+        </Select>
+      </FormControl>
     </div>
   );
 };
