@@ -78,8 +78,10 @@ public class VizSchemaMapper {
         for (DatabaseAttribute attr : basicEntity.getAttributes()) {
             if (attr.getIsPrimary() || isUnique(attr)) {
                 vizSchema.setKeyOne(attr);
+                vizSchema.setKeyOneAlias(attr.getAttributeName());
             } else if (isScalarDataType(attr.getDataType())) {
                 vizSchema.setScalarOne(attr);
+                vizSchema.setScalarOneAlias(attr.getAttributeName());
             }
         }
         this.sqlQuery = generateSql(VizSchemaType.BASIC, false);
