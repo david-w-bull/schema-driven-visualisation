@@ -157,7 +157,13 @@ function App() {
               onSelectedData={handleSelectedData}
             ></EntityList>
           </div>
-          <div style={{ backgroundColor: "#f0f0f1" }}>
+          <div
+            style={{
+              padding: "5%",
+              backgroundImage:
+                "linear-gradient(to right bottom, #ffffff, #f5f5f5, #eaeaeb, #e0e0e2, #d6d6d8)",
+            }}
+          >
             <div>
               <SQLEditor value={sqlCode} onChange={setSqlCode} />
               <button onClick={handleSqlSubmit}>Update SQL</button>

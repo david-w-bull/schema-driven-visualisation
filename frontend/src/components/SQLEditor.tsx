@@ -30,6 +30,11 @@ const SQLEditor = ({ value, onChange }: SQLEditorProps) => {
         showLineNumbers: true,
         tabSize: 2,
       }}
+      style={{
+        height: "300px",
+        width: "700px",
+        // borderRadius: 20,
+      }}
     />
   );
 };
