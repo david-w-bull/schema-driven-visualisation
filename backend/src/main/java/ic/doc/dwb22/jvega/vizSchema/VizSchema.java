@@ -30,6 +30,7 @@ public class VizSchema {
     private String scalarOneAlias;
     private Boolean reflexive = false;
     private List<Map<String, Object>> dataset;
+    private Integer keyCardinality;
     private String sqlQuery;
     private String connectionString;
     private List<String> chartTypes;
@@ -104,5 +105,55 @@ public class VizSchema {
             e.printStackTrace();
         }
         this.dataset = JsonData.jsonNodeToMap(jsonNode);
+    }
+
+    public Integer calculateMaxKeyCardinality(String username, String password) {
+        Integer maxKeyCardinality = -1;
+        String query;
+        StringBuilder queryString = new StringBuilder();
+        if (this.keyOne != null) {
+            queryString.append("COUNT(DISTINCT " + this.keyOneAlias + ") AS key_one_count");
+            if (this.keyTwo != null) {
+                queryString.append(", ");
+            }
+        }
+
+        if (this.keyTwo != null) {
+            queryString.append("COUNT(DISTINCT " + this.keyTwoAlias + ") AS key_two_count");
+        }
+
+        if (queryString.length() == 0) {
+            return -1;
+        }
+
+        queryString.append(" FROM (\n");
+        queryString.append(sqlQuery);
+        queryString.append("\n) AS subquery;");
+        query = queryString.toString();
+
+        try (Connection conn = DriverManager.getConnection(this.connectionString,
+                username,
+                password);
+
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                ResultSetMetaData metaData = rs.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                for (int i = 1; i <= columnCount; i++) {
+                    int countValue = rs.getInt(i);
+                    if (countValue > maxKeyCardinality) {
+                        maxKeyCardinality = countValue;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.keyCardinality = maxKeyCardinality;
+        return maxKeyCardinality;
     }
 }

@@ -5,8 +5,6 @@ import ic.doc.dwb22.jvega.schema.*;
 import ic.doc.dwb22.jvega.utils.JsonData;
 import io.github.MigadaTang.Relationship;
 import lombok.Getter;
-
-import javax.management.relation.Relation;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,6 +86,7 @@ public class VizSchemaMapper {
         vizSchema.setSqlQuery(sqlQuery);
         vizSchema.setConnectionString(databaseSchema.getConnectionString());
         vizSchema.fetchSqlData(sqlUser, sqlPassword);
+        vizSchema.calculateMaxKeyCardinality(sqlUser, sqlPassword);
         return vizSchema;
     }
 
@@ -130,6 +129,7 @@ public class VizSchemaMapper {
         vizSchema.setSqlQuery(sqlQuery);
         vizSchema.setConnectionString(databaseSchema.getConnectionString());
         vizSchema.fetchSqlData(sqlUser, sqlPassword);
+        vizSchema.calculateMaxKeyCardinality(sqlUser, sqlPassword);
         return vizSchema;
     }
 
@@ -176,6 +176,7 @@ public class VizSchemaMapper {
         vizSchema.setSqlQuery(sqlQuery);
         vizSchema.setConnectionString(databaseSchema.getConnectionString());
         vizSchema.fetchSqlData(sqlUser, sqlPassword);
+        vizSchema.calculateMaxKeyCardinality(sqlUser, sqlPassword);
         return vizSchema;
     }
 
@@ -236,6 +237,7 @@ public class VizSchemaMapper {
         vizSchema.setSqlQuery(sqlQuery);
         vizSchema.setConnectionString(databaseSchema.getConnectionString());
         vizSchema.fetchSqlData(sqlUser, sqlPassword);
+        vizSchema.calculateMaxKeyCardinality(sqlUser, sqlPassword);
         return vizSchema;
     }
 
