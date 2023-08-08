@@ -111,6 +111,7 @@ public class VizSchema {
         Integer maxKeyCardinality = -1;
         String query;
         StringBuilder queryString = new StringBuilder();
+        queryString.append("SELECT ");
         if (this.keyOne != null) {
             queryString.append("COUNT(DISTINCT " + this.keyOneAlias + ") AS key_one_count");
             if (this.keyTwo != null) {
@@ -128,8 +129,10 @@ public class VizSchema {
 
         queryString.append(" FROM (\n");
         queryString.append(sqlQuery);
-        queryString.append("\n) AS subquery;");
+        queryString.append("\n) AS subquery");
         query = queryString.toString();
+
+        System.out.println(query);
 
         try (Connection conn = DriverManager.getConnection(this.connectionString,
                 username,

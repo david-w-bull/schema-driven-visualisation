@@ -422,7 +422,7 @@ public class VizSchemaMapper {
                 sqlString.append("ON " + on.get(i) + "\n\n");
             }
 
-            sqlString.append("LIMIT 50;");
+            sqlString.append("LIMIT 50");
 
             return sqlString.toString();
         }
