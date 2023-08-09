@@ -35,6 +35,7 @@ const SQLEditor = ({ value, onChange }: SQLEditorProps) => {
         width: "700px",
         borderRadius: 5,
         boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)",
+        marginBottom: "15px",
       }}
     />
   );

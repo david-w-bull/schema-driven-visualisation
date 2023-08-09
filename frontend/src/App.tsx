@@ -19,7 +19,11 @@ import SQLEditor from "./components/SQLEditor";
 import DataTable from "./components/DataTable";
 import styled from "styled-components";
 import Split from "react-split";
-import { Button } from "antd";
+import { Button as AntButton, Radio, RadioChangeEvent } from "antd";
+import Button from "@mui/material/Button";
+import AddchartIcon from "@mui/icons-material/Addchart";
+import StorageIcon from "@mui/icons-material/Storage";
+import CachedIcon from "@mui/icons-material/Cached";
 
 function App() {
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
@@ -129,6 +133,12 @@ function App() {
       });
   };
 
+  const [radioSelect, setRadioSelect] = useState("SQL");
+
+  const handleRadioSelect = (e: RadioChangeEvent) => {
+    setRadioSelect(e.target.value);
+  };
+
   return (
     <>
       <div style={{ display: "flex", height: "100vh", width: "100%" }}>
@@ -165,42 +175,77 @@ function App() {
                 "linear-gradient(to right bottom, #ffffff, #f5f5f5, #eaeaeb, #e0e0e2, #d6d6d8)",
             }}
           >
-            <div>
-              <SQLEditor value={sqlCode} onChange={setSqlCode} />
-              <button onClick={handleSqlSubmit}>Update SQL</button>
-            </div>
-            <p>{vizSchema.keyCardinality}</p>
-            <p>{vizSchema.dataRelationship}</p>
-            {typeof vizSchema.exampleData === "undefined" ? (
-              <div></div>
-            ) : (
-              <DataTable data={vizSchema.exampleData}></DataTable>
-            )}
-            <div>
-              {chartTypes?.map((chartType: string, index: number) => {
-                const matchingSpec = specList.find(
-                  (spec: any) => spec.description === chartType
-                );
-                return (
+            <Radio.Group
+              onChange={handleRadioSelect}
+              defaultValue="SQL"
+              // buttonStyle="solid"
+              size="large"
+              style={{ marginBottom: "20px" }}
+            >
+              <Radio.Button value="SQL">SQL</Radio.Button>
+              <Radio.Button value="Visualisations">Visualisations</Radio.Button>
+            </Radio.Group>
+
+            {radioSelect === "SQL" && (
+              <div>
+                <div>
+                  <SQLEditor value={sqlCode} onChange={setSqlCode} />
                   <Button
-                    type="default"
-                    key={index}
+                    variant="contained"
+                    endIcon={<CachedIcon />}
                     onClick={() => {
-                      if (matchingSpec) {
-                        setVegaSpec(matchingSpec);
-                        setVegaActionMenu(true);
-                        setSelectedChart(null);
-                      } else {
-                        setSelectedChart(chartType);
-                      }
-                      setIsModalOpen(true);
+                      handleSqlSubmit();
+                    }}
+                    style={{
+                      margin: "5px 20px 20px 0px",
+                      boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)",
                     }}
                   >
-                    {chartType}
+                    Update SQL
                   </Button>
-                );
-              })}
-            </div>
+                  <p>{vizSchema.dataRelationship}</p>
+                </div>
+                {typeof vizSchema.exampleData != "undefined" && (
+                  <DataTable data={vizSchema.exampleData}></DataTable>
+                )}
+              </div>
+            )}
+
+            {radioSelect === "Visualisations" && (
+              <div>
+                {chartTypes?.map((chartType: string, index: number) => {
+                  const matchingSpec = specList.find(
+                    (spec: any) => spec.description === chartType
+                  );
+                  return (
+                    <AntButton
+                      type="default"
+                      key={index}
+                      style={{
+                        width: "150px",
+                        height: "150px",
+                        marginRight: "20px", // Update to use grid layout
+                      }}
+                      onClick={() => {
+                        if (matchingSpec) {
+                          setVegaSpec(matchingSpec);
+                          setVegaActionMenu(true);
+                          setSelectedChart(null);
+                        } else {
+                          setSelectedChart(chartType);
+                        }
+                        setIsModalOpen(true);
+                      }}
+                    >
+                      {chartType}
+                    </AntButton>
+                  );
+                })}
+                <br></br>
+                <br></br>
+                <p> Cardinality: {vizSchema.keyCardinality}</p>
+              </div>
+            )}
           </div>
         </Split>
       </div>
