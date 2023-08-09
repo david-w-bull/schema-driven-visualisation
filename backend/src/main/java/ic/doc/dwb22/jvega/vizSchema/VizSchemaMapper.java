@@ -142,7 +142,7 @@ public class VizSchemaMapper {
 
         String manyEntityName;
         String oneEntityName;
-        if(relationship.getEntityACardinality() == "Many") {
+        if(relationship.getEntityACardinality().equals("Many")) {
             manyEntityName = relationship.getEntityA();
             oneEntityName = relationship.getEntityB();
         }
@@ -251,13 +251,13 @@ public class VizSchemaMapper {
             DatabaseEntity entity = entities.get(0);
             List<DatabaseAttribute> attributes = entity.getAttributes();
             String attributeList = attributes.stream()
-                    .map(s -> entity.getName() + "." + s.getAttributeName())
-                    .collect(Collectors.joining(", "));
-            return "SELECT "
-                    + attributeList
-                    + " FROM "
-                    + entity.getName()
-                    + " LIMIT 30"
+                    .map(s ->"\t" + entity.getName() + "." + s.getAttributeName())
+                    .collect(Collectors.joining(",\n"));
+            return "SELECT" + "\n"
+                    + attributeList + "\n\n"
+                    + "FROM "
+                    + entity.getName() + "\n\n"
+                    + "LIMIT 30"
                     ; // Limit needs to be removed once a better solution can be found
         }
 
@@ -301,7 +301,7 @@ public class VizSchemaMapper {
             // Needs to be done this way in case there are two relationships between two entities with fks on both sides
             for(DatabaseEntity entity: entities) {
                 String entityName = entity.getName();
-                if(entityName != from) {
+                if(!entityName.equals(from)) {
                     join = entityName;
                 }
                 for(DatabaseAttribute attribute: entity.getAttributes()) {
@@ -313,14 +313,15 @@ public class VizSchemaMapper {
             }
 
             select = selectAttributes.stream()
-                    .collect(Collectors.joining(", "));
+                    .collect(Collectors.joining(",\n\t"));
 
 
-            return "SELECT " + select
-                    + " FROM " + from
-                    + " JOIN " + join
-                    + " ON " + on
-                    + " LIMIT 50";
+            return "SELECT" + "\n"
+                    + "\t" + select + "\n\n"
+                    + "FROM " + from + "\n\n"
+                    + "JOIN " + join + "\n"
+                    + "ON " + on + "\n\n"
+                    + "LIMIT 50";
         }
 
         else if(type == VizSchemaType.MANYTOMANY) {

@@ -16,6 +16,7 @@ import StackedBar from "./components/charts/StackedBar";
 import TreeMap from "./components/charts/TreeMap";
 import * as d3 from "d3";
 import SQLEditor from "./components/SQLEditor";
+import DataTable from "./components/DataTable";
 import styled from "styled-components";
 import Split from "react-split";
 import { Button } from "antd";
@@ -168,6 +169,13 @@ function App() {
               <SQLEditor value={sqlCode} onChange={setSqlCode} />
               <button onClick={handleSqlSubmit}>Update SQL</button>
             </div>
+            <p>{vizSchema.keyCardinality}</p>
+            <p>{vizSchema.dataRelationship}</p>
+            {typeof vizSchema.exampleData === "undefined" ? (
+              <div></div>
+            ) : (
+              <DataTable data={vizSchema.exampleData}></DataTable>
+            )}
             <div>
               {chartTypes?.map((chartType: string, index: number) => {
                 const matchingSpec = specList.find(

@@ -22,7 +22,11 @@ export type VizSchema = {
   scalarOneAlias?: string;
   reflexive?: boolean;
   dataset?: any[];
+  keyCardinality?: number;
+  dataRelationship?: string;
+  exampleData?: any[];
   sqlQuery?: string;
+  connectionString?: string;
   chartTypes?: string[];
 };
 

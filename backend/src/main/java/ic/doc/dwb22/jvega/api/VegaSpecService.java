@@ -145,7 +145,11 @@ public class VegaSpecService {
     }
 
     public VizSchema updateSqlData(VizSchema vizSchema) {
-        vizSchema.fetchSqlData(System.getenv("POSTGRES_USER"), System.getenv("POSTGRES_PASSWORD"));
+        String user = System.getenv("POSTGRES_USER");
+        String pw = System.getenv("POSTGRES_PASSWORD");
+        vizSchema.fetchSqlData(user, pw);
+        vizSchema.calculateMaxKeyCardinality(user, pw);
+        vizSchema.analyseDataRelationships(user, pw);
         return vizSchema;
     }
 
