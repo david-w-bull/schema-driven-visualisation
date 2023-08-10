@@ -188,7 +188,7 @@ public class VizSchema {
             queryBuilder.append("COUNT(DISTINCT " + this.keyTwoAlias + ") AS key_two_count");
         }
 
-        if (queryBuilder.length() == 0) {
+        if (this.keyOne == null && this.keyTwo == null) {
             return -1;
         }
 

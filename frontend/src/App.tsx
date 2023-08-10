@@ -67,7 +67,7 @@ function App() {
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
       .then((response) => {
         console.log(JSON.stringify(response.data));
-        setChartTypes(response.data.vizSchema.chartTypes);
+        setChartTypes(response.data.vizSchema.allChartTypes.Recommended);
         setVizSchema(response.data.vizSchema);
         setSqlCode(response.data.vizSchema.sqlQuery);
 
@@ -123,6 +123,7 @@ function App() {
     const updatedVizSchema = {
       ...vizSchema,
       sqlQuery: sqlCode,
+      allChartTypes: null,
     };
 
     axios
@@ -132,6 +133,8 @@ function App() {
       )
       .then((response) => {
         setVizSchema(response.data);
+        console.log(response.data);
+        setChartTypes(response.data.allChartTypes.Recommended);
         updateRawDataInSpecList(response.data.dataset);
       });
   };

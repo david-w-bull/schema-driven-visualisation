@@ -12,6 +12,7 @@ import ic.doc.dwb22.jvega.spec.transforms.*;
 import ic.doc.dwb22.jvega.utils.JsonData;
 import ic.doc.dwb22.jvega.vizSchema.VizSchema;
 import ic.doc.dwb22.jvega.vizSchema.VizSchemaMapper;
+import ic.doc.dwb22.jvega.vizSchema.VizSchemaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,9 @@ public class VegaSpecService {
 
         List<VegaSpec> specs = new ArrayList<>();
 
-        for(String chartType: vizSchema.matchChartTypes()) {
+        vizSchema.matchChartTypes();
+
+        for(String chartType: vizSchema.getAllChartTypes().get("Recommended")) {
             if(chartType == "Bar Chart") {
                 VegaSpec barSpec = specTemplatesByChartType(true, Arrays.asList("Bar Chart")).get(0).getSpecs().get(0);
 
@@ -149,7 +152,11 @@ public class VegaSpecService {
         String pw = System.getenv("POSTGRES_PASSWORD");
         vizSchema.fetchSqlData(user, pw);
         vizSchema.calculateMaxKeyCardinality(user, pw);
-        vizSchema.analyseDataRelationships(user, pw);
+        if(vizSchema.getDataRelationship() == VizSchemaType.ONETOMANY
+                || vizSchema.getDataRelationship() == VizSchemaType.MANYTOMANY) {
+            vizSchema.analyseDataRelationships(user, pw);
+        }
+        vizSchema.matchChartTypes();
         return vizSchema;
     }
 

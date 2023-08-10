@@ -85,9 +85,12 @@ public class VizSchemaMapper {
             }
         }
 
-        vizSchema.setKeyOne(keys.get(0));
-        vizSchema.setKeyOneAlias(keys.get(0).getAttributeName());
+        if(!keys.isEmpty()) {
+            vizSchema.setKeyOne(keys.get(0));
+            vizSchema.setKeyOneAlias(keys.get(0).getAttributeName());
+        }
 
+        // Needs to be updated to handle selections > 3 scalars
         switch(scalars.size()) {
             case 3: vizSchema.setScalarThree(scalars.get(2)); vizSchema.setScalarThreeAlias(scalars.get(2).getAttributeName());
             case 2: vizSchema.setScalarTwo(scalars.get(1)); vizSchema.setScalarTwoAlias(scalars.get(1).getAttributeName());
@@ -268,8 +271,8 @@ public class VizSchemaMapper {
                     + attributeList + "\n\n"
                     + "FROM "
                     + entity.getName()
-//                    + "\n\n"
-//                    + "LIMIT 30"
+                    + "\n\n"
+                    + "LIMIT 30"
                     ; // Limit needs to be removed once a better solution can be found
         }
 
