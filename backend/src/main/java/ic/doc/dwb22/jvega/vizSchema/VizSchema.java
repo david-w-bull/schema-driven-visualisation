@@ -1,7 +1,10 @@
 package ic.doc.dwb22.jvega.vizSchema;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ic.doc.dwb22.jvega.schema.DatabaseAttribute;
 import ic.doc.dwb22.jvega.schema.SqlDataType;
 import ic.doc.dwb22.jvega.utils.JsonData;
@@ -9,7 +12,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +48,12 @@ public class VizSchema {
     private String sqlQuery;
     private String connectionString;
     private List<String> chartTypes;
+    private Map<String, Integer> cardinalityLimits;
 
     public VizSchema(VizSchemaType type) {
         this.type = type;
+        this.cardinalityLimits = readCardinalities("cardinalityLimits.json");
+        System.out.println(cardinalityLimits);
     }
     public String getK1FieldName() { return keyOne == null ? null : keyOne.getAttributeName(); }
     public String getK2FieldName() { return keyTwo == null ? null : keyTwo.getAttributeName(); }
@@ -251,5 +262,21 @@ public class VizSchema {
         queryBuilder.append(";");
         String rawDataQuery = queryBuilder.toString();
         return rawDataQuery;
+    }
+
+    private Map<String, Integer> readCardinalities(String cardinalityLimitsFile) {
+        try {
+        ObjectMapper mapper = new ObjectMapper();
+        File file = new ClassPathResource(cardinalityLimitsFile).getFile();
+
+            JsonNode jsonData = mapper.readTree(file);
+            String jsonString = mapper.writeValueAsString(jsonData);
+            return mapper.readValue(jsonString, new TypeReference<>() {});
+        } catch (JsonProcessingException e) {
+            System.err.println(e);
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+        return null;
     }
 }

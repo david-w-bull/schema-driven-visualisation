@@ -187,6 +187,7 @@ function App() {
             >
               <Radio.Button value="SQL">SQL</Radio.Button>
               <Radio.Button value="Visualisations">Visualisations</Radio.Button>
+              <Radio.Button value="Schema">Schema</Radio.Button>
             </Radio.Group>
 
             {radioSelect === "SQL" && (
