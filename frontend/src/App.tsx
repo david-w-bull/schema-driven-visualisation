@@ -14,6 +14,7 @@ import ChordDiagramTest from "./components/charts/ChordDiagramTest";
 import GroupedBar from "./components/charts/GroupedBar";
 import StackedBar from "./components/charts/StackedBar";
 import TreeMap from "./components/charts/TreeMap";
+import ScatterPlot from "./components/charts/ScatterPlot";
 import * as d3 from "d3";
 import SQLEditor from "./components/SQLEditor";
 import DataTable from "./components/DataTable";
@@ -94,6 +95,8 @@ function App() {
         return <GroupedBar vizSchema={vizSchema} />;
       case "Stacked Bar Chart":
         return <StackedBar vizSchema={vizSchema} />;
+      case "Scatter Plot":
+        return <ScatterPlot vizSchema={vizSchema} />;
       default:
         return null;
     }

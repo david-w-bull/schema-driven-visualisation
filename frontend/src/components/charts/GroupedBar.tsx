@@ -18,15 +18,8 @@ const GroupedBar = ({ vizSchema }: GroupedBarProps) => {
     yField: "label",
     seriesField: "type",
     marginRatio: 0,
-    // label: {
-    //   // 可手动配置 label 数据标签位置
-    //   position: "right" as "right",
-    //   // 'left', 'middle', 'right'
-    //   offset: 4 as any,
-    // },
     label: {
       position: "right" as "right",
-      // 'top', 'middle', 'bottom'
       layout: [
         {
           type: "interval-adjust-position",

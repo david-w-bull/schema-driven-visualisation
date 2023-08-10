@@ -28,6 +28,10 @@ public class VizSchema {
     private String keyTwoAlias;
     private DatabaseAttribute scalarOne;
     private String scalarOneAlias;
+    private DatabaseAttribute scalarTwo;
+    private String scalarTwoAlias;
+    private DatabaseAttribute scalarThree;
+    private String scalarThreeAlias;
     private Boolean reflexive = false;
     private List<Map<String, Object>> dataset;
     private Integer keyCardinality;
@@ -43,15 +47,21 @@ public class VizSchema {
     public String getK1FieldName() { return keyOne == null ? null : keyOne.getAttributeName(); }
     public String getK2FieldName() { return keyTwo == null ? null : keyTwo.getAttributeName(); }
     public String getA1FieldName() { return scalarOne == null ? null : scalarOne.getAttributeName(); }
+    public String getA2FieldName() { return scalarTwo == null ? null : scalarTwo.getAttributeName(); }
+    public String getA3FieldName() { return scalarThree == null ? null : scalarThree.getAttributeName(); }
 
     public List<String> matchChartTypes() {
         List<String> matchedChartTypes = new ArrayList<>();
         if (type == VizSchemaType.BASIC) {
-            if (keyOne != null && scalarOne != null) {
-                matchedChartTypes.add("Bar Chart");             //consider updating to enum
-            }
-            if(keyOne != null && scalarOne != null && isLexical(keyOne.getDataType())) {
-                matchedChartTypes.add("Word Cloud");
+            if(keyOne != null) {
+                if(scalarTwo != null) {
+                    matchedChartTypes.add("Scatter Plot");
+                } else if(scalarOne != null) {
+                    matchedChartTypes.add("Bar Chart");
+                    if(isLexical(keyOne.getDataType())) {
+                        matchedChartTypes.add("Word Cloud");
+                    }
+                }
             }
         } else if(type == VizSchemaType.ONETOMANY) {
             if(keyOne != null && keyTwo != null) {

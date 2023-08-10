@@ -75,15 +75,30 @@ public class VizSchemaMapper {
     private VizSchema generateBasicEntitySchema() {
         VizSchema vizSchema = new VizSchema(VizSchemaType.BASIC);
         DatabaseEntity basicEntity = entities.get(0);
+        List<DatabaseAttribute> keys = new ArrayList<>();
+        List<DatabaseAttribute> scalars = new ArrayList<>();
         for (DatabaseAttribute attr : basicEntity.getAttributes()) {
             if (attr.getIsPrimary() || isUnique(attr)) {
-                vizSchema.setKeyOne(attr);
-                vizSchema.setKeyOneAlias(attr.getAttributeName());
+                keys.add(attr);
+//                vizSchema.setKeyOne(attr);
+//                vizSchema.setKeyOneAlias(attr.getAttributeName());
             } else if (isScalarDataType(attr.getDataType())) {
-                vizSchema.setScalarOne(attr);
-                vizSchema.setScalarOneAlias(attr.getAttributeName());
+                scalars.add(attr);
+//                vizSchema.setScalarOne(attr);
+//                vizSchema.setScalarOneAlias(attr.getAttributeName());
             }
         }
+
+        vizSchema.setKeyOne(keys.get(0));
+        vizSchema.setKeyOneAlias(keys.get(0).getAttributeName());
+
+        switch(scalars.size()) {
+            case 3: vizSchema.setScalarThree(scalars.get(2)); vizSchema.setScalarThreeAlias(scalars.get(2).getAttributeName());
+            case 2: vizSchema.setScalarTwo(scalars.get(1)); vizSchema.setScalarTwoAlias(scalars.get(1).getAttributeName());
+            case 1: vizSchema.setScalarOne(scalars.get(0)); vizSchema.setScalarOneAlias(scalars.get(0).getAttributeName());
+            default: break;
+        }
+
         this.sqlQuery = generateSql(VizSchemaType.BASIC, false);
         vizSchema.setSqlQuery(sqlQuery);
         vizSchema.setConnectionString(databaseSchema.getConnectionString());

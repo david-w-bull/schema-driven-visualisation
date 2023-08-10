@@ -12,7 +12,6 @@ const StackedBar = ({ vizSchema }: StackedBarProps) => {
   }));
 
   const config = {
-    // data: DATA.reverse(),
     data: DATA.reverse(),
     isStack: true,
     xField: "value",
