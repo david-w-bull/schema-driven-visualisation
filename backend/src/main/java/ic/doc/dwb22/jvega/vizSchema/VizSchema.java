@@ -13,15 +13,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Setter
@@ -48,12 +44,12 @@ public class VizSchema {
     private String sqlQuery;
     private String connectionString;
     private List<String> chartTypes;
+    private Map<String, List<String>> allChartTypes;
     private Map<String, Integer> cardinalityLimits;
 
     public VizSchema(VizSchemaType type) {
         this.type = type;
         this.cardinalityLimits = readCardinalities("cardinalityLimits.json");
-        System.out.println(cardinalityLimits);
     }
     public String getK1FieldName() { return keyOne == null ? null : keyOne.getAttributeName(); }
     public String getK2FieldName() { return keyTwo == null ? null : keyTwo.getAttributeName(); }
@@ -62,15 +58,22 @@ public class VizSchema {
     public String getA3FieldName() { return scalarThree == null ? null : scalarThree.getAttributeName(); }
 
     public List<String> matchChartTypes() {
-        List<String> matchedChartTypes = new ArrayList<>();
+        return matchChartTypes(this.type, false);
+    }
+
+    public List<String> matchChartTypes(VizSchemaType type, Boolean checkCardinalities) {
+        List<String> matchedChartTypes = new ArrayList<>();  // Can be removed after recommender update
         if (type == VizSchemaType.BASIC) {
             if(keyOne != null) {
                 if(scalarTwo != null) {
-                    matchedChartTypes.add("Scatter Plot");
+                    matchedChartTypes.add("Scatter Plot");  // Can be removed after recommender update
+                    categoriseChartRecommendation("Scatter Plot");
                 } else if(scalarOne != null) {
                     matchedChartTypes.add("Bar Chart");
+                    categoriseChartRecommendation("Bar Chart");
                     if(isLexical(keyOne.getDataType())) {
                         matchedChartTypes.add("Word Cloud");
+                        categoriseChartRecommendation("Word Cloud");
                     }
                 }
             }
@@ -78,8 +81,10 @@ public class VizSchema {
             if(keyOne != null && keyTwo != null) {
                 if (scalarOne == null) {
                     matchedChartTypes.add("Hierarchy Tree");
+                    categoriseChartRecommendation("Hierarchy Tree");
                 } else {
                     matchedChartTypes.add("Treemap");
+                    categoriseChartRecommendation("Treemap");
                 }
             }
         } else if(type == VizSchemaType.MANYTOMANY) {
@@ -87,15 +92,22 @@ public class VizSchema {
                 if(reflexive) {
                     // matchedChartTypes.add("Sankey Diagram");
                     matchedChartTypes.add("Chord Diagram");
+                    categoriseChartRecommendation("Chord Diagram");
                 } else {
                     matchedChartTypes.add("Sankey Diagram");
+                    categoriseChartRecommendation("Sankey Diagram");
                 }
             }
         } else if(type == VizSchemaType.WEAK) {
             matchedChartTypes.add("Grouped Bar Chart");
             matchedChartTypes.add("Stacked Bar Chart");
+            categoriseChartRecommendation("Grouped Bar Chart");
+            categoriseChartRecommendation("Stacked Bar Chart");
         }
         this.chartTypes = matchedChartTypes;
+
+        categoriseRemainingCharts();
+
         return matchedChartTypes;
     }
 
@@ -107,6 +119,36 @@ public class VizSchema {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    private void categoriseChartRecommendation(String chartName) {
+        if(!cardinalityLimits.containsKey(chartName)) {
+            System.err.println("Chart type: " + chartName + " has no cardinality limit set.");
+            return;
+        }
+        if(allChartTypes == null) {
+            allChartTypes = new HashMap<>();
+            allChartTypes.put("Recommended", new ArrayList<>());
+            allChartTypes.put("Possible", new ArrayList<>());
+            allChartTypes.put("Other", new ArrayList<>());
+        }
+        String option = keyCardinality <= cardinalityLimits.get(chartName) ? "Recommended" : "Possible";
+        allChartTypes.get(option).add(chartName);
+    }
+
+    private void categoriseRemainingCharts() {
+        if(allChartTypes == null) {
+            allChartTypes = new HashMap<>();
+            allChartTypes.put("Recommended", new ArrayList<>());
+            allChartTypes.put("Possible", new ArrayList<>());
+            allChartTypes.put("Other", new ArrayList<>());
+        }
+        for(String chart: cardinalityLimits.keySet()) {
+            if(!allChartTypes.get("Recommended").contains(chart)
+                && !allChartTypes.get("Possible").contains(chart)) {
+                allChartTypes.get("Other").add(chart);
+            }
         }
     }
 

@@ -66,7 +66,7 @@ public class JVegaApplication {
 //
 //		System.out.println(schema.toJson().toPrettyString());
 
-//		testSchemaMapping("oneToManySchema.json");
+		testSchemaMapping("basicSchema.json");
 
 //testTemplateFile( "sankeyTemplate.json", "manyToManySchema.json");
 
@@ -107,19 +107,23 @@ public class JVegaApplication {
 
 		VizSchema vizSchema = mapper.generateVizSchema();
 
-		System.out.println(mapper.getSqlQuery());
+//		System.out.println(mapper.getSqlQuery());
+//
+//		System.out.println(vizSchema.getDataset());
+//
+//		System.out.println(vizSchema.getK1FieldName());
+//		System.out.println(vizSchema.getKeyOneAlias());
+//		System.out.println(vizSchema.getK2FieldName());
+//		System.out.println(vizSchema.getKeyTwoAlias());
+//		System.out.println(vizSchema.getA1FieldName());
+//		System.out.println(vizSchema.getScalarOneAlias());
+//		System.out.println(vizSchema.getKeyCardinality());
+//		System.out.println(vizSchema.getDataRelationship());
+//		System.out.println(vizSchema.getExampleData());
 
-		System.out.println(vizSchema.getDataset());
+		vizSchema.matchChartTypes();
 
-		System.out.println(vizSchema.getK1FieldName());
-		System.out.println(vizSchema.getKeyOneAlias());
-		System.out.println(vizSchema.getK2FieldName());
-		System.out.println(vizSchema.getKeyTwoAlias());
-		System.out.println(vizSchema.getA1FieldName());
-		System.out.println(vizSchema.getScalarOneAlias());
-		System.out.println(vizSchema.getKeyCardinality());
-		System.out.println(vizSchema.getDataRelationship());
-		System.out.println(vizSchema.getExampleData());
+		System.out.println(vizSchema.getAllChartTypes());
 
 	}
 

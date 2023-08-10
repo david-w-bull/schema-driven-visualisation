@@ -80,12 +80,8 @@ public class VizSchemaMapper {
         for (DatabaseAttribute attr : basicEntity.getAttributes()) {
             if (attr.getIsPrimary() || isUnique(attr)) {
                 keys.add(attr);
-//                vizSchema.setKeyOne(attr);
-//                vizSchema.setKeyOneAlias(attr.getAttributeName());
             } else if (isScalarDataType(attr.getDataType())) {
                 scalars.add(attr);
-//                vizSchema.setScalarOne(attr);
-//                vizSchema.setScalarOneAlias(attr.getAttributeName());
             }
         }
 
@@ -271,8 +267,9 @@ public class VizSchemaMapper {
             return "SELECT" + "\n"
                     + attributeList + "\n\n"
                     + "FROM "
-                    + entity.getName() + "\n\n"
-                    + "LIMIT 30"
+                    + entity.getName()
+//                    + "\n\n"
+//                    + "LIMIT 30"
                     ; // Limit needs to be removed once a better solution can be found
         }
 
