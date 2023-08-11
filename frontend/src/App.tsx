@@ -19,9 +19,16 @@ import * as d3 from "d3";
 import SQLEditor from "./components/SQLEditor";
 import DataTable from "./components/DataTable";
 import VisualisationButtons from "./components/VisualisationButtons";
+import VisualisationButtonsGroup from "./components/VisualisationButtonsGroup";
 import styled from "styled-components";
 import Split from "react-split";
-import { Button as AntButton, Radio, RadioChangeEvent } from "antd";
+import {
+  Button as AntButton,
+  Radio,
+  RadioChangeEvent,
+  Divider,
+  Space,
+} from "antd";
 import Button from "@mui/material/Button";
 import AddchartIcon from "@mui/icons-material/Addchart";
 import StorageIcon from "@mui/icons-material/Storage";
@@ -221,40 +228,14 @@ function App() {
             )}
 
             {radioSelect === "Visualisations" && (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <h1>Recommended</h1>
-                <VisualisationButtons
-                  chartTypes={chartTypes.Recommended}
-                  specList={specList}
-                  setVegaSpec={setVegaSpec}
-                  setVegaActionMenu={setVegaActionMenu}
-                  setSelectedChart={setSelectedChart}
-                  setIsModalOpen={setIsModalOpen}
-                />
-                <h1>Possible</h1>
-                <VisualisationButtons
-                  chartTypes={chartTypes.Possible}
-                  specList={specList}
-                  setVegaSpec={setVegaSpec}
-                  setVegaActionMenu={setVegaActionMenu}
-                  setSelectedChart={setSelectedChart}
-                  setIsModalOpen={setIsModalOpen}
-                />
-                <h1>Other</h1>
-                <VisualisationButtons
-                  chartTypes={chartTypes.Other}
-                  specList={specList}
-                  setVegaSpec={setVegaSpec}
-                  setVegaActionMenu={setVegaActionMenu}
-                  setSelectedChart={setSelectedChart}
-                  setIsModalOpen={setIsModalOpen}
-                />
-              </div>
+              <VisualisationButtonsGroup
+                chartTypes={chartTypes}
+                specList={specList}
+                setVegaSpec={setVegaSpec}
+                setVegaActionMenu={setVegaActionMenu}
+                setSelectedChart={setSelectedChart}
+                setIsModalOpen={setIsModalOpen}
+              />
             )}
           </div>
         </Split>

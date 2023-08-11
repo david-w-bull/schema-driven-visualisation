@@ -1,4 +1,4 @@
-import { Button as AntButton } from "antd";
+import { Button } from "antd";
 
 type VisualisationButtonsProps = {
   chartTypes: string[];
@@ -24,13 +24,13 @@ const VisualisationButtons = ({
           (spec: any) => spec.description === chartType
         );
         return (
-          <AntButton
+          <Button
             type="default"
             key={index}
             style={{
               width: "150px",
               height: "150px",
-              marginRight: "20px", // Update to use grid layout
+              margin: "25px 20px 30px 0px",
             }}
             onClick={() => {
               if (matchingSpec) {
@@ -44,7 +44,7 @@ const VisualisationButtons = ({
             }}
           >
             {chartType}
-          </AntButton>
+          </Button>
         );
       })}
     </div>
