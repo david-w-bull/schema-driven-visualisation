@@ -18,6 +18,7 @@ import ScatterPlot from "./components/charts/ScatterPlot";
 import * as d3 from "d3";
 import SQLEditor from "./components/SQLEditor";
 import DataTable from "./components/DataTable";
+import VisualisationButtons from "./components/VisualisationButtons";
 import styled from "styled-components";
 import Split from "react-split";
 import { Button as AntButton, Radio, RadioChangeEvent } from "antd";
@@ -54,7 +55,7 @@ function App() {
       });
   };
 
-  const [chartTypes, setChartTypes] = useState<string[]>([]);
+  const [chartTypes, setChartTypes] = useState<any>(null);
   const [selectedChart, setSelectedChart] = useState<string | null>(null);
   const [specList, setSpecList] = useState<any[]>([]);
   const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
@@ -67,7 +68,7 @@ function App() {
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
       .then((response) => {
         console.log(JSON.stringify(response.data));
-        setChartTypes(response.data.vizSchema.allChartTypes.Recommended);
+        setChartTypes(response.data.vizSchema.allChartTypes);
         setVizSchema(response.data.vizSchema);
         setSqlCode(response.data.vizSchema.sqlQuery);
 
@@ -134,7 +135,7 @@ function App() {
       .then((response) => {
         setVizSchema(response.data);
         console.log(response.data);
-        setChartTypes(response.data.allChartTypes.Recommended);
+        setChartTypes(response.data.allChartTypes);
         updateRawDataInSpecList(response.data.dataset);
       });
   };
@@ -174,6 +175,7 @@ function App() {
               onSelectedData={handleSelectedData}
             ></EntityList>
           </div>
+
           <div
             style={{
               padding: "5%",
@@ -219,38 +221,39 @@ function App() {
             )}
 
             {radioSelect === "Visualisations" && (
-              <div>
-                {chartTypes?.map((chartType: string, index: number) => {
-                  const matchingSpec = specList.find(
-                    (spec: any) => spec.description === chartType
-                  );
-                  return (
-                    <AntButton
-                      type="default"
-                      key={index}
-                      style={{
-                        width: "150px",
-                        height: "150px",
-                        marginRight: "20px", // Update to use grid layout
-                      }}
-                      onClick={() => {
-                        if (matchingSpec) {
-                          setVegaSpec(matchingSpec);
-                          setVegaActionMenu(true);
-                          setSelectedChart(null);
-                        } else {
-                          setSelectedChart(chartType);
-                        }
-                        setIsModalOpen(true);
-                      }}
-                    >
-                      {chartType}
-                    </AntButton>
-                  );
-                })}
-                <br></br>
-                <br></br>
-                <p> Cardinality: {vizSchema.keyCardinality}</p>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <h1>Recommended</h1>
+                <VisualisationButtons
+                  chartTypes={chartTypes.Recommended}
+                  specList={specList}
+                  setVegaSpec={setVegaSpec}
+                  setVegaActionMenu={setVegaActionMenu}
+                  setSelectedChart={setSelectedChart}
+                  setIsModalOpen={setIsModalOpen}
+                />
+                <h1>Possible</h1>
+                <VisualisationButtons
+                  chartTypes={chartTypes.Possible}
+                  specList={specList}
+                  setVegaSpec={setVegaSpec}
+                  setVegaActionMenu={setVegaActionMenu}
+                  setSelectedChart={setSelectedChart}
+                  setIsModalOpen={setIsModalOpen}
+                />
+                <h1>Other</h1>
+                <VisualisationButtons
+                  chartTypes={chartTypes.Other}
+                  specList={specList}
+                  setVegaSpec={setVegaSpec}
+                  setVegaActionMenu={setVegaActionMenu}
+                  setSelectedChart={setSelectedChart}
+                  setIsModalOpen={setIsModalOpen}
+                />
               </div>
             )}
           </div>
