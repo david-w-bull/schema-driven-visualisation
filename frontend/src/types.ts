@@ -86,7 +86,7 @@ export type CardinalityLimits = {
   [key: string]: number;
 };
 
-export type ChartTypes = {
+export type ChartRecommendations = {
   Recommended: string[];
   Possible: string[];
   Other: string[];

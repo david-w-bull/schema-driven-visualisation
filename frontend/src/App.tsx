@@ -2,12 +2,17 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./App.css";
 import { Vega, VegaLite, VisualizationSpec } from "react-vega";
-import { Data, VizSchema, CardinalityLimits, ChartTypes } from "./types";
+import {
+  Data,
+  VizSchema,
+  CardinalityLimits,
+  ChartRecommendations,
+} from "./types";
 import {
   BLANKSPEC,
   BLANKSCHEMA,
   BLANKVIZSCHEMA,
-  BLANKCHARTTYPES,
+  BLANKRECOMMENDATIONS,
 } from "./constants";
 import cardinalityLimitsData from "./cardinalityLimitsData";
 import { categorizeCharts } from "./utils/chartUtils";
@@ -37,7 +42,6 @@ function App() {
   const [schemaConnection, setSchemaConnection] = useState("No connection");
 
   const handleSelectDatabase = (selectedValue: string) => {
-    console.log(selectedValue);
     axios
       .get("http://localhost:8080/api/v1/schemas/" + selectedValue)
       .then((response) => {
@@ -53,20 +57,30 @@ function App() {
 
   const [chartTypes, setChartTypes] = useState<string[]>([]);
   const [recommendedCharts, setRecommendedCharts] =
-    useState<ChartTypes>(BLANKCHARTTYPES);
+    useState<ChartRecommendations>(BLANKRECOMMENDATIONS);
   const [selectedChart, setSelectedChart] = useState<string | null>(null);
   const [specList, setSpecList] = useState<any[]>([]);
   const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
+  const [keyCardinality, setKeyCardinality] = useState<number>(0);
 
   const [cardinalityLimits, setCardinalityLimits] = useState<CardinalityLimits>(
     cardinalityLimitsData
   );
 
   const handleCardinalityUpdate = (key: string, value: number) => {
-    setCardinalityLimits((prevData) => ({
-      ...prevData,
+    const newCardinalityLimits = {
+      ...cardinalityLimits,
       [key]: value,
-    }));
+    };
+    setCardinalityLimits(newCardinalityLimits);
+
+    let recommendedCharts = categorizeCharts(
+      chartTypes,
+      newCardinalityLimits,
+      keyCardinality
+    );
+
+    setRecommendedCharts(recommendedCharts);
   };
 
   const handleSelectedData = (data: Data) => {
@@ -79,7 +93,8 @@ function App() {
         console.log(JSON.stringify(response.data));
         setVizSchema(response.data.vizSchema);
         setSqlCode(response.data.vizSchema.sqlQuery);
-        // setCardinalityLimits(response.data.vizSchema.cardinalityLimits);
+        setKeyCardinality(response.data.vizSchema.keyCardinality);
+        setChartTypes(response.data.vizSchema.chartTypes);
 
         let recommendedCharts = categorizeCharts(
           response.data.vizSchema.chartTypes,

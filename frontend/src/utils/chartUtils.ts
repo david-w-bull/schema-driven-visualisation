@@ -1,4 +1,7 @@
-import { CardinalityLimits, ChartTypes as RecommendedCharts } from "../types";
+import {
+  CardinalityLimits,
+  ChartRecommendations as RecommendedCharts,
+} from "../types";
 
 export const categorizeCharts = (
   charts: string[],

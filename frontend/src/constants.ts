@@ -18,7 +18,7 @@ export const BLANKVIZSCHEMA = {
   type: "NONE",
 };
 
-export const BLANKCHARTTYPES = {
+export const BLANKRECOMMENDATIONS = {
   Recommended: [],
   Possible: [],
   Other: [],
