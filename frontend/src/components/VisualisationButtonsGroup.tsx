@@ -1,7 +1,7 @@
 import React from "react";
 import { Divider, Skeleton } from "antd";
 import VisualisationButtons from "./VisualisationButtons";
-import { DotChartOutlined } from "@ant-design/icons";
+import { DotChartOutlined, BarChartOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 
 type VisualisationButtonsGroupProps = {
@@ -43,6 +43,11 @@ const VisualisationButtonsGroup = ({
           setVegaActionMenu={setVegaActionMenu}
           setSelectedChart={setSelectedChart}
           setIsModalOpen={setIsModalOpen}
+          buttonStyle={{
+            width: "150px",
+            height: "150px",
+            margin: "25px 20px 30px 0px",
+          }}
         />
       ) : (
         <Skeleton.Node
@@ -53,7 +58,7 @@ const VisualisationButtonsGroup = ({
             margin: "25px 20px 30px 0px", // Update to use grid layout
           }}
         >
-          <DotChartOutlined style={{ fontSize: 40, color: "#bfbfbf" }} />
+          <BarChartOutlined style={{ fontSize: 40, color: "#bfbfbf" }} />
         </Skeleton.Node>
       )}
       {chartTypes.Possible.length > 0 && (
@@ -71,6 +76,11 @@ const VisualisationButtonsGroup = ({
             setVegaActionMenu={setVegaActionMenu}
             setSelectedChart={setSelectedChart}
             setIsModalOpen={setIsModalOpen}
+            buttonStyle={{
+              width: "150px",
+              height: "150px",
+              margin: "25px 20px 30px 0px",
+            }}
           />
         </>
       )}
@@ -80,14 +90,19 @@ const VisualisationButtonsGroup = ({
         data and may not display correctly
       </SubHeader>
       <StyledDivider />
-      <VisualisationButtons
-        chartTypes={chartTypes.Other}
-        specList={specList}
-        setVegaSpec={setVegaSpec}
-        setVegaActionMenu={setVegaActionMenu}
-        setSelectedChart={setSelectedChart}
-        setIsModalOpen={setIsModalOpen}
-      />
+      <div style={{ paddingTop: "20px", width: "700px" }}>
+        <VisualisationButtons
+          chartTypes={chartTypes.Other}
+          specList={specList}
+          setVegaSpec={setVegaSpec}
+          setVegaActionMenu={setVegaActionMenu}
+          setSelectedChart={setSelectedChart}
+          setIsModalOpen={setIsModalOpen}
+          buttonStyle={{
+            margin: "5px 5px 5px 0px",
+          }}
+        />
+      </div>
     </div>
   );
 };

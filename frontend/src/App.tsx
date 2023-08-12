@@ -28,7 +28,10 @@ import {
   RadioChangeEvent,
   Divider,
   Space,
+  FloatButton,
+  Drawer,
 } from "antd";
+import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
 import Button from "@mui/material/Button";
 import AddchartIcon from "@mui/icons-material/Addchart";
 import StorageIcon from "@mui/icons-material/Storage";
@@ -153,6 +156,16 @@ function App() {
     setRadioSelect(e.target.value);
   };
 
+  const [settingsDrawIsOpen, setSettingsDrawIsOpen] = useState(false);
+
+  const showSettingsDrawer = () => {
+    setSettingsDrawIsOpen(true);
+  };
+
+  const closeSettingsDrawer = () => {
+    setSettingsDrawIsOpen(false);
+  };
+
   return (
     <>
       <div style={{ display: "flex", height: "100vh", width: "100%" }}>
@@ -253,6 +266,21 @@ function App() {
           </ModalContent>
         </ModalContainer>
       )}
+      <Drawer
+        title="Basic Drawer"
+        placement="bottom"
+        closable={true}
+        onClose={closeSettingsDrawer}
+        open={settingsDrawIsOpen}
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Drawer>
+      <FloatButton.Group shape="square" style={{ right: 24 }}>
+        <FloatButton icon={<QuestionCircleOutlined />} />
+        <FloatButton icon={<SettingOutlined />} onClick={showSettingsDrawer} />
+      </FloatButton.Group>
     </>
   );
 }

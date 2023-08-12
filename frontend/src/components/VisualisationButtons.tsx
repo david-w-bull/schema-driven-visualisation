@@ -7,6 +7,7 @@ type VisualisationButtonsProps = {
   setVegaActionMenu: (value: boolean) => void;
   setSelectedChart: (chart: string | null) => void;
   setIsModalOpen: (isOpen: boolean) => void;
+  buttonStyle?: React.CSSProperties;
 };
 
 const VisualisationButtons = ({
@@ -16,6 +17,7 @@ const VisualisationButtons = ({
   setVegaActionMenu,
   setSelectedChart,
   setIsModalOpen,
+  buttonStyle,
 }: VisualisationButtonsProps) => {
   return (
     <div>
@@ -28,9 +30,7 @@ const VisualisationButtons = ({
             type="default"
             key={index}
             style={{
-              width: "150px",
-              height: "150px",
-              margin: "25px 20px 30px 0px",
+              ...buttonStyle,
             }}
             onClick={() => {
               if (matchingSpec) {
