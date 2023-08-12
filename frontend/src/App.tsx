@@ -275,6 +275,8 @@ function App() {
               <VisualisationButtonsGroup
                 chartTypes={recommendedCharts}
                 specList={specList}
+                cardinalityLimits={cardinalityLimits}
+                keyCardinality={keyCardinality}
                 setVegaSpec={setVegaSpec}
                 setVegaActionMenu={setVegaActionMenu}
                 setSelectedChart={setSelectedChart}

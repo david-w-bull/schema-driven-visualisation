@@ -3,14 +3,13 @@ import { Divider, Skeleton } from "antd";
 import VisualisationButtons from "./VisualisationButtons";
 import { DotChartOutlined, BarChartOutlined } from "@ant-design/icons";
 import styled from "styled-components";
+import { CardinalityLimits, ChartRecommendations } from "../types";
 
 type VisualisationButtonsGroupProps = {
-  chartTypes: {
-    Recommended: string[];
-    Possible: string[];
-    Other: string[];
-  };
+  chartTypes: ChartRecommendations;
   specList: any[];
+  cardinalityLimits?: CardinalityLimits;
+  keyCardinality?: number;
   setVegaSpec: (spec: any) => void;
   setVegaActionMenu: (value: boolean) => void;
   setSelectedChart: (chart: string | null) => void;
@@ -20,6 +19,8 @@ type VisualisationButtonsGroupProps = {
 const VisualisationButtonsGroup = ({
   chartTypes,
   specList,
+  cardinalityLimits,
+  keyCardinality,
   setVegaSpec,
   setVegaActionMenu,
   setSelectedChart,
@@ -72,6 +73,8 @@ const VisualisationButtonsGroup = ({
           <VisualisationButtons
             chartTypes={chartTypes.Possible}
             specList={specList}
+            keyCardinality={keyCardinality}
+            cardinalityLimits={cardinalityLimits}
             setVegaSpec={setVegaSpec}
             setVegaActionMenu={setVegaActionMenu}
             setSelectedChart={setSelectedChart}

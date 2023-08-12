@@ -1,8 +1,12 @@
 import { Button } from "antd";
+import { CardinalityLimits } from "../types";
+import styled from "styled-components";
 
 type VisualisationButtonsProps = {
   chartTypes: string[];
   specList: any[];
+  cardinalityLimits?: CardinalityLimits;
+  keyCardinality?: number;
   setVegaSpec: (spec: any) => void;
   setVegaActionMenu: (value: boolean) => void;
   setSelectedChart: (chart: string | null) => void;
@@ -13,6 +17,8 @@ type VisualisationButtonsProps = {
 const VisualisationButtons = ({
   chartTypes,
   specList,
+  cardinalityLimits,
+  keyCardinality,
   setVegaSpec,
   setVegaActionMenu,
   setSelectedChart,
@@ -43,7 +49,34 @@ const VisualisationButtons = ({
               setIsModalOpen(true);
             }}
           >
-            {chartType}
+            {cardinalityLimits ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "100%",
+                }}
+              >
+                <div
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {chartType}
+                </div>
+                <div style={{ fontSize: 11, color: "#999999" }}>
+                  Dataset: {keyCardinality}
+                </div>
+                <div style={{ fontSize: 11, color: "#999999" }}>
+                  Limit: {cardinalityLimits && cardinalityLimits[chartType]}
+                </div>
+              </div>
+            ) : (
+              chartType
+            )}
           </Button>
         );
       })}
