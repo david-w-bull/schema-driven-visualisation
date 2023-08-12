@@ -62,18 +62,15 @@ public class VizSchema {
     }
 
     public List<String> matchChartTypes(VizSchemaType type, Boolean checkCardinalities) {
-        List<String> matchedChartTypes = new ArrayList<>();  // Can be removed after recommender update
+        List<String> matchedChartTypes = new ArrayList<>();
         if (type == VizSchemaType.BASIC) {
             if(keyOne != null) {
                 if(scalarTwo != null) {
-                    matchedChartTypes.add("Scatter Plot");  // Can be removed after recommender update
-//                    categoriseChartRecommendation("Scatter Plot");
+                    matchedChartTypes.add("Scatter Plot");
                 } else if(scalarOne != null) {
                     matchedChartTypes.add("Bar Chart");
-//                    categoriseChartRecommendation("Bar Chart");
                     if(isLexical(keyOne.getDataType())) {
                         matchedChartTypes.add("Word Cloud");
-//                        categoriseChartRecommendation("Word Cloud");
                     }
                 }
             }
@@ -81,10 +78,8 @@ public class VizSchema {
             if(keyOne != null && keyTwo != null) {
                 if (scalarOne == null) {
                     matchedChartTypes.add("Hierarchy Tree");
-//                    categoriseChartRecommendation("Hierarchy Tree");
                 } else {
                     matchedChartTypes.add("Treemap");
-//                    categoriseChartRecommendation("Treemap");
                 }
             }
         } else if(type == VizSchemaType.MANYTOMANY) {
@@ -92,21 +87,15 @@ public class VizSchema {
                 if(reflexive) {
                     // matchedChartTypes.add("Sankey Diagram");
                     matchedChartTypes.add("Chord Diagram");
-//                    categoriseChartRecommendation("Chord Diagram");
                 } else {
                     matchedChartTypes.add("Sankey Diagram");
-//                    categoriseChartRecommendation("Sankey Diagram");
                 }
             }
         } else if(type == VizSchemaType.WEAK) {
             matchedChartTypes.add("Grouped Bar Chart");
             matchedChartTypes.add("Stacked Bar Chart");
-//            categoriseChartRecommendation("Grouped Bar Chart");
-//            categoriseChartRecommendation("Stacked Bar Chart");
         }
         this.chartTypes = matchedChartTypes;
-
-//        categoriseRemainingCharts();
 
         return matchedChartTypes;
     }
