@@ -67,13 +67,13 @@ public class VizSchema {
             if(keyOne != null) {
                 if(scalarTwo != null) {
                     matchedChartTypes.add("Scatter Plot");  // Can be removed after recommender update
-                    categoriseChartRecommendation("Scatter Plot");
+//                    categoriseChartRecommendation("Scatter Plot");
                 } else if(scalarOne != null) {
                     matchedChartTypes.add("Bar Chart");
-                    categoriseChartRecommendation("Bar Chart");
+//                    categoriseChartRecommendation("Bar Chart");
                     if(isLexical(keyOne.getDataType())) {
                         matchedChartTypes.add("Word Cloud");
-                        categoriseChartRecommendation("Word Cloud");
+//                        categoriseChartRecommendation("Word Cloud");
                     }
                 }
             }
@@ -81,10 +81,10 @@ public class VizSchema {
             if(keyOne != null && keyTwo != null) {
                 if (scalarOne == null) {
                     matchedChartTypes.add("Hierarchy Tree");
-                    categoriseChartRecommendation("Hierarchy Tree");
+//                    categoriseChartRecommendation("Hierarchy Tree");
                 } else {
                     matchedChartTypes.add("Treemap");
-                    categoriseChartRecommendation("Treemap");
+//                    categoriseChartRecommendation("Treemap");
                 }
             }
         } else if(type == VizSchemaType.MANYTOMANY) {
@@ -92,21 +92,21 @@ public class VizSchema {
                 if(reflexive) {
                     // matchedChartTypes.add("Sankey Diagram");
                     matchedChartTypes.add("Chord Diagram");
-                    categoriseChartRecommendation("Chord Diagram");
+//                    categoriseChartRecommendation("Chord Diagram");
                 } else {
                     matchedChartTypes.add("Sankey Diagram");
-                    categoriseChartRecommendation("Sankey Diagram");
+//                    categoriseChartRecommendation("Sankey Diagram");
                 }
             }
         } else if(type == VizSchemaType.WEAK) {
             matchedChartTypes.add("Grouped Bar Chart");
             matchedChartTypes.add("Stacked Bar Chart");
-            categoriseChartRecommendation("Grouped Bar Chart");
-            categoriseChartRecommendation("Stacked Bar Chart");
+//            categoriseChartRecommendation("Grouped Bar Chart");
+//            categoriseChartRecommendation("Stacked Bar Chart");
         }
         this.chartTypes = matchedChartTypes;
 
-        categoriseRemainingCharts();
+//        categoriseRemainingCharts();
 
         return matchedChartTypes;
     }

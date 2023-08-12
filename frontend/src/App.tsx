@@ -168,7 +168,8 @@ function App() {
       .then((response) => {
         setVizSchema(response.data);
         console.log(response.data);
-        setChartTypes(response.data.allChartTypes);
+        setChartTypes(response.data.chartTypes);
+        setKeyCardinality(response.data.keyCardinality);
         let recommendedCharts = categorizeCharts(
           response.data.chartTypes,
           cardinalityLimits,

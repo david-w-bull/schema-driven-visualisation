@@ -69,9 +69,9 @@ public class VegaSpecService {
 
         List<VegaSpec> specs = new ArrayList<>();
 
-        vizSchema.matchChartTypes();
 
-        for(String chartType: vizSchema.getAllChartTypes().get("Recommended")) {
+
+        for(String chartType: vizSchema.matchChartTypes()) {
             if(chartType == "Bar Chart") {
                 VegaSpec barSpec = specTemplatesByChartType(true, Arrays.asList("Bar Chart")).get(0).getSpecs().get(0);
 
