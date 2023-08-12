@@ -8,8 +8,9 @@ import {
   BLANKSCHEMA,
   BLANKVIZSCHEMA,
   BLANKCHARTTYPES,
-  BLANKCARDINALITIES,
 } from "./constants";
+import cardinalityLimitsData from "./cardinalityLimitsData";
+import { categorizeCharts } from "./utils/chartUtils";
 import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
 import CardinalitySettings from "./components/CardinalitySettings";
@@ -50,13 +51,16 @@ function App() {
       });
   };
 
-  const [chartTypes, setChartTypes] = useState<ChartTypes>(BLANKCHARTTYPES);
+  const [chartTypes, setChartTypes] = useState<string[]>([]);
+  const [recommendedCharts, setRecommendedCharts] =
+    useState<ChartTypes>(BLANKCHARTTYPES);
   const [selectedChart, setSelectedChart] = useState<string | null>(null);
   const [specList, setSpecList] = useState<any[]>([]);
   const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
 
-  const [cardinalityLimits, setCardinalityLimits] =
-    useState<CardinalityLimits>(BLANKCARDINALITIES);
+  const [cardinalityLimits, setCardinalityLimits] = useState<CardinalityLimits>(
+    cardinalityLimitsData
+  );
 
   const handleCardinalityUpdate = (key: string, value: number) => {
     setCardinalityLimits((prevData) => ({
@@ -73,10 +77,17 @@ function App() {
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
       .then((response) => {
         console.log(JSON.stringify(response.data));
-        setChartTypes(response.data.vizSchema.allChartTypes);
         setVizSchema(response.data.vizSchema);
         setSqlCode(response.data.vizSchema.sqlQuery);
-        setCardinalityLimits(response.data.vizSchema.cardinalityLimits);
+        // setCardinalityLimits(response.data.vizSchema.cardinalityLimits);
+
+        let recommendedCharts = categorizeCharts(
+          response.data.vizSchema.chartTypes,
+          cardinalityLimits,
+          response.data.vizSchema.keyCardinality
+        );
+
+        setRecommendedCharts(recommendedCharts);
 
         // Copy the reference to the VizSchema data into any Vega specs as 'rawData'.
         response.data.specs.forEach((specItem: any) => {
@@ -131,6 +142,7 @@ function App() {
       ...vizSchema,
       sqlQuery: sqlCode,
       allChartTypes: null,
+      chartTypes: [],
     };
 
     axios
@@ -142,6 +154,13 @@ function App() {
         setVizSchema(response.data);
         console.log(response.data);
         setChartTypes(response.data.allChartTypes);
+        let recommendedCharts = categorizeCharts(
+          response.data.chartTypes,
+          cardinalityLimits,
+          response.data.keyCardinality
+        );
+
+        setRecommendedCharts(recommendedCharts);
         updateRawDataInSpecList(response.data.dataset);
       });
   };
@@ -238,7 +257,7 @@ function App() {
 
             {radioSelect === "Visualisations" && (
               <VisualisationButtonsGroup
-                chartTypes={chartTypes}
+                chartTypes={recommendedCharts}
                 specList={specList}
                 setVegaSpec={setVegaSpec}
                 setVegaActionMenu={setVegaActionMenu}

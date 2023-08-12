@@ -9,8 +9,6 @@ type CardinalitySettingProps = {
 };
 
 function CardinalitySettings({ data, onDataUpdate }: CardinalitySettingProps) {
-  console.log("Cardinality");
-  console.log(data);
   const handleInputChange = (key: string, value: number) => {
     onDataUpdate(key, value);
   };

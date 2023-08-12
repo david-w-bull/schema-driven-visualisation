@@ -81,3 +81,13 @@ export type Data = {
   entityList: Entity[];
   relationshipList: Relationship[];
 };
+
+export type CardinalityLimits = {
+  [key: string]: number;
+};
+
+export type ChartTypes = {
+  Recommended: string[];
+  Possible: string[];
+  Other: string[];
+};
