@@ -17,3 +17,13 @@ export const BLANKSCHEMA = {
 export const BLANKVIZSCHEMA = {
   type: "NONE",
 };
+
+export const BLANKCHARTTYPES = {
+  Recommended: [],
+  Possible: [],
+  Other: [],
+};
+
+export const BLANKCARDINALITIES = {
+  "No defaults": 0,
+};

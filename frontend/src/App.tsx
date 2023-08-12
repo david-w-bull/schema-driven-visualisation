@@ -1,40 +1,32 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./App.css";
-import Message from "./components/Message";
 import { Vega, VegaLite, VisualizationSpec } from "react-vega";
-import ListGroup from "./components/ListGroup";
-import { Data, Entity, Attribute, VizSchema } from "./types";
-import { BLANKSPEC, BLANKSCHEMA, BLANKVIZSCHEMA } from "./constants";
+import { Data, VizSchema, CardinalityLimits, ChartTypes } from "./types";
+import {
+  BLANKSPEC,
+  BLANKSCHEMA,
+  BLANKVIZSCHEMA,
+  BLANKCHARTTYPES,
+  BLANKCARDINALITIES,
+} from "./constants";
 import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
+import CardinalitySettings from "./components/CardinalitySettings";
 import ERDiagram from "./components/ERDiagram";
-import ChordDiagram from "./components/charts/ChordDiagram";
 import ChordDiagramTest from "./components/charts/ChordDiagramTest";
 import GroupedBar from "./components/charts/GroupedBar";
 import StackedBar from "./components/charts/StackedBar";
 import TreeMap from "./components/charts/TreeMap";
 import ScatterPlot from "./components/charts/ScatterPlot";
-import * as d3 from "d3";
 import SQLEditor from "./components/SQLEditor";
 import DataTable from "./components/DataTable";
-import VisualisationButtons from "./components/VisualisationButtons";
 import VisualisationButtonsGroup from "./components/VisualisationButtonsGroup";
 import styled from "styled-components";
 import Split from "react-split";
-import {
-  Button as AntButton,
-  Radio,
-  RadioChangeEvent,
-  Divider,
-  Space,
-  FloatButton,
-  Drawer,
-} from "antd";
+import { Radio, RadioChangeEvent, FloatButton, Drawer } from "antd";
 import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
 import Button from "@mui/material/Button";
-import AddchartIcon from "@mui/icons-material/Addchart";
-import StorageIcon from "@mui/icons-material/Storage";
 import CachedIcon from "@mui/icons-material/Cached";
 
 function App() {
@@ -42,13 +34,6 @@ function App() {
   const [vegaActionMenu, setVegaActionMenu] = useState(false);
   const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
   const [schemaConnection, setSchemaConnection] = useState("No connection");
-
-  const handleSelectItem = (item: string) => {
-    const payload = { viz: item };
-    axios
-      .post("http://localhost:8080/api/v1/specs/postTest", payload)
-      .then((response) => setVegaSpec(response.data.spec));
-  };
 
   const handleSelectDatabase = (selectedValue: string) => {
     console.log(selectedValue);
@@ -65,10 +50,20 @@ function App() {
       });
   };
 
-  const [chartTypes, setChartTypes] = useState<any>(null);
+  const [chartTypes, setChartTypes] = useState<ChartTypes>(BLANKCHARTTYPES);
   const [selectedChart, setSelectedChart] = useState<string | null>(null);
   const [specList, setSpecList] = useState<any[]>([]);
   const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
+
+  const [cardinalityLimits, setCardinalityLimits] =
+    useState<CardinalityLimits>(BLANKCARDINALITIES);
+
+  const handleCardinalityUpdate = (key: string, value: number) => {
+    setCardinalityLimits((prevData) => ({
+      ...prevData,
+      [key]: value,
+    }));
+  };
 
   const handleSelectedData = (data: Data) => {
     setVegaSpec(BLANKSPEC);
@@ -81,6 +76,7 @@ function App() {
         setChartTypes(response.data.vizSchema.allChartTypes);
         setVizSchema(response.data.vizSchema);
         setSqlCode(response.data.vizSchema.sqlQuery);
+        setCardinalityLimits(response.data.vizSchema.cardinalityLimits);
 
         // Copy the reference to the VizSchema data into any Vega specs as 'rawData'.
         response.data.specs.forEach((specItem: any) => {
@@ -267,15 +263,16 @@ function App() {
         </ModalContainer>
       )}
       <Drawer
-        title="Basic Drawer"
-        placement="bottom"
+        title="Cardinality Limits"
+        placement="right"
         closable={true}
         onClose={closeSettingsDrawer}
         open={settingsDrawIsOpen}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <CardinalitySettings
+          data={cardinalityLimits}
+          onDataUpdate={handleCardinalityUpdate}
+        />
       </Drawer>
       <FloatButton.Group shape="square" style={{ right: 24 }}>
         <FloatButton icon={<QuestionCircleOutlined />} />
