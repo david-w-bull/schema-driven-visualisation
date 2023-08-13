@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import { CardinalityLimits } from "../types";
 import styled from "styled-components";
+import { BLANKSPEC } from "../constants";
 
 type VisualisationButtonsProps = {
   chartTypes: string[];
@@ -42,10 +43,11 @@ const VisualisationButtons = ({
               if (matchingSpec) {
                 setVegaSpec(matchingSpec);
                 setVegaActionMenu(true);
-                setSelectedChart(null);
               } else {
-                setSelectedChart(chartType);
+                setVegaSpec(BLANKSPEC);
+                setVegaActionMenu(false);
               }
+              setSelectedChart(chartType);
               setIsModalOpen(true);
             }}
           >

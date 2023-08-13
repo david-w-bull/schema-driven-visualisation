@@ -1,7 +1,9 @@
 import styled from "styled-components";
-import { Vega, VisualizationSpec } from "react-vega";
+import { Vega } from "react-vega";
 import { VizSchema } from "../types";
+import { BLANKSPEC } from "../constants";
 import { renderChartComponent } from "../utils/chartUtils";
+import { useState } from "react";
 
 type ChartDisplayModalProps = {
   setIsModalOpen: (isOpen: boolean) => void;
@@ -18,15 +20,35 @@ function ChartDisplayModal({
   vegaActionMenu,
   vizSchema,
 }: ChartDisplayModalProps) {
+  const [showVegaSpec, setShowVegaSpec] = useState(false);
+
+  const handleToggleVega = () => {
+    setShowVegaSpec((prevState) => !prevState);
+  };
+
+  console.log(vegaSpec);
+
   return (
     <ModalContainer>
       <ModalBackdrop />
       <ModalContent>
         <CloseIcon onClick={() => setIsModalOpen(false)}>×</CloseIcon>
-        {selectedChart ? (
+
+        {showVegaSpec ? (
+          <Vega spec={vegaSpec} actions={vegaActionMenu} />
+        ) : selectedChart ? (
           renderChartComponent(selectedChart, vizSchema)
         ) : (
-          <Vega spec={vegaSpec} actions={vegaActionMenu} />
+          <div>Visualisation Unavailable</div> // Blank div
+        )}
+
+        {vegaSpec && vegaSpec !== BLANKSPEC && (
+          <button
+            style={{ position: "absolute", bottom: "10px", right: "10px" }}
+            onClick={handleToggleVega}
+          >
+            {showVegaSpec ? "Ant-V" : "Vega"}
+          </button>
         )}
       </ModalContent>
     </ModalContainer>

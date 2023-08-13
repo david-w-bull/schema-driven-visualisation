@@ -4,12 +4,16 @@ import ChordDiagramTest from "../components/charts/ChordDiagramTest";
 import GroupedBar from "../components/charts/GroupedBar";
 import StackedBar from "../components/charts/StackedBar";
 import ScatterPlot from "../components/charts/ScatterPlot";
+import ColumnSlider from "../components/charts/ColumnSlider";
+import BarSlider from "../components/charts/BarSlider";
 
 export const renderChartComponent = (
   chartType: string,
   vizSchema: VizSchema
 ) => {
   switch (chartType) {
+    case "Bar Chart":
+      return <BarSlider vizSchema={vizSchema} />;
     case "Chord Diagram":
       return <ChordDiagramTest vizSchema={vizSchema} />;
     case "Grouped Bar Chart":

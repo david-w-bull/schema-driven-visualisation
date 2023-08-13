@@ -6,23 +6,6 @@ interface ScatterPlotProps {
 }
 
 const ScatterPlot = ({ vizSchema }: ScatterPlotProps) => {
-  //   const [data, setData] = useState([]);
-
-  //   useEffect(() => {
-  //     asyncFetch();
-  //   }, []);
-
-  //   const asyncFetch = () => {
-  //     fetch(
-  //       "https://gw.alipayobjects.com/os/bmw-prod/3e4db10a-9da1-4b44-80d8-c128f42764a8.json"
-  //     )
-  //       .then((response) => response.json())
-  //       .then((json) => setData(json))
-  //       .catch((error) => {
-  //         console.log("fetch data failed", error);
-  //       });
-  //   };
-
   const DATA = vizSchema.dataset.map((item: any) => ({
     ...item,
     [vizSchema.scalarOneAlias]: parseFloat(item[vizSchema.scalarOneAlias]),
