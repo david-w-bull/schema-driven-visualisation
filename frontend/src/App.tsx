@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./App.css";
-import { Vega, VegaLite, VisualizationSpec } from "react-vega";
 import {
   Data,
   VizSchema,
@@ -19,21 +18,15 @@ import { categorizeCharts } from "./utils/chartUtils";
 import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
 import CardinalitySettings from "./components/CardinalitySettings";
-import ERDiagram from "./components/ERDiagram";
-import ChordDiagramTest from "./components/charts/ChordDiagramTest";
-import GroupedBar from "./components/charts/GroupedBar";
-import StackedBar from "./components/charts/StackedBar";
-import TreeMap from "./components/charts/TreeMap";
-import ScatterPlot from "./components/charts/ScatterPlot";
 import SQLEditor from "./components/SQLEditor";
 import DataTable from "./components/DataTable";
 import VisualisationButtonsGroup from "./components/VisualisationButtonsGroup";
-import styled from "styled-components";
 import Split from "react-split";
 import { Radio, RadioChangeEvent, FloatButton, Drawer } from "antd";
 import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
 import Button from "@mui/material/Button";
 import CachedIcon from "@mui/icons-material/Cached";
+import ChartDisplayModal from "./components/ChartDisplayModal";
 
 function App() {
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
@@ -119,21 +112,6 @@ function App() {
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const renderChartComponent = (chartType: string) => {
-    switch (chartType) {
-      case "Chord Diagram":
-        return <ChordDiagramTest vizSchema={vizSchema} />;
-      case "Grouped Bar Chart":
-        return <GroupedBar vizSchema={vizSchema} />;
-      case "Stacked Bar Chart":
-        return <StackedBar vizSchema={vizSchema} />;
-      case "Scatter Plot":
-        return <ScatterPlot vizSchema={vizSchema} />;
-      default:
-        return null;
-    }
-  };
 
   const updateRawDataInSpecList = (newVizSchemaDataset: any) => {
     const updatedSpecList = specList.map((specItem) => {
@@ -287,17 +265,13 @@ function App() {
         </Split>
       </div>
       {isModalOpen && (
-        <ModalContainer>
-          <ModalBackdrop />
-          <ModalContent>
-            <CloseIcon onClick={() => setIsModalOpen(false)}>×</CloseIcon>
-            {selectedChart ? (
-              renderChartComponent(selectedChart)
-            ) : (
-              <Vega spec={vegaSpec} actions={vegaActionMenu} />
-            )}
-          </ModalContent>
-        </ModalContainer>
+        <ChartDisplayModal
+          setIsModalOpen={setIsModalOpen}
+          selectedChart={selectedChart}
+          vegaSpec={vegaSpec}
+          vegaActionMenu={vegaActionMenu}
+          vizSchema={vizSchema}
+        ></ChartDisplayModal>
       )}
       <Drawer
         title="Cardinality Limits"
@@ -320,44 +294,3 @@ function App() {
 }
 
 export default App;
-
-const ModalContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-`;
-
-const ModalBackdrop = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-`;
-
-const ModalContent = styled.div`
-  position: relative;
-  background: #fff;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  width: 80%;
-  height: 80%;
-  z-index: 1001;
-`;
-
-const CloseIcon = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-  font-size: 24px;
-  color: #000;
-`;
