@@ -21,10 +21,10 @@ const WordCloud = ({ vizSchema }: WordCloudProps) => {
     data,
     wordField: vizSchema.keyOneAlias,
     weightField: vizSchema.scalarOneAlias,
-    color: "#122c6a",
+    color: "#1976d2",
     wordStyle: {
-      fontFamily: "Verdana",
-      fontSize: [24, 80] as any,
+      fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+      fontSize: [16, 80] as any,
     },
 
     interactions: [
@@ -35,8 +35,20 @@ const WordCloud = ({ vizSchema }: WordCloudProps) => {
     state: {
       active: {
         style: {
-          lineWidth: 3,
+          fill: "#fc7d0b",
+          lineWidth: 0,
         },
+      },
+    },
+    tooltip: {
+      showContent: true,
+      formatter: (datum: any) => {
+        const { text, value } = datum;
+
+        return {
+          name: vizSchema.scalarOneAlias,
+          value: `${value}`,
+        };
       },
     },
   };
