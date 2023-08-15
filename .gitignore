@@ -40,3 +40,6 @@ backend/lib/*.jar
 
 ### Frontend node modules ###
 frontend/node_modules
+
+### Logs ###
+logging.log

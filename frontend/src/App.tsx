@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
 import axios from "axios";
 import "./App.css";
 import {
@@ -22,7 +23,7 @@ import SQLEditor from "./components/SQLEditor";
 import DataTable from "./components/DataTable";
 import VisualisationButtonsGroup from "./components/VisualisationButtonsGroup";
 import Split from "react-split";
-import { Radio, RadioChangeEvent, FloatButton, Drawer } from "antd";
+import { Radio, RadioChangeEvent, FloatButton, Drawer, Alert } from "antd";
 import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
 import Button from "@mui/material/Button";
 import CachedIcon from "@mui/icons-material/Cached";
@@ -60,6 +61,13 @@ function App() {
     cardinalityLimitsData
   );
 
+  const [radioSelect, setRadioSelect] = useState("SQL");
+  const [radioEnabled, setRadioEnabled] = useState(false);
+
+  const handleRadioSelect = (e: RadioChangeEvent) => {
+    setRadioSelect(e.target.value);
+  };
+
   const handleCardinalityUpdate = (key: string, value: number) => {
     const newCardinalityLimits = {
       ...cardinalityLimits,
@@ -85,6 +93,7 @@ function App() {
       .then((response) => {
         console.log(JSON.stringify(response.data));
         setVizSchema(response.data.vizSchema);
+        setRadioEnabled(true);
         setSqlCode(response.data.vizSchema.sqlQuery);
         setKeyCardinality(response.data.vizSchema.keyCardinality);
         setChartTypes(response.data.vizSchema.chartTypes);
@@ -129,7 +138,22 @@ function App() {
 
   const [sqlCode, setSqlCode] = useState("");
 
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [showErrors, setShowErrors] = useState(false);
+
+  const handleBackendErrors = (vizSchema: VizSchema) => {
+    if (vizSchema.type !== "ERROR") {
+      return false;
+    }
+    setErrorMessages(vizSchema.messages);
+    setShowErrors(true);
+    return true;
+  };
+
   const handleSqlSubmit = () => {
+    // Clear previous alerts
+    setShowErrors(false);
+
     // Add code to revert to previous schema if the returned vizSchema is of type NONE or ERROR
     const updatedVizSchema = {
       ...vizSchema,
@@ -144,6 +168,10 @@ function App() {
         updatedVizSchema
       )
       .then((response) => {
+        console.log(response.data);
+        if (handleBackendErrors(response.data)) {
+          return;
+        }
         setVizSchema(response.data);
         console.log(response.data);
         setChartTypes(response.data.chartTypes);
@@ -157,12 +185,6 @@ function App() {
         setRecommendedCharts(recommendedCharts);
         updateRawDataInSpecList(response.data.dataset);
       });
-  };
-
-  const [radioSelect, setRadioSelect] = useState("SQL");
-
-  const handleRadioSelect = (e: RadioChangeEvent) => {
-    setRadioSelect(e.target.value);
   };
 
   const [settingsDrawIsOpen, setSettingsDrawIsOpen] = useState(false);
@@ -218,6 +240,7 @@ function App() {
               // buttonStyle="solid"
               size="large"
               style={{ marginBottom: "20px" }}
+              disabled={!radioEnabled}
             >
               <Radio.Button value="SQL">SQL</Radio.Button>
               <Radio.Button value="Visualisations">Visualisations</Radio.Button>
@@ -231,6 +254,7 @@ function App() {
                   <Button
                     variant="contained"
                     endIcon={<CachedIcon />}
+                    disabled={sqlCode.length == 0}
                     onClick={() => {
                       handleSqlSubmit();
                     }}
@@ -289,8 +313,30 @@ function App() {
         <FloatButton icon={<QuestionCircleOutlined />} />
         <FloatButton icon={<SettingOutlined />} onClick={showSettingsDrawer} />
       </FloatButton.Group>
+      {showErrors && (
+        <TopWarningAlert
+          className="top-warning-alert"
+          message="Error"
+          description={errorMessages.join("\n")}
+          type="error"
+          showIcon
+          closable
+          onClose={() => {
+            setShowErrors(false);
+          }}
+        />
+      )}
     </>
   );
 }
 
 export default App;
+
+const TopWarningAlert = styled(Alert)`
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  width: 40%;
+`;

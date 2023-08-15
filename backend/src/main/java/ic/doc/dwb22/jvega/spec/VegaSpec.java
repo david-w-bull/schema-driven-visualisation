@@ -50,7 +50,8 @@ public class VegaSpec {
             VegaSpec spec = objectMapper.readValue(jsonString, VegaSpec.class);
             return spec;
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            System.err.println("Error deserializing VegaSpec from string: " + e);
+            return null;
         }
     }
 
@@ -59,7 +60,8 @@ public class VegaSpec {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.treeToValue(jsonNode, VegaSpec.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            System.err.println("Error serializing VegaSpec to JSON: " + e);
+            return null;
         }
     }
 

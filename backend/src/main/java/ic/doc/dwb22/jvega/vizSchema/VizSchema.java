@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -46,6 +47,7 @@ public class VizSchema {
     private List<String> chartTypes;
     private Map<String, List<String>> allChartTypes;
     private Map<String, Integer> cardinalityLimits;
+    private List<String> messages = new ArrayList<>(); // for returning user error messages etc.
 
     public VizSchema(VizSchemaType type) {
         this.type = type;
@@ -151,12 +153,19 @@ public class VizSchema {
                 try {
                     jsonNode = JsonData.convertResultSetToJson(resultSet);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    LoggerFactory.getLogger(VizSchema.class).error("Error converting SQL result set to JSON: " + e);
+                    this.type = VizSchemaType.ERROR;
+                    this.messages.add(e.getMessage());
+                    this.dataset = new ArrayList<>();
+                    return;
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Error in connecting to the database");
-            e.printStackTrace();
+            LoggerFactory.getLogger(VizSchema.class).error("Error in connecting to the database:" + e);
+            this.type = VizSchemaType.ERROR;
+            this.messages.add(e.getMessage());
+            this.dataset = new ArrayList<>();
+            return;
         }
         this.dataset = JsonData.jsonNodeToMap(jsonNode);
     }
@@ -178,6 +187,12 @@ public class VizSchema {
         }
 
         if (this.keyOne == null && this.keyTwo == null) {
+            this.keyCardinality = -1;
+            return -1;
+        }
+
+        if (sqlQuery == null || sqlQuery.trim().isEmpty()) {
+            this.keyCardinality = -1;
             return -1;
         }
 
@@ -205,7 +220,7 @@ public class VizSchema {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggerFactory.getLogger(VizSchema.class).error("Error calculating cardinality data:" + e);
         }
         this.keyCardinality = maxKeyCardinality;
         return maxKeyCardinality;
@@ -251,6 +266,7 @@ public class VizSchema {
                         + "OR a_count > 1 AND b_count = 1 LIMIT 20";
                 queryResults = statement.executeQuery(oneManyExampleData);
             }
+
             JsonNode jsonNode = null;
             try {
                 if (queryResults != null) {
@@ -266,7 +282,7 @@ public class VizSchema {
             statement.executeUpdate(dropTempTableSql);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggerFactory.getLogger(VizSchema.class).error("Error analysing data relationships:" + e);
         }
     }
 

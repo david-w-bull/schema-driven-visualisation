@@ -28,6 +28,7 @@ export type VizSchema = {
   sqlQuery?: string;
   connectionString?: string;
   chartTypes?: string[];
+  messages: string[];
 };
 
 export type ForeignKey = {
