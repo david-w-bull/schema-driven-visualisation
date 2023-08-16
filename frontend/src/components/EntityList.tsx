@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from "react";
 import EntityComponent from "./EntityComponent";
-import {
-  Data,
-  Entity,
-  Attribute,
-  Relationship,
-  EntityOrRelationship,
-} from "../types";
+import { Data, Entity, Attribute, Relationship } from "../types";
 import styled from "styled-components";
-// import { Button } from "antd";
-// import { RightCircleTwoTone } from "@ant-design/icons";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
 import AddchartIcon from "@mui/icons-material/Addchart";
 
 interface EntityListProps {
@@ -28,32 +19,11 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
 
   useEffect(() => {
     setData(initialData);
-    setIsSelectionMade(checkAnyCheckboxChecked(initialData));
     setEntityNames(initialData.entityList.map((entity) => entity.name));
     setRelationshipNames(
       initialData.relationshipList.map((relationship) => relationship.name)
     );
   }, [initialData]);
-
-  const checkAnyCheckboxChecked = (data: Data) => {
-    for (const entity of data.entityList) {
-      for (const attribute of entity.attributes || []) {
-        if (attribute.isChecked) {
-          return true;
-        }
-      }
-    }
-
-    for (const relationship of data.relationshipList) {
-      for (const attribute of relationship.attributes || []) {
-        if (attribute.isChecked) {
-          return true;
-        }
-      }
-    }
-
-    return false;
-  };
 
   const handleAttributeChange = (
     isEntity: boolean,
@@ -94,17 +64,21 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
 
     // Track checked attributes
     if (checked) {
-      setCheckedAttributes((prevAttributes) => [...prevAttributes, attribute]);
+      setCheckedAttributes((prevAttributes) => {
+        const newAttributes = [...prevAttributes, attribute];
+        setIsSelectionMade(newAttributes.length > 0);
+        return newAttributes;
+      });
     } else {
-      setCheckedAttributes((prevAttributes) =>
-        prevAttributes.filter(
+      setCheckedAttributes((prevAttributes) => {
+        const newAttributes = prevAttributes.filter(
           (attr) => attr.attributeId !== attribute.attributeId
-        )
-      );
+        );
+        setIsSelectionMade(newAttributes.length > 0);
+        return newAttributes;
+      });
     }
-
     setData(newData);
-    setIsSelectionMade(checkAnyCheckboxChecked(newData));
   };
 
   const getCheckedAttributesData = (data: Data) => {
@@ -166,6 +140,55 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     };
   };
 
+  const [reachableEntities, setReachableEntities] = useState<Set<string>>(
+    new Set()
+  );
+  const [reachableRelationships, setReachableRelationships] = useState<
+    Set<string>
+  >(new Set());
+
+  const getActiveRelationships = (
+    data: Data,
+    entityNames: Set<string>,
+    relationshipNames: Set<string>
+  ) => {
+    return data.relationshipList.filter((relationship) => {
+      return (
+        entityNames.has(relationship.entityA) ||
+        entityNames.has(relationship.entityB) ||
+        relationshipNames.has(relationship.name)
+      );
+    });
+  };
+
+  useEffect(() => {
+    const {
+      entityNamesWithCheckedAttributes,
+      relationshipNamesWithCheckedAttributes,
+    } = getCheckedAttributesData(data);
+    const activeRelationships = getActiveRelationships(
+      data,
+      entityNamesWithCheckedAttributes,
+      relationshipNamesWithCheckedAttributes
+    );
+
+    const allReachableEntities: Set<string> = new Set();
+    const allReachableRelationships: Set<string> = new Set();
+
+    activeRelationships.forEach((rel) => {
+      allReachableEntities.add(rel.entityA);
+      allReachableEntities.add(rel.entityB);
+      allReachableRelationships.add(rel.name);
+    });
+
+    setReachableEntities(allReachableEntities);
+    setReachableRelationships(allReachableRelationships);
+
+    console.log("Reachable");
+    console.log(allReachableEntities);
+    console.log(allReachableRelationships);
+  }, [checkedAttributes]);
+
   const handleSubmit = () => {
     const selectedData = {
       schemaId: data.schemaId,
@@ -219,8 +242,6 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
         });
       }
     }
-    console.log("Selected data");
-    console.log(selectedData);
     onSelectedData(selectedData);
   };
 
