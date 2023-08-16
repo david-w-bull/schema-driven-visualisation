@@ -163,6 +163,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
 
   useEffect(() => {
     const {
+      entitiesWithCheckedAttributes,
       entityNamesWithCheckedAttributes,
       relationshipNamesWithCheckedAttributes,
     } = getCheckedAttributesData(data);
@@ -172,17 +173,37 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
       relationshipNamesWithCheckedAttributes
     );
 
-    const allReachableEntities: Set<string> = new Set();
-    const allReachableRelationships: Set<string> = new Set();
+    // Add current selections as reachable
+    const allReachableEntities: Set<string> = new Set(
+      entityNamesWithCheckedAttributes
+    );
+    const allReachableRelationships: Set<string> = new Set(
+      relationshipNamesWithCheckedAttributes
+    );
 
+    // Add one-hop relationships as reachable
     activeRelationships.forEach((rel) => {
       allReachableEntities.add(rel.entityA);
       allReachableEntities.add(rel.entityB);
       allReachableRelationships.add(rel.name);
     });
 
+    // Add is-a relationships as reachable
+    for (const entity of entitiesWithCheckedAttributes) {
+      if (entity.relatedStrongEntity !== null) {
+        let relatedEntity: Entity = entity.relatedStrongEntity;
+        allReachableEntities.add(relatedEntity.name);
+      }
+    }
+
     setReachableEntities(allReachableEntities);
     setReachableRelationships(allReachableRelationships);
+
+    console.log("Reachable");
+    console.log(checkedAttributes);
+    console.log(entityNamesWithCheckedAttributes);
+    console.log(allReachableEntities);
+    console.log(allReachableRelationships);
   }, [checkedAttributes]);
 
   const handleSubmit = () => {
