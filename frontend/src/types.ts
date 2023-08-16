@@ -42,7 +42,7 @@ export type Entity = {
   id: number;
   name: string;
   entityType: string;
-  relatedStrongEntity: null;
+  relatedStrongEntity: Entity | null;
   attributes: Attribute[];
   foreignKeys: ForeignKey[];
 };

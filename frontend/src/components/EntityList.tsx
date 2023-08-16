@@ -14,6 +14,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   const [data, setData] = useState(initialData);
   const [entityNames, setEntityNames] = useState<string[]>([]);
   const [relationshipNames, setRelationshipNames] = useState<string[]>([]);
+  const [subsetEntities, setSubsetEntities] = useState<Entity[]>([]);
   const [isSelectionMade, setIsSelectionMade] = useState(false);
   const [checkedAttributes, setCheckedAttributes] = useState<Attribute[]>([]);
 
@@ -22,6 +23,9 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     setEntityNames(initialData.entityList.map((entity) => entity.name));
     setRelationshipNames(
       initialData.relationshipList.map((relationship) => relationship.name)
+    );
+    setSubsetEntities(
+      initialData.entityList.filter((entity) => entity.entityType == "SUBSET")
     );
   }, [initialData]);
 
@@ -188,22 +192,26 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
       allReachableRelationships.add(rel.name);
     });
 
-    // Add is-a relationships as reachable
+    // Add is-a relationships as reachable in both directions
+
+    // When the checked attribute is on the subset
     for (const entity of entitiesWithCheckedAttributes) {
       if (entity.relatedStrongEntity !== null) {
-        let relatedEntity: Entity = entity.relatedStrongEntity;
-        allReachableEntities.add(relatedEntity.name);
+        allReachableEntities.add(entity.relatedStrongEntity.name);
       }
     }
 
+    // When the checked attribute is on the parent
+    const matchedEntities = subsetEntities.filter(
+      (entity) =>
+        entity.relatedStrongEntity &&
+        entityNamesWithCheckedAttributes.has(entity.relatedStrongEntity.name)
+    );
+    const matchedNames = matchedEntities.map((entity) => entity.name);
+    matchedNames.forEach((entityName) => allReachableEntities.add(entityName));
+
     setReachableEntities(allReachableEntities);
     setReachableRelationships(allReachableRelationships);
-
-    console.log("Reachable");
-    console.log(checkedAttributes);
-    console.log(entityNamesWithCheckedAttributes);
-    console.log(allReachableEntities);
-    console.log(allReachableRelationships);
   }, [checkedAttributes]);
 
   const handleSubmit = () => {
