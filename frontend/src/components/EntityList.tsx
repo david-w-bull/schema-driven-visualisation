@@ -183,10 +183,6 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
 
     setReachableEntities(allReachableEntities);
     setReachableRelationships(allReachableRelationships);
-
-    console.log("Reachable");
-    console.log(allReachableEntities);
-    console.log(allReachableRelationships);
   }, [checkedAttributes]);
 
   const handleSubmit = () => {
@@ -261,16 +257,26 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
         Visualise
       </Button>
       <ComponentContainer>
-        {data.entityList.map((entity) => (
+        {(checkedAttributes.length > 0
+          ? data.entityList.filter((entity) =>
+              reachableEntities.has(entity.name)
+            )
+          : data.entityList
+        ).map((entity) => (
           <EntityComponent
             key={entity.id}
             item={entity}
-            onAttributeChange={(attribute, checked) =>
-              handleAttributeChange(true, entity.id, attribute, checked)
+            onAttributeChange={(attributeId, checked) =>
+              handleAttributeChange(true, entity.id, attributeId, checked)
             }
           />
         ))}
-        {data.relationshipList
+        {(checkedAttributes.length > 0
+          ? data.relationshipList.filter((relationship) =>
+              reachableRelationships.has(relationship.name)
+            )
+          : data.relationshipList
+        )
           .filter(
             (relationship) =>
               relationship.attributes && relationship.attributes.length > 0
@@ -279,11 +285,11 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
             <EntityComponent
               key={relationship.id}
               item={relationship}
-              onAttributeChange={(attribute, checked) =>
+              onAttributeChange={(attributeId, checked) =>
                 handleAttributeChange(
                   false,
                   relationship.id,
-                  attribute,
+                  attributeId,
                   checked
                 )
               }
