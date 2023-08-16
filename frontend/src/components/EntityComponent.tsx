@@ -45,7 +45,7 @@ const AttributeList = ({ attribute, onChange }: AttributeProps) => {
 
 interface EntityProps {
   item: EntityOrRelationship;
-  onAttributeChange: (attributeId: number, checked: boolean) => void;
+  onAttributeChange: (attribute: Attribute, checked: boolean) => void;
 }
 
 const EntityComponent = ({ item, onAttributeChange }: EntityProps) => {
@@ -57,9 +57,7 @@ const EntityComponent = ({ item, onAttributeChange }: EntityProps) => {
         <AttributeList
           key={attribute.attributeId}
           attribute={attribute}
-          onChange={(checked) =>
-            onAttributeChange(attribute.attributeId, checked)
-          }
+          onChange={(checked) => onAttributeChange(attribute, checked)}
         />
       ))}
     </EntityContainer>

@@ -94,9 +94,12 @@ function App() {
         console.log(JSON.stringify(response.data));
         setVizSchema(response.data.vizSchema);
         setRadioEnabled(true);
-        setSqlCode(response.data.vizSchema.sqlQuery);
-        setKeyCardinality(response.data.vizSchema.keyCardinality);
-        setChartTypes(response.data.vizSchema.chartTypes);
+        response.data.vizSchema.sqlQuery &&
+          setSqlCode(response.data.vizSchema.sqlQuery);
+        response.data.vizSchema.keyCardinality &&
+          setKeyCardinality(response.data.vizSchema.keyCardinality);
+        response.data.vizSchema.chartTypes &&
+          setChartTypes(response.data.vizSchema.chartTypes);
 
         let recommendedCharts = categorizeCharts(
           response.data.vizSchema.chartTypes,

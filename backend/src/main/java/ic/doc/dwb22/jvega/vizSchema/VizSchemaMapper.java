@@ -5,6 +5,9 @@ import ic.doc.dwb22.jvega.schema.*;
 import ic.doc.dwb22.jvega.utils.JsonData;
 import io.github.MigadaTang.Relationship;
 import lombok.Getter;
+import net.sourceforge.htmlunit.corejs.javascript.EcmaError;
+import org.slf4j.LoggerFactory;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -199,65 +202,72 @@ public class VizSchemaMapper {
     }
 
     private VizSchema generateManyToManySchema(Boolean reflexive) {
-        VizSchema vizSchema = new VizSchema(VizSchemaType.MANYTOMANY);
-        vizSchema.setReflexive(reflexive);
-        DatabaseRelationship relationship = relationships.get(0);
+        try {
+            VizSchema vizSchema = new VizSchema(VizSchemaType.MANYTOMANY);
+            vizSchema.setReflexive(reflexive);
 
-        // The attribution to A and B, and therefore also to K1 and K2 is arbitrary
-        String entityAName = relationship.getEntityA();
-        String entityBName = relationship.getEntityB();
 
-        DatabaseEntity entityA = getEntityByName(entityAName);
-        DatabaseEntity entityB = getEntityByName(entityBName);
+            DatabaseRelationship relationship = relationships.get(0);
 
-        String entityAAlias = "";
-        String entityBAlias = "";
+            // The attribution to A and B, and therefore also to K1 and K2 is arbitrary
+            String entityAName = relationship.getEntityA();
+            String entityBName = relationship.getEntityB();
 
-        // In a reflexive relationship the table name must be aliased to distinguish two joins to the same entity
-        // For consistency throughout the program this alias is drawn from the fk field names on the relationship
-        // Note that in this reflexive case 'entityA' and 'entityB' will refer to the same entity
-        if(reflexive) {
-            entityAAlias = String.join("_", relationship.getForeignKeys().get(0).getFkColumnNames());
-            entityBAlias = String.join("_", relationship.getForeignKeys().get(1).getFkColumnNames());
-        }
+            DatabaseEntity entityA = getEntityByName(entityAName);
+            DatabaseEntity entityB = getEntityByName(entityBName);
 
-        // According to the schema definition there should only be one attribute selected, but the loop handles edge cases
-        for(DatabaseAttribute attribute: entityA.getAttributes()) {
-            if(attribute.getIsPrimary() || isUnique(attribute)) {
-                vizSchema.setKeyOne(attribute);
-                if(reflexive) {
-                    vizSchema.setKeyOneAlias(entityAAlias + "_" + attribute.getAttributeName());
-                } else {
-                    vizSchema.setKeyOneAlias(entityAName + "_" + attribute.getAttributeName());
+            String entityAAlias = "";
+            String entityBAlias = "";
+
+            // In a reflexive relationship the table name must be aliased to distinguish two joins to the same entity
+            // For consistency throughout the program this alias is drawn from the fk field names on the relationship
+            // Note that in this reflexive case 'entityA' and 'entityB' will refer to the same entity
+            if(reflexive) {
+                entityAAlias = String.join("_", relationship.getForeignKeys().get(0).getFkColumnNames());
+                entityBAlias = String.join("_", relationship.getForeignKeys().get(1).getFkColumnNames());
+            }
+
+            // According to the schema definition there should only be one attribute selected, but the loop handles edge cases
+            for(DatabaseAttribute attribute: entityA.getAttributes()) {
+                if(attribute.getIsPrimary() || isUnique(attribute)) {
+                    vizSchema.setKeyOne(attribute);
+                    if(reflexive) {
+                        vizSchema.setKeyOneAlias(entityAAlias + "_" + attribute.getAttributeName());
+                    } else {
+                        vizSchema.setKeyOneAlias(entityAName + "_" + attribute.getAttributeName());
+                    }
                 }
             }
-        }
 
-        for(DatabaseAttribute attribute: entityB.getAttributes()) {
-            if(attribute.getIsPrimary() || isUnique(attribute)) {
-                vizSchema.setKeyTwo(attribute);
-                if(reflexive) {
-                    vizSchema.setKeyTwoAlias(entityBAlias + "_" + attribute.getAttributeName());
-                } else {
-                    vizSchema.setKeyTwoAlias(entityBName + "_" + attribute.getAttributeName());
+            for(DatabaseAttribute attribute: entityB.getAttributes()) {
+                if(attribute.getIsPrimary() || isUnique(attribute)) {
+                    vizSchema.setKeyTwo(attribute);
+                    if(reflexive) {
+                        vizSchema.setKeyTwoAlias(entityBAlias + "_" + attribute.getAttributeName());
+                    } else {
+                        vizSchema.setKeyTwoAlias(entityBName + "_" + attribute.getAttributeName());
+                    }
                 }
             }
-        }
 
-        for(DatabaseAttribute attribute: relationships.get(0).getAttributes()) {
-            if(isScalarDataType(attribute.getDataType())) {
-                vizSchema.setScalarOne(attribute);
-                vizSchema.setScalarOneAlias(attribute.getParentEntityName() + "_" + attribute.getAttributeName());
+            for(DatabaseAttribute attribute: relationships.get(0).getAttributes()) {
+                if(isScalarDataType(attribute.getDataType())) {
+                    vizSchema.setScalarOne(attribute);
+                    vizSchema.setScalarOneAlias(attribute.getParentEntityName() + "_" + attribute.getAttributeName());
+                }
             }
-        }
 
-        this.sqlQuery = generateSql(VizSchemaType.MANYTOMANY, reflexive);
-        vizSchema.setSqlQuery(sqlQuery);
-        vizSchema.setConnectionString(databaseSchema.getConnectionString());
-        vizSchema.fetchSqlData(sqlUser, sqlPassword);
-        vizSchema.calculateMaxKeyCardinality(sqlUser, sqlPassword);
-        vizSchema.analyseDataRelationships(sqlUser, sqlPassword);
-        return vizSchema;
+            this.sqlQuery = generateSql(VizSchemaType.MANYTOMANY, reflexive);
+            vizSchema.setSqlQuery(sqlQuery);
+            vizSchema.setConnectionString(databaseSchema.getConnectionString());
+            vizSchema.fetchSqlData(sqlUser, sqlPassword);
+            vizSchema.calculateMaxKeyCardinality(sqlUser, sqlPassword);
+            vizSchema.analyseDataRelationships(sqlUser, sqlPassword);
+            return vizSchema;
+        } catch (Exception e) {
+            LoggerFactory.getLogger(VizSchemaMapper.class).error("Error mapping many-many relationship:" + e);
+            return new VizSchema(VizSchemaType.NONE);
+        }
     }
 
     public String generateSql(VizSchemaType type, Boolean reflexive) {

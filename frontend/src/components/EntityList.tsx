@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import EntityComponent from "./EntityComponent";
-import { Data, Entity, Attribute, Relationship } from "../types";
+import {
+  Data,
+  Entity,
+  Attribute,
+  Relationship,
+  EntityOrRelationship,
+} from "../types";
 import styled from "styled-components";
 // import { Button } from "antd";
 // import { RightCircleTwoTone } from "@ant-design/icons";
@@ -15,11 +21,18 @@ interface EntityListProps {
 
 const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   const [data, setData] = useState(initialData);
+  const [entityNames, setEntityNames] = useState<string[]>([]);
+  const [relationshipNames, setRelationshipNames] = useState<string[]>([]);
   const [isSelectionMade, setIsSelectionMade] = useState(false);
+  const [checkedAttributes, setCheckedAttributes] = useState<Attribute[]>([]);
 
   useEffect(() => {
     setData(initialData);
     setIsSelectionMade(checkAnyCheckboxChecked(initialData));
+    setEntityNames(initialData.entityList.map((entity) => entity.name));
+    setRelationshipNames(
+      initialData.relationshipList.map((relationship) => relationship.name)
+    );
   }, [initialData]);
 
   const checkAnyCheckboxChecked = (data: Data) => {
@@ -45,14 +58,14 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   const handleAttributeChange = (
     isEntity: boolean,
     itemId: number,
-    attributeId: number,
+    attribute: Attribute,
     checked: boolean
   ) => {
     let newData = { ...data };
 
     const updateAttributeCheckedStatus = (attributes: Attribute[]) => {
       const attributeIndex = attributes.findIndex(
-        (attribute) => attribute.attributeId === attributeId
+        (attr) => attr.attributeId === attribute.attributeId
       );
       if (attributeIndex !== -1) {
         attributes[attributeIndex].isChecked = checked;
@@ -79,8 +92,47 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
       }
     }
 
+    // Track checked attributes
+    if (checked) {
+      setCheckedAttributes((prevAttributes) => [...prevAttributes, attribute]);
+    } else {
+      setCheckedAttributes((prevAttributes) =>
+        prevAttributes.filter(
+          (attr) => attr.attributeId !== attribute.attributeId
+        )
+      );
+    }
+
     setData(newData);
     setIsSelectionMade(checkAnyCheckboxChecked(newData));
+  };
+
+  const getCheckedAttributesData = (data: Data) => {
+    const entitiesWithCheckedAttributesTest: Entity[] = [];
+    const relationshipsWithCheckedAttributesTest: Relationship[] = [];
+
+    // const entitiesWithCheckedAttributesTest: string[] = [];
+    // const relationshipsWithCheckedAttributesTest: string[] = [];
+
+    for (const checkedAttr of checkedAttributes) {
+      if (entityNames.includes(checkedAttr.parentEntityName)) {
+        // entitiesWithCheckedAttributesTest.push(checkedAttr.parentEntityName);
+        let entity = data.entityList.find(
+          (entity) => entity.name === checkedAttr.parentEntityName
+        );
+        entity && entitiesWithCheckedAttributesTest.push(entity);
+      } else if (relationshipNames.includes(checkedAttr.parentEntityName)) {
+        let relationship = data.relationshipList.find(
+          (relationship) => relationship.name === checkedAttr.parentEntityName
+        );
+        relationship &&
+          relationshipsWithCheckedAttributesTest.push(relationship);
+      }
+    }
+    return {
+      entitiesWithCheckedAttributesTest,
+      relationshipsWithCheckedAttributesTest,
+    };
   };
 
   const handleSubmit = () => {
@@ -91,6 +143,15 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
       entityList: [] as Entity[],
       relationshipList: [] as Relationship[],
     };
+
+    const {
+      entitiesWithCheckedAttributesTest,
+      relationshipsWithCheckedAttributesTest,
+    } = getCheckedAttributesData(data);
+
+    console.log("Checked attribute entities");
+    console.log(entitiesWithCheckedAttributesTest);
+    console.log(relationshipsWithCheckedAttributesTest);
 
     const entityIdsWithCheckedAttributes: number[] = [];
     const entitiesWithCheckedAttributes: Entity[] = [];
@@ -189,8 +250,8 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
           <EntityComponent
             key={entity.id}
             item={entity}
-            onAttributeChange={(attributeId, checked) =>
-              handleAttributeChange(true, entity.id, attributeId, checked)
+            onAttributeChange={(attribute, checked) =>
+              handleAttributeChange(true, entity.id, attribute, checked)
             }
           />
         ))}
@@ -203,11 +264,11 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
             <EntityComponent
               key={relationship.id}
               item={relationship}
-              onAttributeChange={(attributeId, checked) =>
+              onAttributeChange={(attribute, checked) =>
                 handleAttributeChange(
                   false,
                   relationship.id,
-                  attributeId,
+                  attribute,
                   checked
                 )
               }

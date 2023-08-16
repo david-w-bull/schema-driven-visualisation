@@ -42,7 +42,7 @@ public class VizSchema {
     private Integer keyCardinality;
     private VizSchemaType dataRelationship;
     private List<Map<String, Object>> exampleData;
-    private String sqlQuery;
+    private String sqlQuery = "";
     private String connectionString;
     private List<String> chartTypes;
     private Map<String, List<String>> allChartTypes;
@@ -51,7 +51,6 @@ public class VizSchema {
 
     public VizSchema(VizSchemaType type) {
         this.type = type;
-        this.cardinalityLimits = readCardinalities("cardinalityLimits.json");
     }
     public String getK1FieldName() { return keyOne == null ? null : keyOne.getAttributeName(); }
     public String getK2FieldName() { return keyTwo == null ? null : keyTwo.getAttributeName(); }
