@@ -108,30 +108,61 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   };
 
   const getCheckedAttributesData = (data: Data) => {
-    const entitiesWithCheckedAttributesTest: Entity[] = [];
-    const relationshipsWithCheckedAttributesTest: Relationship[] = [];
+    const entitiesWithCheckedAttributes: Set<Entity> = new Set();
+    const entityNamesWithCheckedAttributes: Set<string> = new Set();
+    const entityIdsWithCheckedAttributes: Set<number> = new Set();
 
-    // const entitiesWithCheckedAttributesTest: string[] = [];
-    // const relationshipsWithCheckedAttributesTest: string[] = [];
+    const relationshipsWithCheckedAttributes: Set<Relationship> = new Set();
+    const relationshipNamesWithCheckedAttributes: Set<string> = new Set();
+    const relationshipIdsWithCheckedAttributes: Set<number> = new Set();
 
     for (const checkedAttr of checkedAttributes) {
       if (entityNames.includes(checkedAttr.parentEntityName)) {
-        // entitiesWithCheckedAttributesTest.push(checkedAttr.parentEntityName);
-        let entity = data.entityList.find(
-          (entity) => entity.name === checkedAttr.parentEntityName
-        );
-        entity && entitiesWithCheckedAttributesTest.push(entity);
+        entityNamesWithCheckedAttributes.add(checkedAttr.parentEntityName);
       } else if (relationshipNames.includes(checkedAttr.parentEntityName)) {
-        let relationship = data.relationshipList.find(
-          (relationship) => relationship.name === checkedAttr.parentEntityName
+        relationshipNamesWithCheckedAttributes.add(
+          checkedAttr.parentEntityName
         );
-        relationship &&
-          relationshipsWithCheckedAttributesTest.push(relationship);
       }
     }
+
+    for (const entityName of entityNamesWithCheckedAttributes) {
+      let entity = data.entityList.find((entity) => entity.name === entityName);
+      // Add the entity but only included selected attributes in its attribute list
+      if (entity) {
+        const selectedAttributes =
+          entity.attributes?.filter((attr) => attr.isChecked) || [];
+        entitiesWithCheckedAttributes.add({
+          ...entity,
+          attributes: selectedAttributes,
+        });
+        entityIdsWithCheckedAttributes.add(entity.id);
+      }
+    }
+
+    for (const relationshipName of relationshipNamesWithCheckedAttributes) {
+      let relationship = data.relationshipList.find(
+        (relationship) => relationship.name === relationshipName
+      );
+      if (relationship) {
+        // Add the relationship but only included selected attributes in its attribute list
+        const selectedAttributes =
+          relationship.attributes?.filter((attr) => attr.isChecked) || [];
+        relationshipsWithCheckedAttributes.add({
+          ...relationship,
+          attributes: selectedAttributes,
+        });
+        relationshipIdsWithCheckedAttributes.add(relationship.id);
+      }
+    }
+
     return {
-      entitiesWithCheckedAttributesTest,
-      relationshipsWithCheckedAttributesTest,
+      entitiesWithCheckedAttributes,
+      entityNamesWithCheckedAttributes,
+      entityIdsWithCheckedAttributes,
+      relationshipsWithCheckedAttributes,
+      relationshipNamesWithCheckedAttributes,
+      relationshipIdsWithCheckedAttributes,
     };
   };
 
@@ -145,53 +176,17 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     };
 
     const {
-      entitiesWithCheckedAttributesTest,
-      relationshipsWithCheckedAttributesTest,
+      entitiesWithCheckedAttributes,
+      entityNamesWithCheckedAttributes,
+      entityIdsWithCheckedAttributes,
+      relationshipIdsWithCheckedAttributes,
     } = getCheckedAttributesData(data);
-
-    console.log("Checked attribute entities");
-    console.log(entitiesWithCheckedAttributesTest);
-    console.log(relationshipsWithCheckedAttributesTest);
-
-    const entityIdsWithCheckedAttributes: number[] = [];
-    const entitiesWithCheckedAttributes: Entity[] = [];
-    const relationshipsWithCheckedAttributes: Relationship[] = [];
-
-    for (const entity of data.entityList) {
-      const selectedAttributes =
-        entity.attributes?.filter((attr) => attr.isChecked) || [];
-
-      if (selectedAttributes.length > 0) {
-        entityIdsWithCheckedAttributes.push(entity.id);
-        entitiesWithCheckedAttributes.push({
-          ...entity,
-          attributes: selectedAttributes,
-        });
-      }
-    }
-
-    for (const relationship of data.relationshipList) {
-      const selectedAttributes =
-        relationship.attributes?.filter((attr) => attr.isChecked) || [];
-
-      if (selectedAttributes.length > 0) {
-        relationshipsWithCheckedAttributes.push({
-          ...relationship,
-          attributes: selectedAttributes,
-        });
-      }
-    }
-
-    // Add entity names with checked attributes to a separate array
-    const entityNamesWithCheckedAttributes = entitiesWithCheckedAttributes.map(
-      (entity) => entity.name
-    );
 
     // Filter foreign keys for each entity with selected attributes
     for (const entity of entitiesWithCheckedAttributes) {
       const selectedForeignKeys =
         entity.foreignKeys?.filter((fk) =>
-          entityNamesWithCheckedAttributes.includes(fk.pkTableName)
+          entityNamesWithCheckedAttributes.has(fk.pkTableName)
         ) || [];
 
       selectedData.entityList.push({
@@ -206,14 +201,12 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
       );
 
       const entitiesInRelationshipAreChecked = relatedEntityIds.every((id) =>
-        entityIdsWithCheckedAttributes.includes(id)
+        entityIdsWithCheckedAttributes.has(id)
       );
 
       if (
         entitiesInRelationshipAreChecked ||
-        relationshipsWithCheckedAttributes.some(
-          (checkedRelationship) => checkedRelationship.id === relationship.id
-        )
+        relationshipIdsWithCheckedAttributes.has(relationship.id)
       ) {
         // Only include attributes where isChecked is true
         const selectedAttributes =
@@ -226,7 +219,8 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
         });
       }
     }
-
+    console.log("Selected data");
+    console.log(selectedData);
     onSelectedData(selectedData);
   };
 

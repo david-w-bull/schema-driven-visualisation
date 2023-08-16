@@ -87,6 +87,7 @@ function App() {
   const handleSelectedData = (data: Data) => {
     setVegaSpec(BLANKSPEC);
     setVegaActionMenu(false);
+    setSqlCode("");
     axios
       // the 'data' payload is a DatabaseSchema object filtered based on user selections
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
@@ -278,6 +279,7 @@ function App() {
 
             {radioSelect === "Visualisations" && (
               <VisualisationButtonsGroup
+                vizSchemaType={vizSchema.type}
                 chartTypes={recommendedCharts}
                 specList={specList}
                 cardinalityLimits={cardinalityLimits}

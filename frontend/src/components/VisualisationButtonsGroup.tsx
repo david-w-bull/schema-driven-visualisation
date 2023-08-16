@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { CardinalityLimits, ChartRecommendations } from "../types";
 
 type VisualisationButtonsGroupProps = {
+  vizSchemaType: string;
   chartTypes: ChartRecommendations;
   specList: any[];
   cardinalityLimits?: CardinalityLimits;
@@ -17,6 +18,7 @@ type VisualisationButtonsGroupProps = {
 };
 
 const VisualisationButtonsGroup = ({
+  vizSchemaType,
   chartTypes,
   specList,
   cardinalityLimits,
@@ -87,25 +89,29 @@ const VisualisationButtonsGroup = ({
           />
         </>
       )}
-      <Header>Not recommended</Header>
-      <SubHeader>
-        Visualisations that do not match the schema pattern of your selected
-        data and may not display correctly
-      </SubHeader>
-      <StyledDivider />
-      <div style={{ paddingTop: "20px", width: "700px" }}>
-        <VisualisationButtons
-          chartTypes={chartTypes.Other}
-          specList={specList}
-          setVegaSpec={setVegaSpec}
-          setVegaActionMenu={setVegaActionMenu}
-          setSelectedChart={setSelectedChart}
-          setIsModalOpen={setIsModalOpen}
-          buttonStyle={{
-            margin: "5px 5px 5px 0px",
-          }}
-        />
-      </div>
+      {vizSchemaType != "NONE" && vizSchemaType != "ERROR" && (
+        <>
+          <Header>Not recommended</Header>
+          <SubHeader>
+            Visualisations that do not match the schema pattern of your selected
+            data and may not display correctly
+          </SubHeader>
+          <StyledDivider />
+          <div style={{ paddingTop: "20px", width: "700px" }}>
+            <VisualisationButtons
+              chartTypes={chartTypes.Other}
+              specList={specList}
+              setVegaSpec={setVegaSpec}
+              setVegaActionMenu={setVegaActionMenu}
+              setSelectedChart={setSelectedChart}
+              setIsModalOpen={setIsModalOpen}
+              buttonStyle={{
+                margin: "5px 5px 5px 0px",
+              }}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
