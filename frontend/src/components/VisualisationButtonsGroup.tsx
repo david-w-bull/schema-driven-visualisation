@@ -1,7 +1,7 @@
 import React from "react";
 import { Divider, Skeleton } from "antd";
 import VisualisationButtons from "./VisualisationButtons";
-import { DotChartOutlined, BarChartOutlined } from "@ant-design/icons";
+import { BarChartOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import { CardinalityLimits, ChartRecommendations } from "../types";
 
