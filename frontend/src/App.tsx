@@ -280,7 +280,6 @@ function App() {
                   >
                     Update SQL
                   </Button>
-                  <p>{vizSchema.dataRelationship}</p>
                 </div>
                 {typeof vizSchema.exampleData != "undefined" && (
                   <DataTable data={vizSchema.exampleData}></DataTable>

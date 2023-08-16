@@ -70,7 +70,13 @@ public class JVegaApplication {
 
 //testTemplateFile( "sankeyTemplate.json", "manyToManySchema.json");
 
-	SpringApplication.run(JVegaApplication.class, args);
+	ReportExamples.scaleExample();
+
+
+
+
+
+//	SpringApplication.run(JVegaApplication.class, args);
 
 	}
 
