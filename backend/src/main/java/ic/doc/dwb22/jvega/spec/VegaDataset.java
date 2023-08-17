@@ -23,7 +23,6 @@ public class VegaDataset {
     private String url;
     private List<String> source;
     private List<Transform> transform;
-    @JsonInclude(JsonInclude.Include.ALWAYS)
     private List<Map<String, Object>> values;
 
     public static VegaDataset urlDataset(String name, String url) {
@@ -33,8 +32,18 @@ public class VegaDataset {
         return data;
     }
 
+    public static VegaDataset sourceDataset(String name, String source) {
+        VegaDataset data = new BuildDataset().withName(name).withSource(source).build();
+        return data;
+    }
+
     public static VegaDataset jsonDataset(String name, JsonNode jsonValues) {
         VegaDataset data = new BuildDataset().withName(name).withValues(jsonValues).build();
+        return data;
+    }
+
+    public static VegaDataset mapDataset(List<Map<String, Object>> dataMap) {
+        VegaDataset data = new BuildDataset().withValues(dataMap).build();
         return data;
     }
 
