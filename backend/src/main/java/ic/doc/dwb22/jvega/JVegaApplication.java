@@ -80,10 +80,10 @@ public class JVegaApplication {
 
 	}
 
-	@GetMapping("/")
-	public String apiRoot() {
-		return "Test endpoint";
-	}
+//	@GetMapping("/")
+//	public String apiRoot() {
+//		return "Test endpoint";
+//	}
 
 	public static void specTester(VegaSpec spec) {
 		System.out.println(spec.toJson().toPrettyString());

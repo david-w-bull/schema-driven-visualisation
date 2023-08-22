@@ -16,6 +16,7 @@ export const BLANKSCHEMA = {
 
 export const BLANKVIZSCHEMA = {
   type: "NONE",
+  messages: [],
 };
 
 export const BLANKRECOMMENDATIONS = {
