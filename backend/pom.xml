@@ -71,6 +71,13 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+		<dependency>
+			<groupId>io.github.MigadaTang</groupId>
+			<artifactId>amazing-er</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+<!--			<scope>system</scope>-->
+<!--			<systemPath>${project.basedir}/lib/amazing-er.jar</systemPath>-->
+		</dependency>
     </dependencies>
 
 	<build>
@@ -79,6 +86,9 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<includeSystemScope>true</includeSystemScope>
+					<mainClass>ic.doc.dwb22.jvega.JVegaApplication</mainClass>
+<!--					<includeSystemScope>true</includeSystemScope>-->
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -86,6 +96,13 @@
 						</exclude>
 					</excludes>
 				</configuration>
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<goals>-->
+<!--							<goal>repackage</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+<!--				</executions>-->
 			</plugin>
 		</plugins>
 	</build>

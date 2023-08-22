@@ -1,6 +1,6 @@
 backend/HELP.md
 backend/target/
-!.mvn/wrapper/maven-wrapper.jar
+!backend/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -47,3 +47,6 @@ logging.log.*
 
 ### Frontend build files - these are served via the backend 'static' folder instead ###
 frontend/dist/*
+
+### Docker ###
+Dockerfile
