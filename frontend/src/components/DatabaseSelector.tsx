@@ -8,7 +8,7 @@ interface DatabaseSelectorProps {
 
 const DatabaseSelector = ({ onSelectDatabase }: DatabaseSelectorProps) => {
   const [selectedValue, setSelectedValue] = useState<string>(
-    "64dbbc759fbef90ba1359128"
+    "64e4b803fe3299654b1739bf"
   );
 
   const handleChange = (event: SelectChangeEvent<any>) => {
@@ -36,12 +36,10 @@ const DatabaseSelector = ({ onSelectDatabase }: DatabaseSelectorProps) => {
           label="Database"
           onChange={handleChange}
         >
-          <MenuItem value={"64dbbc759fbef90ba1359128"}>
+          <MenuItem value={"64e4b803fe3299654b1739bf"}>
             Mondial Fragment
           </MenuItem>
-          <MenuItem value={"64c6a0b0c078197638e7bd14"}>
-            Another database
-          </MenuItem>
+          <MenuItem value={"64e4b8f4fc72440674f39f11"}>Mondial Full</MenuItem>
         </Select>
       </FormControl>
     </div>

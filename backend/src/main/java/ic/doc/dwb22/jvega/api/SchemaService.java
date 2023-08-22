@@ -29,9 +29,9 @@ public class SchemaService {
 
     public DatabaseSchema insertSchemaTest(Integer testId) throws DBConnectionException, ParseException, IOException, SQLException {
         DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
-                "localhost",
+                "individual-project-postgres.postgres.database.azure.com",
                 "5432",
-                System.getenv("POSTGRES_DATABASE"),
+                "mondial_full",
                 System.getenv("POSTGRES_USER"),
                 System.getenv("POSTGRES_PASSWORD"),
                 testId);

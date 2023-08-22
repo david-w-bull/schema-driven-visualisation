@@ -3,6 +3,7 @@ package ic.doc.dwb22.jvega;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ic.doc.dwb22.jvega.schema.DatabaseProfiler;
 import ic.doc.dwb22.jvega.schema.DatabaseSchema;
 import ic.doc.dwb22.jvega.schema.ForeignKey;
 import ic.doc.dwb22.jvega.spec.*;
@@ -17,6 +18,7 @@ import ic.doc.dwb22.jvega.utils.GenericMap;
 import ic.doc.dwb22.jvega.utils.JsonData;
 import ic.doc.dwb22.jvega.vizSchema.VizSchema;
 import ic.doc.dwb22.jvega.vizSchema.VizSchemaMapper;
+import io.github.MigadaTang.common.RDBMSType;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -56,9 +58,9 @@ public class JVegaApplication {
 		//testTemplateFile("barChartTemplate.json");
 
 //		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
-//				"localhost",
+//				"individual-project-postgres.postgres.database.azure.com",
 //				"5432",
-//				System.getenv("POSTGRES_DATABASE"),
+//				"mondial_full",
 //				System.getenv("POSTGRES_USER"),
 //				System.getenv("POSTGRES_PASSWORD"),
 //				0);
