@@ -1,0 +1,193 @@
+{
+  "schemaId": 1,
+  "name": "public",
+  "connectionString": "jdbc:postgresql://individual-project-postgres.postgres.database.azure.com:5432/mondial_fragment",
+  "entityList": [
+    {
+      "id": 8,
+      "name": "economy",
+      "entityType": "SUBSET",
+      "relatedStrongEntity": {
+        "id": 3,
+        "name": "country",
+        "entityType": "STRONG",
+        "relatedStrongEntity": null,
+        "attributes": [
+          {
+            "attributeId": 9,
+            "attributeName": "name",
+            "mandatory": true,
+            "optional": false,
+            "multiValued": false,
+            "dataType": "VARCHAR",
+            "isPrimary": false,
+            "parentEntityName": "country"
+          },
+          {
+            "attributeId": 10,
+            "attributeName": "code",
+            "mandatory": true,
+            "optional": false,
+            "multiValued": false,
+            "dataType": "VARCHAR",
+            "isPrimary": true,
+            "parentEntityName": "country"
+          },
+          {
+            "attributeId": 11,
+            "attributeName": "capital",
+            "mandatory": false,
+            "optional": true,
+            "multiValued": false,
+            "dataType": "VARCHAR",
+            "isPrimary": false,
+            "parentEntityName": "country"
+          },
+          {
+            "attributeId": 12,
+            "attributeName": "province",
+            "mandatory": false,
+            "optional": true,
+            "multiValued": false,
+            "dataType": "VARCHAR",
+            "isPrimary": false,
+            "parentEntityName": "country"
+          },
+          {
+            "attributeId": 13,
+            "attributeName": "area",
+            "mandatory": true,
+            "optional": false,
+            "multiValued": false,
+            "dataType": "NUMERIC",
+            "isPrimary": false,
+            "parentEntityName": "country"
+          },
+          {
+            "attributeId": 14,
+            "attributeName": "population",
+            "mandatory": true,
+            "optional": false,
+            "multiValued": false,
+            "dataType": "INT4",
+            "isPrimary": false,
+            "parentEntityName": "country"
+          }
+        ],
+        "foreignKeys": []
+      },
+      "attributes": [
+        {
+          "attributeId": 29,
+          "attributeName": "gdp",
+          "mandatory": false,
+          "optional": true,
+          "multiValued": false,
+          "dataType": "INT4",
+          "isPrimary": false,
+          "parentEntityName": "economy",
+          "isChecked": true
+        },
+        {
+          "attributeId": 34,
+          "attributeName": "unemployment",
+          "mandatory": false,
+          "optional": true,
+          "multiValued": false,
+          "dataType": "NUMERIC",
+          "isPrimary": false,
+          "parentEntityName": "economy",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": [
+        {
+          "fkName": "economy_isa",
+          "fkTableName": "economy",
+          "fkColumnNames": [
+            "country"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "country",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "attributes": [
+        {
+          "attributeId": 9,
+          "attributeName": "name",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": false,
+          "parentEntityName": "country",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": []
+    }
+  ],
+  "relationshipList": [
+    {
+      "id": 5,
+      "name": "borders",
+      "isWeakRelationship": false,
+      "entityA": "country",
+      "entityACardinality": "Many",
+      "entityB": "country",
+      "entityBCardinality": "Many",
+      "overallCardinality": "ManyToMany",
+      "relationships": [
+        {
+          "edgeId": 9,
+          "relationshipId": 5,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        },
+        {
+          "edgeId": 10,
+          "relationshipId": 5,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        }
+      ],
+      "attributes": [],
+      "foreignKeys": [
+        {
+          "fkName": "border_country_b_fk",
+          "fkTableName": "borders",
+          "fkColumnNames": [
+            "country2"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        },
+        {
+          "fkName": "border_country_a_fk",
+          "fkTableName": "borders",
+          "fkColumnNames": [
+            "country1"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        }
+      ]
+    }
+  ]
+}

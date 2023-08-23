@@ -62,14 +62,25 @@ public class VizSchemaMapper {
                 return generateManyToManySchema(reflexive);
             }
 
-        } else if(entities.size() == 2 && relationships.size() == 1) {
-                if(relationships.get(0).getIsWeakRelationship()) {
-                    return generateWeakEntitySchema();
-                } else if (relationships.get(0).getOverallCardinality().equals("OneToMany")
-                    || relationships.get(0).getOverallCardinality().equals("ManyToOne")) {
-                    return generateOneToManySchema();
-                } else if (relationships.get(0).getOverallCardinality().equals("ManyToMany")) {
-                    return generateManyToManySchema(reflexive);
+        } else if(entities.size() == 2) {
+                DatabaseEntity entityOne = entities.get(0);
+                DatabaseEntity entityTwo = entities.get(1);
+                if(entityOne.getEntityType() == DatabaseEntityType.SUBSET
+                        && entityOne.getRelatedStrongEntity().getName().equals(entityTwo.getName())) {
+                    System.out.println("Subset detected");
+                } else if(entityTwo.getEntityType() == DatabaseEntityType.SUBSET
+                        && entityTwo.getRelatedStrongEntity().getName().equals(entityOne.getName())) {
+                    System.out.println("Subset detected");
+                } else if(relationships.size() == 1) {
+                    DatabaseRelationship relationship = relationships.get(0);
+                    if (relationship.getIsWeakRelationship()) {
+                        return generateWeakEntitySchema();
+                    } else if (relationship.getOverallCardinality().equals("OneToMany")
+                            || relationship.getOverallCardinality().equals("ManyToOne")) {
+                        return generateOneToManySchema();
+                    } else if (relationship.getOverallCardinality().equals("ManyToMany")) {
+                        return generateManyToManySchema(reflexive);
+                    }
                 }
         }
         return new VizSchema(VizSchemaType.NONE);
