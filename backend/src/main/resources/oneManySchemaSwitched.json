@@ -1,0 +1,166 @@
+{
+  "schemaId": 1,
+  "name": "public",
+  "connectionString": "jdbc:postgresql://individual-project-postgres.postgres.database.azure.com:5432/mondial_full",
+  "entityList": [
+    {
+      "id": 2,
+      "name": "continent",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "attributes": [
+        {
+          "attributeId": 7,
+          "attributeName": "name",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": true,
+          "parentEntityName": "continent",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": []
+    },
+    {
+      "id": 3,
+      "name": "country",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "attributes": [
+        {
+          "attributeId": 9,
+          "attributeName": "name",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": false,
+          "parentEntityName": "country",
+          "isChecked": true
+        },
+        {
+          "attributeId": 14,
+          "attributeName": "population",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "INT4",
+          "isPrimary": false,
+          "parentEntityName": "country",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": []
+    }
+  ],
+  "relationshipList": [
+    {
+      "id": 8,
+      "name": "borders",
+      "isWeakRelationship": false,
+      "entityA": "country",
+      "entityACardinality": "Many",
+      "entityB": "country",
+      "entityBCardinality": "Many",
+      "overallCardinality": "ManyToMany",
+      "relationships": [
+        {
+          "edgeId": 15,
+          "relationshipId": 8,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        },
+        {
+          "edgeId": 16,
+          "relationshipId": 8,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        }
+      ],
+      "attributes": [],
+      "foreignKeys": [
+        {
+          "fkName": "border_country_b_fk",
+          "fkTableName": "borders",
+          "fkColumnNames": [
+            "country2"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        },
+        {
+          "fkName": "border_country_a_fk",
+          "fkTableName": "borders",
+          "fkColumnNames": [
+            "country1"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "encompasses",
+      "isWeakRelationship": false,
+      "entityA": "country",
+      "entityACardinality": "Many",
+      "entityB": "continent",
+      "entityBCardinality": "Many",
+      "overallCardinality": "ManyToMany",
+      "relationships": [
+        {
+          "edgeId": 17,
+          "relationshipId": 9,
+          "entityId": 3,
+          "entityName": "country",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        },
+        {
+          "edgeId": 18,
+          "relationshipId": 9,
+          "entityId": 2,
+          "entityName": "continent",
+          "cardinality": "ZeroToMany",
+          "isKey": false
+        }
+      ],
+      "attributes": [],
+      "foreignKeys": [
+        {
+          "fkName": "encompasses_continent_fk",
+          "fkTableName": "encompasses",
+          "fkColumnNames": [
+            "continent"
+          ],
+          "pkTableName": "continent",
+          "pkColumnNames": [
+            "name"
+          ]
+        },
+        {
+          "fkName": "encompasses_country_fk",
+          "fkTableName": "encompasses",
+          "fkColumnNames": [
+            "country"
+          ],
+          "pkTableName": "country",
+          "pkColumnNames": [
+            "code"
+          ]
+        }
+      ]
+    }
+  ]
+}

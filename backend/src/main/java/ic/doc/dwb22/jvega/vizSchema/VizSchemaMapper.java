@@ -227,6 +227,21 @@ public class VizSchemaMapper {
                 entityBAlias = String.join("_", relationship.getForeignKeys().get(1).getFkColumnNames());
             }
 
+            for(DatabaseAttribute attribute: relationships.get(0).getAttributes()) {
+                if(isScalarDataType(attribute.getDataType())) {
+                    vizSchema.setScalarOne(attribute);
+                    vizSchema.setScalarOneAlias(attribute.getParentEntityName() + "_" + attribute.getAttributeName());
+                }
+            }
+
+            // If there are no scalars present as relationship attributes then the type is downgraded to basic
+            // This scenario indicates that the second table is being used elsewhere in the query (e.g. the WHERE clause)
+            // This downgrade only affects chart recommendations
+            // Sql generation still works on the basis of a many-to-many relationship
+            if(vizSchema.getScalarOne() == null) {
+                vizSchema.setType(VizSchemaType.BASIC);
+            }
+
             // According to the schema definition there should only be one attribute selected, but the loop handles edge cases
             for(DatabaseAttribute attribute: entityA.getAttributes()) {
                 if(attribute.getIsPrimary() || isUnique(attribute)) {
@@ -235,6 +250,14 @@ public class VizSchemaMapper {
                         vizSchema.setKeyOneAlias(entityAAlias + "_" + attribute.getAttributeName());
                     } else {
                         vizSchema.setKeyOneAlias(entityAName + "_" + attribute.getAttributeName());
+                    }
+                }
+                if(vizSchema.getScalarOne() == null && isScalarDataType(attribute.getDataType())) {
+                    vizSchema.setScalarOne(attribute);
+                    if(reflexive) {
+                        vizSchema.setScalarOneAlias(entityAAlias + "_" + attribute.getAttributeName());
+                    } else {
+                        vizSchema.setScalarOneAlias(entityAName + "_" + attribute.getAttributeName());
                     }
                 }
             }
@@ -248,12 +271,13 @@ public class VizSchemaMapper {
                         vizSchema.setKeyTwoAlias(entityBName + "_" + attribute.getAttributeName());
                     }
                 }
-            }
-
-            for(DatabaseAttribute attribute: relationships.get(0).getAttributes()) {
-                if(isScalarDataType(attribute.getDataType())) {
+                if(vizSchema.getScalarOne() == null && isScalarDataType(attribute.getDataType())) {
                     vizSchema.setScalarOne(attribute);
-                    vizSchema.setScalarOneAlias(attribute.getParentEntityName() + "_" + attribute.getAttributeName());
+                    if(reflexive) {
+                        vizSchema.setScalarOneAlias(entityAAlias + "_" + attribute.getAttributeName());
+                    } else {
+                        vizSchema.setScalarOneAlias(entityAName + "_" + attribute.getAttributeName());
+                    }
                 }
             }
 

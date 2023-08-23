@@ -68,7 +68,7 @@ public class JVegaApplication {
 //
 //		System.out.println(schema.toJson().toPrettyString());
 
-//		testSchemaMapping("basicSchema.json");
+//		testSchemaMapping("oneManySchemaSwitched.json");
 
 //testTemplateFile( "sankeyTemplate.json", "manyToManySchema.json");
 
@@ -77,7 +77,6 @@ public class JVegaApplication {
 //		scatterChartTest();
 
 	SpringApplication.run(JVegaApplication.class, args);
-
 	}
 
 //	@GetMapping("/")
@@ -117,12 +116,12 @@ public class JVegaApplication {
 //
 //		System.out.println(vizSchema.getDataset());
 //
-//		System.out.println(vizSchema.getK1FieldName());
-//		System.out.println(vizSchema.getKeyOneAlias());
-//		System.out.println(vizSchema.getK2FieldName());
-//		System.out.println(vizSchema.getKeyTwoAlias());
-//		System.out.println(vizSchema.getA1FieldName());
-//		System.out.println(vizSchema.getScalarOneAlias());
+		System.out.println(vizSchema.getK1FieldName());
+		System.out.println(vizSchema.getKeyOneAlias());
+		System.out.println(vizSchema.getK2FieldName());
+		System.out.println(vizSchema.getKeyTwoAlias());
+		System.out.println(vizSchema.getA1FieldName());
+		System.out.println(vizSchema.getScalarOneAlias());
 //		System.out.println(vizSchema.getKeyCardinality());
 //		System.out.println(vizSchema.getDataRelationship());
 //		System.out.println(vizSchema.getExampleData());
