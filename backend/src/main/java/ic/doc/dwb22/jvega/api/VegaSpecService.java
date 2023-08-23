@@ -104,9 +104,9 @@ public class VegaSpecService {
                 VegaSpec treemapSpec = specTemplatesByChartType(true, Arrays.asList("Treemap")).get(0).getSpecs().get(0);
 
                 List<String> fieldsToRename = Arrays.asList(
-                        vizSchema.getKeyTwo().getParentEntityName() + "_" + vizSchema.getK2FieldName(),
-                        vizSchema.getScalarOne().getParentEntityName() + "_" + vizSchema.getA1FieldName(),
-                        vizSchema.getKeyOne().getParentEntityName() + "_" + vizSchema.getK1FieldName());
+                        vizSchema.getKeyTwoAlias(),
+                        vizSchema.getScalarOneAlias(),
+                        vizSchema.getKeyOneAlias());
 
                 List<String> fieldAliases = Arrays.asList("name", "size", "parent");
 
