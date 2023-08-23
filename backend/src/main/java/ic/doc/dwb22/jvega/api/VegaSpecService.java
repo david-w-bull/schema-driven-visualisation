@@ -79,8 +79,8 @@ public class VegaSpecService {
                         .withName("rawData")
                         //.withValues(mapper.getSqlData())
                         .withValues(new ArrayList<>()) // Passing empty array to be filled client side
-                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "barLabel"))
-                        .withTransform(FormulaTransform.simpleFormula("parseInt(datum." + vizSchema.getA1FieldName() + ")", "barHeight"))
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getKeyOneAlias(), "barLabel"))
+                        .withTransform(FormulaTransform.simpleFormula("parseInt(datum." + vizSchema.getScalarOneAlias() + ")", "barHeight"))
                         .withTransform(CollectTransform.simpleSort("barHeight", "descending"))
                         .build();
                 barSpec.setData(Arrays.asList(dataset));
@@ -94,8 +94,8 @@ public class VegaSpecService {
 //                        .withValues(mapper.getSqlData())
                         .withValues(new ArrayList<>()) // Passing empty array to be filled client side
                         .withTransform(FormulaTransform.simpleFormula("[-45, 0, 45][~~(random() * 3)]", "angle"))
-                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getK1FieldName(), "wordField"))
-                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getA1FieldName(), "wordSizeField"))
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getKeyOneAlias(), "wordField"))
+                        .withTransform(FormulaTransform.simpleFormula("datum." + vizSchema.getScalarOneAlias(), "wordSizeField"))
                         .build();
                 wordCloudSpec.setData(Arrays.asList(dataset));
                 specs.add(wordCloudSpec);
