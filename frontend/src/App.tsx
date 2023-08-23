@@ -20,6 +20,7 @@ import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
 import CardinalitySettings from "./components/CardinalitySettings";
 import SQLEditor from "./components/SQLEditor";
+import SQLSubmitButton from "./components/SQLSubmitButton";
 import DataTable from "./components/DataTable";
 import VisualisationButtonsGroup from "./components/VisualisationButtonsGroup";
 import Split from "react-split";
@@ -36,6 +37,7 @@ import {
 import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
 import Button from "@mui/material/Button";
 import CachedIcon from "@mui/icons-material/Cached";
+import Tooltip from "@mui/material/Tooltip";
 import ChartDisplayModal from "./components/ChartDisplayModal";
 import manyManyIcon from "./assets/many-to-many.svg";
 import oneManyIcon from "./assets/one-to-many.svg";
@@ -53,7 +55,6 @@ function App() {
         console.log(response.data);
         setSchemaInfo(response.data);
         setSchemaConnection(response.data.connectionString);
-        console.log(schemaConnection);
       })
       .catch((error) => {
         console.error("There was an error!", error);
@@ -275,20 +276,11 @@ function App() {
               <div>
                 <div>
                   <SQLEditor value={sqlCode} onChange={setSqlCode} />
-                  <Button
-                    variant="contained"
-                    endIcon={<CachedIcon />}
-                    disabled={sqlCode.length == 0}
-                    onClick={() => {
-                      handleSqlSubmit();
-                    }}
-                    style={{
-                      margin: "5px 20px 20px 0px",
-                      boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)",
-                    }}
-                  >
-                    Update SQL
-                  </Button>
+                  <SQLSubmitButton
+                    sqlCode={sqlCode}
+                    radioEnabled={radioEnabled}
+                    handleSqlSubmit={handleSqlSubmit}
+                  />
                 </div>
                 {typeof vizSchema.exampleData != "undefined" && (
                   <DataTable data={vizSchema.exampleData}></DataTable>
