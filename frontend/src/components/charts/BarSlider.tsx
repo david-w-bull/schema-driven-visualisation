@@ -7,20 +7,31 @@ interface BarSliderProps {
 
 const BarSlider = ({ vizSchema }: BarSliderProps) => {
   const [data, setData] = useState([]);
+  const [hasSecondKey, setHasSecondKey] = useState(
+    vizSchema.keyTwoAlias != null
+  );
 
   useEffect(() => {
     setData(
-      vizSchema.dataset.map((item: any) => ({
-        ...item,
-        [vizSchema.scalarOneAlias]: parseFloat(item[vizSchema.scalarOneAlias]),
-      }))
+      vizSchema.dataset.map((item: any) => {
+        return {
+          ...item,
+          [vizSchema.scalarOneAlias]: parseFloat(
+            item[vizSchema.scalarOneAlias]
+          ),
+          compound_key: hasSecondKey
+            ? `${item[vizSchema.keyOneAlias]} > ${item[vizSchema.keyTwoAlias]}`
+            : null,
+        };
+      })
     );
   }, [vizSchema]);
 
   const config = {
     data,
-    yField: vizSchema.keyOneAlias,
+    yField: hasSecondKey ? "compound_key" : vizSchema.keyOneAlias,
     xField: vizSchema.scalarOneAlias,
+    seriesField: hasSecondKey ? vizSchema.keyOneAlias : undefined,
     yAxis: {
       label: {
         autoRotate: true,

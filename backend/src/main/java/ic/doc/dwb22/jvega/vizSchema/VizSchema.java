@@ -74,7 +74,7 @@ public class VizSchema {
                     matchedChartTypes.add("Scatter Plot");
                 } else if(scalarOne != null) {
                     matchedChartTypes.add("Bar Chart");
-                    if(isLexical(keyOne.getDataType())) {
+                    if(isLexical(keyOne.getDataType()) && keyTwo == null) {
                         matchedChartTypes.add("Word Cloud");
                     }
                 }
@@ -99,6 +99,7 @@ public class VizSchema {
         } else if(type == VizSchemaType.WEAK) {
             matchedChartTypes.add("Grouped Bar Chart");
             matchedChartTypes.add("Stacked Bar Chart");
+//            matchedChartTypes.add("Treemap");
         }
         this.chartTypes = matchedChartTypes;
 

@@ -157,12 +157,21 @@ function App() {
   const [showErrors, setShowErrors] = useState(false);
 
   const handleBackendErrors = (vizSchema: VizSchema) => {
-    if (vizSchema.type !== "ERROR") {
-      return false;
+    if (vizSchema.type === "ERROR") {
+      setErrorMessages(vizSchema.messages);
+      setShowErrors(true);
+      return true;
     }
-    setErrorMessages(vizSchema.messages);
-    setShowErrors(true);
-    return true;
+    if (
+      !vizSchema.dataset ||
+      (vizSchema.dataset && vizSchema.dataset.length === 0)
+    ) {
+      setErrorMessages(["Your query returned no data"]);
+      setShowErrors(true);
+      return true;
+    }
+
+    return false;
   };
 
   const handleSqlSubmit = () => {
