@@ -103,9 +103,14 @@ public class VizSchemaMapper {
         if(!keys.isEmpty()) {
             vizSchema.setKeyOne(keys.get(0));
             vizSchema.setKeyOneAlias(keys.get(0).getParentEntityName() + "_" + keys.get(0).getAttributeName());
+
+            if(keys.size() > 1) {
+                vizSchema.setKeyTwo(keys.get(1));
+                vizSchema.setKeyTwoAlias(keys.get(1).getParentEntityName() + "_" + keys.get(1).getAttributeName());
+            }
         }
 
-        // Needs to be updated to handle selections > 3 scalars
+        // Needs to be updated if VizSchema patterns are to handle selections > 3 scalars.
         switch(scalars.size()) {
             case 3: vizSchema.setScalarThree(scalars.get(2)); vizSchema.setScalarThreeAlias(scalars.get(2).getParentEntityName() + "_" + scalars.get(2).getAttributeName());
             case 2: vizSchema.setScalarTwo(scalars.get(1)); vizSchema.setScalarTwoAlias(scalars.get(1).getParentEntityName() + "_" + scalars.get(1).getAttributeName());

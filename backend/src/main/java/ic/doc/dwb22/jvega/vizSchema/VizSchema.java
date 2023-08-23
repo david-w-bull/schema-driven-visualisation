@@ -65,6 +65,10 @@ public class VizSchema {
     public List<String> matchChartTypes(VizSchemaType type, Boolean checkCardinalities) {
         List<String> matchedChartTypes = new ArrayList<>();
         if (type == VizSchemaType.BASIC) {
+            if(keyTwo != null && scalarOne != null) {
+                matchedChartTypes.add("Grouped Bar Chart");
+                matchedChartTypes.add("Stacked Bar Chart");
+            }
             if(keyOne != null) {
                 if(scalarTwo != null) {
                     matchedChartTypes.add("Scatter Plot");

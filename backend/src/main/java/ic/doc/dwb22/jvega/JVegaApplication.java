@@ -68,7 +68,7 @@ public class JVegaApplication {
 //
 //		System.out.println(schema.toJson().toPrettyString());
 
-//		testSchemaMapping("subsetSchema.json");
+//		testSchemaMapping("compoundKeySchema.json");
 
 //testTemplateFile( "sankeyTemplate.json", "manyToManySchema.json");
 

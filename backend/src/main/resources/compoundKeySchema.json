@@ -1,0 +1,50 @@
+{
+  "schemaId": 1,
+  "name": "public",
+  "connectionString": "jdbc:postgresql://individual-project-postgres.postgres.database.azure.com:5432/mondial_full",
+  "entityList": [
+    {
+      "id": 4,
+      "name": "country_population",
+      "entityType": "STRONG",
+      "relatedStrongEntity": null,
+      "attributes": [
+        {
+          "attributeId": 16,
+          "attributeName": "country",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "VARCHAR",
+          "isPrimary": true,
+          "parentEntityName": "country_population",
+          "isChecked": true
+        },
+        {
+          "attributeId": 17,
+          "attributeName": "year",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "INT4",
+          "isPrimary": true,
+          "parentEntityName": "country_population",
+          "isChecked": true
+        },
+        {
+          "attributeId": 18,
+          "attributeName": "population",
+          "mandatory": true,
+          "optional": false,
+          "multiValued": false,
+          "dataType": "INT4",
+          "isPrimary": false,
+          "parentEntityName": "country_population",
+          "isChecked": true
+        }
+      ],
+      "foreignKeys": []
+    }
+  ],
+  "relationshipList": []
+}
