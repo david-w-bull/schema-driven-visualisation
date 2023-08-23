@@ -57,7 +57,7 @@ public class VizSchemaMapper {
 
         if (entities.size() == 1 && entities.get(0).getEntityType() == DatabaseEntityType.STRONG) {
             if(!reflexive) {
-                return generateBasicEntitySchema();
+                return generateBasicEntitySchema(false);
             } else {
                 return generateManyToManySchema(reflexive);
             }
@@ -67,10 +67,10 @@ public class VizSchemaMapper {
                 DatabaseEntity entityTwo = entities.get(1);
                 if(entityOne.getEntityType() == DatabaseEntityType.SUBSET
                         && entityOne.getRelatedStrongEntity().getName().equals(entityTwo.getName())) {
-                    System.out.println("Subset detected");
+                    return generateBasicEntitySchema(true);
                 } else if(entityTwo.getEntityType() == DatabaseEntityType.SUBSET
                         && entityTwo.getRelatedStrongEntity().getName().equals(entityOne.getName())) {
-                    System.out.println("Subset detected");
+                    return generateBasicEntitySchema(true);
                 } else if(relationships.size() == 1) {
                     DatabaseRelationship relationship = relationships.get(0);
                     if (relationship.getIsWeakRelationship()) {
@@ -86,39 +86,45 @@ public class VizSchemaMapper {
         return new VizSchema(VizSchemaType.NONE);
     }
 
-    private VizSchema generateBasicEntitySchema() {
+    private VizSchema generateBasicEntitySchema(Boolean subset) {
         VizSchema vizSchema = new VizSchema(VizSchemaType.BASIC);
-        DatabaseEntity basicEntity = entities.get(0);
         List<DatabaseAttribute> keys = new ArrayList<>();
         List<DatabaseAttribute> scalars = new ArrayList<>();
-        for (DatabaseAttribute attr : basicEntity.getAttributes()) {
-            if (attr.getIsPrimary() || isUnique(attr)) {
-                keys.add(attr);
-            } else if (isScalarDataType(attr.getDataType())) {
-                scalars.add(attr);
+        for (DatabaseEntity entity : entities) {
+            for (DatabaseAttribute attr : entity.getAttributes()) {
+                if (attr.getIsPrimary() || isUnique(attr)) {
+                    keys.add(attr);
+                } else if (isScalarDataType(attr.getDataType())) {
+                    scalars.add(attr);
+                }
             }
         }
 
         if(!keys.isEmpty()) {
             vizSchema.setKeyOne(keys.get(0));
-            vizSchema.setKeyOneAlias(keys.get(0).getAttributeName());
+            vizSchema.setKeyOneAlias(keys.get(0).getParentEntityName() + "_" + keys.get(0).getAttributeName());
         }
 
         // Needs to be updated to handle selections > 3 scalars
         switch(scalars.size()) {
-            case 3: vizSchema.setScalarThree(scalars.get(2)); vizSchema.setScalarThreeAlias(scalars.get(2).getAttributeName());
-            case 2: vizSchema.setScalarTwo(scalars.get(1)); vizSchema.setScalarTwoAlias(scalars.get(1).getAttributeName());
-            case 1: vizSchema.setScalarOne(scalars.get(0)); vizSchema.setScalarOneAlias(scalars.get(0).getAttributeName());
+            case 3: vizSchema.setScalarThree(scalars.get(2)); vizSchema.setScalarThreeAlias(scalars.get(2).getParentEntityName() + "_" + scalars.get(2).getAttributeName());
+            case 2: vizSchema.setScalarTwo(scalars.get(1)); vizSchema.setScalarTwoAlias(scalars.get(1).getParentEntityName() + "_" + scalars.get(1).getAttributeName());
+            case 1: vizSchema.setScalarOne(scalars.get(0)); vizSchema.setScalarOneAlias(scalars.get(0).getParentEntityName() + "_" + scalars.get(0).getAttributeName());
             default: break;
         }
 
-        this.sqlQuery = generateSql(VizSchemaType.BASIC, false);
+        if(subset) {
+            this.sqlQuery = generateSql(VizSchemaType.ONETOMANY, false);
+        } else {
+            this.sqlQuery = generateSql(VizSchemaType.BASIC, false);
+        }
         vizSchema.setSqlQuery(sqlQuery);
         vizSchema.setConnectionString(databaseSchema.getConnectionString());
         vizSchema.fetchSqlData(sqlUser, sqlPassword);
         vizSchema.calculateMaxKeyCardinality(sqlUser, sqlPassword);
         return vizSchema;
     }
+
 
     private VizSchema generateWeakEntitySchema() {
         VizSchema vizSchema = new VizSchema(VizSchemaType.WEAK);
@@ -310,7 +316,7 @@ public class VizSchemaMapper {
             DatabaseEntity entity = entities.get(0);
             List<DatabaseAttribute> attributes = entity.getAttributes();
             String attributeList = attributes.stream()
-                    .map(s ->"\t" + entity.getName() + "." + s.getAttributeName())
+                    .map(s ->"\t" + entity.getName() + "." + s.getAttributeName() + " AS " + entity.getName() + "_" + s.getAttributeName())
                     .collect(Collectors.joining(",\n"));
             return "SELECT" + "\n"
                     + attributeList + "\n\n"
@@ -374,7 +380,6 @@ public class VizSchemaMapper {
 
             select = selectAttributes.stream()
                     .collect(Collectors.joining(",\n\t"));
-
 
             return "SELECT" + "\n"
                     + "\t" + select + "\n\n"
@@ -545,7 +550,7 @@ public class VizSchemaMapper {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error fetching SQL for isUnique: " + e);
         }
         return false;
     }
