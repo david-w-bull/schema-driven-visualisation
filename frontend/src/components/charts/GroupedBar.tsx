@@ -16,7 +16,7 @@ const GroupedBar = ({ vizSchema }: GroupedBarProps) => {
     isGroup: true,
     xField: "value",
     yField: "label",
-    seriesField: "type",
+    seriesField: vizSchema.keyTwoAlias ? "type" : null,
     marginRatio: 0,
     label: {
       position: "right" as "right",

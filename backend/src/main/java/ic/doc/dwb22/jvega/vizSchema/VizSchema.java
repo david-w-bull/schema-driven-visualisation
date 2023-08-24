@@ -45,7 +45,8 @@ public class VizSchema {
     private String sqlQuery = "";
     private String connectionString;
     private List<String> chartTypes;
-    private Map<String, List<String>> allChartTypes;
+//    private List<String> dataChartTypes;
+//    private Map<String, List<String>> allChartTypes;
     private Map<String, Integer> cardinalityLimits;
     private List<String> messages = new ArrayList<>(); // for returning user error messages etc.
 
@@ -117,35 +118,35 @@ public class VizSchema {
         }
     }
 
-    private void categoriseChartRecommendation(String chartName) {
-        if(!cardinalityLimits.containsKey(chartName)) {
-            System.err.println("Chart type: " + chartName + " has no cardinality limit set.");
-            return;
-        }
-        if(allChartTypes == null) {
-            allChartTypes = new HashMap<>();
-            allChartTypes.put("Recommended", new ArrayList<>());
-            allChartTypes.put("Possible", new ArrayList<>());
-            allChartTypes.put("Other", new ArrayList<>());
-        }
-        String option = keyCardinality <= cardinalityLimits.get(chartName) ? "Recommended" : "Possible";
-        allChartTypes.get(option).add(chartName);
-    }
+//    private void categoriseChartRecommendation(String chartName) {
+//        if(!cardinalityLimits.containsKey(chartName)) {
+//            System.err.println("Chart type: " + chartName + " has no cardinality limit set.");
+//            return;
+//        }
+//        if(allChartTypes == null) {
+//            allChartTypes = new HashMap<>();
+//            allChartTypes.put("Recommended", new ArrayList<>());
+//            allChartTypes.put("Possible", new ArrayList<>());
+//            allChartTypes.put("Other", new ArrayList<>());
+//        }
+//        String option = keyCardinality <= cardinalityLimits.get(chartName) ? "Recommended" : "Possible";
+//        allChartTypes.get(option).add(chartName);
+//    }
 
-    private void categoriseRemainingCharts() {
-        if(allChartTypes == null) {
-            allChartTypes = new HashMap<>();
-            allChartTypes.put("Recommended", new ArrayList<>());
-            allChartTypes.put("Possible", new ArrayList<>());
-            allChartTypes.put("Other", new ArrayList<>());
-        }
-        for(String chart: cardinalityLimits.keySet()) {
-            if(!allChartTypes.get("Recommended").contains(chart)
-                && !allChartTypes.get("Possible").contains(chart)) {
-                allChartTypes.get("Other").add(chart);
-            }
-        }
-    }
+//    private void categoriseRemainingCharts() {
+//        if(allChartTypes == null) {
+//            allChartTypes = new HashMap<>();
+//            allChartTypes.put("Recommended", new ArrayList<>());
+//            allChartTypes.put("Possible", new ArrayList<>());
+//            allChartTypes.put("Other", new ArrayList<>());
+//        }
+//        for(String chart: cardinalityLimits.keySet()) {
+//            if(!allChartTypes.get("Recommended").contains(chart)
+//                && !allChartTypes.get("Possible").contains(chart)) {
+//                allChartTypes.get("Other").add(chart);
+//            }
+//        }
+//    }
 
     public void fetchSqlData(String username, String password) {
 
@@ -315,19 +316,19 @@ public class VizSchema {
         return rawDataQuery;
     }
 
-    private Map<String, Integer> readCardinalities(String cardinalityLimitsFile) {
-        try {
-        ObjectMapper mapper = new ObjectMapper();
-        File file = new ClassPathResource(cardinalityLimitsFile).getFile();
-
-            JsonNode jsonData = mapper.readTree(file);
-            String jsonString = mapper.writeValueAsString(jsonData);
-            return mapper.readValue(jsonString, new TypeReference<>() {});
-        } catch (JsonProcessingException e) {
-            System.err.println(e);
-        } catch (IOException e) {
-            System.err.println(e);
-        }
-        return null;
-    }
+//    private Map<String, Integer> readCardinalities(String cardinalityLimitsFile) {
+//        try {
+//        ObjectMapper mapper = new ObjectMapper();
+//        File file = new ClassPathResource(cardinalityLimitsFile).getFile();
+//
+//            JsonNode jsonData = mapper.readTree(file);
+//            String jsonString = mapper.writeValueAsString(jsonData);
+//            return mapper.readValue(jsonString, new TypeReference<>() {});
+//        } catch (JsonProcessingException e) {
+//            System.err.println(e);
+//        } catch (IOException e) {
+//            System.err.println(e);
+//        }
+//        return null;
+//    }
 }

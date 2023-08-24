@@ -260,7 +260,9 @@ public class VizSchemaMapper {
             // This scenario indicates that the second table is being used elsewhere in the query (e.g. the WHERE clause)
             // This downgrade only affects chart recommendations
             // Sql generation still works on the basis of a many-to-many relationship
-            if(vizSchema.getScalarOne() == null) {
+            Boolean downgradeToBasic = vizSchema.getScalarOne() == null ? true : false;
+
+            if(downgradeToBasic) {
                 vizSchema.setType(VizSchemaType.BASIC);
             }
 
@@ -301,6 +303,11 @@ public class VizSchemaMapper {
                         vizSchema.setScalarOneAlias(entityAName + "_" + attribute.getAttributeName());
                     }
                 }
+            }
+
+            if(downgradeToBasic) {
+                vizSchema.setKeyTwo(null);
+                vizSchema.setKeyTwoAlias(null);
             }
 
             this.sqlQuery = generateSql(VizSchemaType.MANYTOMANY, reflexive);

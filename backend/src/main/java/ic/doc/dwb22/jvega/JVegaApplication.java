@@ -128,8 +128,6 @@ public class JVegaApplication {
 
 		vizSchema.matchChartTypes();
 
-		System.out.println(vizSchema.getAllChartTypes());
-
 	}
 
 	public static void testTemplateFile(String templateFileName, String schemaFileName) {
