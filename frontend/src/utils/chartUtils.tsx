@@ -9,6 +9,7 @@ import WordCloud from "../components/charts/WordCloud";
 import BarSlider from "../components/charts/BarSlider";
 import Treemap from "../components/charts/Treemap";
 import SankeyDiagram from "../components/charts/SankeyDiagram";
+import LineChart from "../components/charts/LineChart";
 
 export const renderChartComponent = (
   chartType: string,
@@ -31,6 +32,8 @@ export const renderChartComponent = (
       return <Treemap vizSchema={vizSchema} />;
     case "Sankey Diagram":
       return <SankeyDiagram vizSchema={vizSchema} />;
+    case "Line Chart":
+      return <LineChart vizSchema={vizSchema} />;
     default:
       return null;
   }

@@ -9,6 +9,7 @@ const cardinalityLimits: CardinalityLimits = {
   "Treemap": 500,
   "Chord Diagram": 100,
   "Sankey Diagram": 50,
+  "Line Chart": 20,
 };
 
 export default cardinalityLimits;

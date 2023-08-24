@@ -77,6 +77,7 @@ public class VizSchema {
             if(keyTwo != null && scalarOne != null) {
                 matchedChartTypes.add("Grouped Bar Chart");
                 matchedChartTypes.add("Stacked Bar Chart");
+                matchedChartTypes.add("Line Chart");
             }
             if(keyOne != null) {
                 if(scalarTwo != null) {
@@ -108,6 +109,7 @@ public class VizSchema {
         } else if(type == VizSchemaType.WEAK) {
             matchedChartTypes.add("Grouped Bar Chart");
             matchedChartTypes.add("Stacked Bar Chart");
+            matchedChartTypes.add("Line Chart");
 //            matchedChartTypes.add("Treemap");
         }
 
