@@ -8,6 +8,7 @@ import ColumnSlider from "../components/charts/ColumnSlider";
 import WordCloud from "../components/charts/WordCloud";
 import BarSlider from "../components/charts/BarSlider";
 import Treemap from "../components/charts/Treemap";
+import SankeyDiagram from "../components/charts/SankeyDiagram";
 
 export const renderChartComponent = (
   chartType: string,
@@ -28,6 +29,8 @@ export const renderChartComponent = (
       return <ScatterPlot vizSchema={vizSchema} />;
     case "Treemap":
       return <Treemap vizSchema={vizSchema} />;
+    case "Sankey Diagram":
+      return <SankeyDiagram vizSchema={vizSchema} />;
     default:
       return null;
   }
