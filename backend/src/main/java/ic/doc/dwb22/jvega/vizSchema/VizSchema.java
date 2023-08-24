@@ -29,8 +29,10 @@ public class VizSchema {
     private VizSchemaType type;
     private DatabaseAttribute keyOne;
     private String keyOneAlias;
+    private Integer keyOneCardinality;
     private DatabaseAttribute keyTwo;
     private String keyTwoAlias;
+    private Integer keyTwoCardinality;
     private DatabaseAttribute scalarOne;
     private String scalarOneAlias;
     private DatabaseAttribute scalarTwo;
@@ -129,36 +131,6 @@ public class VizSchema {
         }
     }
 
-//    private void categoriseChartRecommendation(String chartName) {
-//        if(!cardinalityLimits.containsKey(chartName)) {
-//            System.err.println("Chart type: " + chartName + " has no cardinality limit set.");
-//            return;
-//        }
-//        if(allChartTypes == null) {
-//            allChartTypes = new HashMap<>();
-//            allChartTypes.put("Recommended", new ArrayList<>());
-//            allChartTypes.put("Possible", new ArrayList<>());
-//            allChartTypes.put("Other", new ArrayList<>());
-//        }
-//        String option = keyCardinality <= cardinalityLimits.get(chartName) ? "Recommended" : "Possible";
-//        allChartTypes.get(option).add(chartName);
-//    }
-
-//    private void categoriseRemainingCharts() {
-//        if(allChartTypes == null) {
-//            allChartTypes = new HashMap<>();
-//            allChartTypes.put("Recommended", new ArrayList<>());
-//            allChartTypes.put("Possible", new ArrayList<>());
-//            allChartTypes.put("Other", new ArrayList<>());
-//        }
-//        for(String chart: cardinalityLimits.keySet()) {
-//            if(!allChartTypes.get("Recommended").contains(chart)
-//                && !allChartTypes.get("Possible").contains(chart)) {
-//                allChartTypes.get("Other").add(chart);
-//            }
-//        }
-//    }
-
     public void fetchSqlData(String username, String password) {
 
         JsonNode jsonNode = null;
@@ -229,9 +201,15 @@ public class VizSchema {
                 int columnCount = metaData.getColumnCount();
 
                 for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
                     int countValue = rs.getInt(i);
                     if (countValue > maxKeyCardinality) {
                         maxKeyCardinality = countValue;
+                    }
+                    if ("key_one_count".equals(columnName)) {
+                        keyOneCardinality = rs.getInt(i);
+                    } else if ("key_two_count".equals(columnName)) {
+                        keyTwoCardinality = rs.getInt(i);
                     }
                 }
             }
@@ -327,19 +305,4 @@ public class VizSchema {
         return rawDataQuery;
     }
 
-//    private Map<String, Integer> readCardinalities(String cardinalityLimitsFile) {
-//        try {
-//        ObjectMapper mapper = new ObjectMapper();
-//        File file = new ClassPathResource(cardinalityLimitsFile).getFile();
-//
-//            JsonNode jsonData = mapper.readTree(file);
-//            String jsonString = mapper.writeValueAsString(jsonData);
-//            return mapper.readValue(jsonString, new TypeReference<>() {});
-//        } catch (JsonProcessingException e) {
-//            System.err.println(e);
-//        } catch (IOException e) {
-//            System.err.println(e);
-//        }
-//        return null;
-//    }
 }

@@ -113,7 +113,9 @@ public class VegaSpecService {
                         vizSchema.getScalarOneAlias(),
                         vizSchema.getKeyOneAlias());
 
-                List<String> fieldAliases = Arrays.asList("name", "size", "parent");
+
+                List<String> fieldAliases = vizSchema.getKeyOneCardinality() < vizSchema.getKeyTwoCardinality() ?
+                Arrays.asList("name", "size", "parent") : Arrays.asList("parent", "size", "name");
 
                 VegaDataset dataset = new VegaDataset.BuildDataset()
                         .withName("rawData")

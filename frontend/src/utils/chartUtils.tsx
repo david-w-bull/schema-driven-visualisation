@@ -66,3 +66,25 @@ export const categorizeCharts = (
     Other,
   };
 };
+
+export const swapKeyFields = (vizSchema: VizSchema): VizSchema => {
+  const {
+    keyOne,
+    keyOneAlias,
+    keyOneCardinality,
+    keyTwo,
+    keyTwoAlias,
+    keyTwoCardinality,
+    ...rest
+  } = vizSchema;
+
+  return {
+    ...rest,
+    keyOne: keyTwo,
+    keyOneAlias: keyTwoAlias,
+    keyOneCardinality: keyTwoCardinality,
+    keyTwo: keyOne,
+    keyTwoAlias: keyOneAlias,
+    keyTwoCardinality: keyOneCardinality,
+  };
+};

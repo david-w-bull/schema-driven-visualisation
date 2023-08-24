@@ -15,7 +15,7 @@ import {
   BLANKRECOMMENDATIONS,
 } from "./constants";
 import cardinalityLimitsData from "./cardinalityLimitsData";
-import { categorizeCharts } from "./utils/chartUtils";
+import { categorizeCharts, swapKeyFields } from "./utils/chartUtils";
 import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
 import CardinalitySettings from "./components/CardinalitySettings";
@@ -113,27 +113,42 @@ function App() {
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
       .then((response) => {
         console.log(response.data);
-        setVizSchema(response.data.vizSchema);
+        let returnedVizSchema = response.data.vizSchema;
+        if (
+          returnedVizSchema.dataRelationship &&
+          returnedVizSchema.dataRelationship == "ONETOMANY"
+        ) {
+          if (
+            returnedVizSchema.keyOneCardinality >
+            returnedVizSchema.keyTwoCardinality
+          ) {
+            console.log("Swapping");
+            console.log(returnedVizSchema);
+            returnedVizSchema = swapKeyFields(returnedVizSchema);
+            console.log(returnedVizSchema);
+          }
+        }
+
+        setVizSchema(returnedVizSchema);
         setRadioEnabled(true);
-        response.data.vizSchema.sqlQuery &&
-          setSqlCode(response.data.vizSchema.sqlQuery);
-        response.data.vizSchema.keyCardinality &&
-          setKeyCardinality(response.data.vizSchema.keyCardinality);
-        response.data.vizSchema.chartTypes &&
-          setSchemaChartTypes(response.data.vizSchema.chartTypes);
-        response.data.vizSchema.dataChartTypes &&
-          setDataChartTypes(response.data.vizSchema.dataChartTypes);
+        returnedVizSchema.sqlQuery && setSqlCode(returnedVizSchema.sqlQuery);
+        returnedVizSchema.keyCardinality &&
+          setKeyCardinality(returnedVizSchema.keyCardinality);
+        returnedVizSchema.chartTypes &&
+          setSchemaChartTypes(returnedVizSchema.chartTypes);
+        returnedVizSchema.dataChartTypes &&
+          setDataChartTypes(returnedVizSchema.dataChartTypes);
 
         let schemaRecommendedCharts = categorizeCharts(
-          response.data.vizSchema.chartTypes,
+          returnedVizSchema.chartTypes,
           cardinalityLimits,
-          response.data.vizSchema.keyCardinality
+          returnedVizSchema.keyCardinality
         );
 
         let dataRecommendedCharts = categorizeCharts(
-          response.data.vizSchema.dataChartTypes,
+          returnedVizSchema.dataChartTypes,
           cardinalityLimits,
-          response.data.vizSchema.keyCardinality
+          returnedVizSchema.keyCardinality
         );
 
         setSchemaRecommendedCharts(schemaRecommendedCharts);
@@ -143,7 +158,7 @@ function App() {
         response.data.specs.forEach((specItem: any) => {
           specItem.data.forEach((dataItem: any) => {
             if (dataItem.name === "rawData") {
-              dataItem.values = response.data.vizSchema.dataset;
+              dataItem.values = returnedVizSchema.dataset;
             }
           });
         });

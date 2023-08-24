@@ -14,8 +14,10 @@ export type VizSchema = {
   type: string;
   keyOne?: Attribute;
   keyOneAlias?: string;
+  keyOneCardinality?: number;
   keyTwo?: Attribute;
   keyTwoAlias?: string;
+  keyTwoCardinality?: number;
   scalarOne?: Attribute;
   scalarOneAlias?: string;
   reflexive?: boolean;
