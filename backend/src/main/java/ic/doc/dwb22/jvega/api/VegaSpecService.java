@@ -69,9 +69,14 @@ public class VegaSpecService {
 
         List<VegaSpec> specs = new ArrayList<>();
 
+        // Creates a set of chart types from which to create Vega Specifications
+        // Also creates chartTypes and dataChartTypes arrays on vizSchema for use in the front end.
+        List<String> schemaRecommendedCharts = vizSchema.matchSchemaChartTypes();
+        List<String> dataRecommendedCharts = vizSchema.matchDataChartTypes();
+        HashSet<String> allChartsSet = new HashSet<>(schemaRecommendedCharts);
+        allChartsSet.addAll(dataRecommendedCharts);
 
-
-        for(String chartType: vizSchema.matchSchemaChartTypes()) {
+        for(String chartType: allChartsSet) {
             if(chartType == "Bar Chart") {
                 VegaSpec barSpec = specTemplatesByChartType(true, Arrays.asList("Bar Chart")).get(0).getSpecs().get(0);
 
@@ -157,6 +162,7 @@ public class VegaSpecService {
             vizSchema.analyseDataRelationships(user, pw);
         }
         vizSchema.matchSchemaChartTypes();
+        vizSchema.matchDataChartTypes();
         return vizSchema;
     }
 

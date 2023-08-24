@@ -26,8 +26,6 @@ function ChartDisplayModal({
     setShowVegaSpec((prevState) => !prevState);
   };
 
-  console.log(vegaSpec);
-
   return (
     <ModalContainer>
       <ModalBackdrop />

@@ -104,7 +104,7 @@ function App() {
       // the 'data' payload is a DatabaseSchema object filtered based on user selections
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
+        console.log(response.data);
         setVizSchema(response.data.vizSchema);
         setRadioEnabled(true);
         response.data.vizSchema.sqlQuery &&
@@ -179,12 +179,11 @@ function App() {
     // Clear previous alerts
     setShowErrors(false);
 
-    // Add code to revert to previous schema if the returned vizSchema is of type NONE or ERROR
     const updatedVizSchema = {
       ...vizSchema,
       sqlQuery: sqlCode,
-      allChartTypes: null,
       chartTypes: [],
+      dataChartTypes: [],
     };
 
     axios

@@ -63,7 +63,10 @@ public class VizSchema {
     }
 
     public List<String> matchDataChartTypes() {
-        return matchChartTypes(this.dataRelationship, true);
+        if(this.dataRelationship != null && this.dataRelationship != this.type) {
+            return matchChartTypes(this.dataRelationship, true);
+        }
+        return new ArrayList<>();
     }
 
     public List<String> matchChartTypes(VizSchemaType type, Boolean dataRelationships) {
