@@ -35,9 +35,6 @@ import {
   List,
 } from "antd";
 import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
-import Button from "@mui/material/Button";
-import CachedIcon from "@mui/icons-material/Cached";
-import Tooltip from "@mui/material/Tooltip";
 import ChartDisplayModal from "./components/ChartDisplayModal";
 import manyManyIcon from "./assets/many-to-many.svg";
 import oneManyIcon from "./assets/one-to-many.svg";
@@ -61,9 +58,14 @@ function App() {
       });
   };
 
-  const [chartTypes, setChartTypes] = useState<string[]>([]);
-  const [recommendedCharts, setRecommendedCharts] =
+  const [schemaChartTypes, setSchemaChartTypes] = useState<string[]>([]);
+  const [dataChartTypes, setDataChartTypes] = useState<string[]>([]);
+
+  const [schemaRecommendedCharts, setSchemaRecommendedCharts] =
     useState<ChartRecommendations>(BLANKRECOMMENDATIONS);
+  const [dataRecommendedCharts, setDataRecommendedCharts] =
+    useState<ChartRecommendations>(BLANKRECOMMENDATIONS);
+
   const [selectedChart, setSelectedChart] = useState<string | null>(null);
   const [specList, setSpecList] = useState<any[]>([]);
   const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
@@ -88,12 +90,12 @@ function App() {
     setCardinalityLimits(newCardinalityLimits);
 
     let recommendedCharts = categorizeCharts(
-      chartTypes,
+      schemaChartTypes,
       newCardinalityLimits,
       keyCardinality
     );
 
-    setRecommendedCharts(recommendedCharts);
+    setSchemaRecommendedCharts(recommendedCharts);
   };
 
   const handleSelectedData = (data: Data) => {
@@ -112,15 +114,24 @@ function App() {
         response.data.vizSchema.keyCardinality &&
           setKeyCardinality(response.data.vizSchema.keyCardinality);
         response.data.vizSchema.chartTypes &&
-          setChartTypes(response.data.vizSchema.chartTypes);
+          setSchemaChartTypes(response.data.vizSchema.chartTypes);
+        response.data.vizSchema.dataChartTypes &&
+          setDataChartTypes(response.data.vizSchema.dataChartTypes);
 
-        let recommendedCharts = categorizeCharts(
+        let schemaRecommendedCharts = categorizeCharts(
           response.data.vizSchema.chartTypes,
           cardinalityLimits,
           response.data.vizSchema.keyCardinality
         );
 
-        setRecommendedCharts(recommendedCharts);
+        let dataRecommendedCharts = categorizeCharts(
+          response.data.vizSchema.dataChartTypes,
+          cardinalityLimits,
+          response.data.vizSchema.keyCardinality
+        );
+
+        setSchemaRecommendedCharts(schemaRecommendedCharts);
+        setDataRecommendedCharts(dataRecommendedCharts);
 
         // Copy the reference to the VizSchema data into any Vega specs as 'rawData'.
         response.data.specs.forEach((specItem: any) => {
@@ -133,7 +144,7 @@ function App() {
         setSpecList(response.data.specs);
       });
 
-    console.log(JSON.stringify(data));
+    console.log(data);
   };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -198,15 +209,24 @@ function App() {
         }
         setVizSchema(response.data);
         console.log(response.data);
-        setChartTypes(response.data.chartTypes);
+        setSchemaChartTypes(response.data.chartTypes);
+        setDataChartTypes(response.data.dataChartTypes);
         setKeyCardinality(response.data.keyCardinality);
-        let recommendedCharts = categorizeCharts(
+
+        let schemaRecommendedCharts = categorizeCharts(
           response.data.chartTypes,
           cardinalityLimits,
           response.data.keyCardinality
         );
 
-        setRecommendedCharts(recommendedCharts);
+        let dataRecommendedCharts = categorizeCharts(
+          response.data.dataChartTypes,
+          cardinalityLimits,
+          response.data.keyCardinality
+        );
+
+        setSchemaRecommendedCharts(schemaRecommendedCharts);
+        setDataRecommendedCharts(dataRecommendedCharts);
         updateRawDataInSpecList(response.data.dataset);
       });
   };
@@ -288,17 +308,22 @@ function App() {
             )}
 
             {radioSelect === "Visualisations" && (
-              <VisualisationButtonsGroup
-                vizSchemaType={vizSchema.type}
-                chartTypes={recommendedCharts}
-                specList={specList}
-                cardinalityLimits={cardinalityLimits}
-                keyCardinality={keyCardinality}
-                setVegaSpec={setVegaSpec}
-                setVegaActionMenu={setVegaActionMenu}
-                setSelectedChart={setSelectedChart}
-                setIsModalOpen={setIsModalOpen}
-              />
+              <>
+                {dataChartTypes && dataChartTypes.length > 0 && (
+                  <div>Different data chart types</div>
+                )}
+                <VisualisationButtonsGroup
+                  vizSchemaType={vizSchema.type}
+                  chartTypes={schemaRecommendedCharts}
+                  specList={specList}
+                  cardinalityLimits={cardinalityLimits}
+                  keyCardinality={keyCardinality}
+                  setVegaSpec={setVegaSpec}
+                  setVegaActionMenu={setVegaActionMenu}
+                  setSelectedChart={setSelectedChart}
+                  setIsModalOpen={setIsModalOpen}
+                />
+              </>
             )}
             {radioSelect === "Schema" && (
               <div

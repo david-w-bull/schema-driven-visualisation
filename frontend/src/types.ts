@@ -1,5 +1,3 @@
-import { BooleanValue } from "vega";
-
 export type Attribute = {
   attributeId: number;
   attributeName: string;
@@ -28,6 +26,7 @@ export type VizSchema = {
   sqlQuery?: string;
   connectionString?: string;
   chartTypes?: string[];
+  dataChartTypes?: string[];
   messages: string[];
 };
 
