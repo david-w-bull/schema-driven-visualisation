@@ -7,6 +7,7 @@ import ScatterPlot from "../components/charts/ScatterPlot";
 import ColumnSlider from "../components/charts/ColumnSlider";
 import WordCloud from "../components/charts/WordCloud";
 import BarSlider from "../components/charts/BarSlider";
+import Treemap from "../components/charts/Treemap";
 
 export const renderChartComponent = (
   chartType: string,
@@ -25,6 +26,8 @@ export const renderChartComponent = (
       return <StackedBar vizSchema={vizSchema} />;
     case "Scatter Plot":
       return <ScatterPlot vizSchema={vizSchema} />;
+    case "Treemap":
+      return <Treemap vizSchema={vizSchema} />;
     default:
       return null;
   }

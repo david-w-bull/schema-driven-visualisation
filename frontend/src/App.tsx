@@ -113,6 +113,7 @@ function App() {
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
       .then((response) => {
         console.log(response.data);
+        console.log(JSON.stringify(response.data));
         let returnedVizSchema = response.data.vizSchema;
         if (
           returnedVizSchema.dataRelationship &&
