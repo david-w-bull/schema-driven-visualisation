@@ -71,7 +71,7 @@ public class VegaSpecService {
 
 
 
-        for(String chartType: vizSchema.matchChartTypes()) {
+        for(String chartType: vizSchema.matchSchemaChartTypes()) {
             if(chartType == "Bar Chart") {
                 VegaSpec barSpec = specTemplatesByChartType(true, Arrays.asList("Bar Chart")).get(0).getSpecs().get(0);
 
@@ -156,7 +156,7 @@ public class VegaSpecService {
                 || vizSchema.getDataRelationship() == VizSchemaType.MANYTOMANY) {
             vizSchema.analyseDataRelationships(user, pw);
         }
-        vizSchema.matchChartTypes();
+        vizSchema.matchSchemaChartTypes();
         return vizSchema;
     }
 

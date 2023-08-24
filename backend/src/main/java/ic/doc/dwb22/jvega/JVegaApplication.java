@@ -126,7 +126,9 @@ public class JVegaApplication {
 //		System.out.println(vizSchema.getDataRelationship());
 //		System.out.println(vizSchema.getExampleData());
 
-		vizSchema.matchChartTypes();
+		vizSchema.matchSchemaChartTypes();
+
+		vizSchema.matchDataChartTypes();
 
 	}
 

@@ -45,8 +45,7 @@ public class VizSchema {
     private String sqlQuery = "";
     private String connectionString;
     private List<String> chartTypes;
-//    private List<String> dataChartTypes;
-//    private Map<String, List<String>> allChartTypes;
+    private List<String> dataChartTypes;
     private Map<String, Integer> cardinalityLimits;
     private List<String> messages = new ArrayList<>(); // for returning user error messages etc.
 
@@ -59,11 +58,15 @@ public class VizSchema {
     public String getA2FieldName() { return scalarTwo == null ? null : scalarTwo.getAttributeName(); }
     public String getA3FieldName() { return scalarThree == null ? null : scalarThree.getAttributeName(); }
 
-    public List<String> matchChartTypes() {
+    public List<String> matchSchemaChartTypes() {
         return matchChartTypes(this.type, false);
     }
 
-    public List<String> matchChartTypes(VizSchemaType type, Boolean checkCardinalities) {
+    public List<String> matchDataChartTypes() {
+        return matchChartTypes(this.dataRelationship, true);
+    }
+
+    public List<String> matchChartTypes(VizSchemaType type, Boolean dataRelationships) {
         List<String> matchedChartTypes = new ArrayList<>();
         if (type == VizSchemaType.BASIC) {
             if(keyTwo != null && scalarOne != null) {
@@ -102,7 +105,12 @@ public class VizSchema {
             matchedChartTypes.add("Stacked Bar Chart");
 //            matchedChartTypes.add("Treemap");
         }
-        this.chartTypes = matchedChartTypes;
+
+        if(dataRelationships) {
+            this.dataChartTypes = matchedChartTypes;
+        } else {
+            this.chartTypes = matchedChartTypes;
+        }
 
         return matchedChartTypes;
     }
