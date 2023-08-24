@@ -78,8 +78,14 @@ function App() {
   const [radioSelect, setRadioSelect] = useState("SQL");
   const [radioEnabled, setRadioEnabled] = useState(false);
 
+  const [radioRecommendations, setRadioRecommendations] = useState("Schema");
+
   const handleRadioSelect = (e: RadioChangeEvent) => {
     setRadioSelect(e.target.value);
+  };
+
+  const handleChangeRecommendations = (e: RadioChangeEvent) => {
+    setRadioRecommendations(e.target.value);
   };
 
   const handleCardinalityUpdate = (key: string, value: number) => {
@@ -276,6 +282,8 @@ function App() {
               padding: "5%",
               backgroundImage:
                 "linear-gradient(to right bottom, #ffffff, #f5f5f5, #eaeaeb, #e0e0e2, #d6d6d8)",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <Radio.Group
@@ -310,11 +318,21 @@ function App() {
             {radioSelect === "Visualisations" && (
               <>
                 {dataChartTypes && dataChartTypes.length > 0 && (
-                  <div>Different data chart types</div>
+                  <Radio.Group
+                    onChange={handleChangeRecommendations}
+                    value={radioRecommendations}
+                  >
+                    <Radio value={"Schema"}>Schema</Radio>
+                    <Radio value={"Data"}>Data</Radio>
+                  </Radio.Group>
                 )}
                 <VisualisationButtonsGroup
                   vizSchemaType={vizSchema.type}
-                  chartTypes={schemaRecommendedCharts}
+                  chartTypes={
+                    radioRecommendations == "Data"
+                      ? dataRecommendedCharts
+                      : schemaRecommendedCharts
+                  }
                   specList={specList}
                   cardinalityLimits={cardinalityLimits}
                   keyCardinality={keyCardinality}
