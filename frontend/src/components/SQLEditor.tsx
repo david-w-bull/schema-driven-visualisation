@@ -24,9 +24,9 @@ const SQLEditor = ({ value, onChange }: SQLEditorProps) => {
       highlightActiveLine={true}
       editorProps={{ $blockScrolling: true }}
       setOptions={{
-        enableBasicAutocompletion: false,
-        enableLiveAutocompletion: false,
-        enableSnippets: false,
+        // enableBasicAutocompletion: false,
+        // enableLiveAutocompletion: false,
+        // enableSnippets: false,
         showLineNumbers: true,
         tabSize: 2,
       }}
