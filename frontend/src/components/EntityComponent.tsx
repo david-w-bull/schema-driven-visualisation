@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Attribute, EntityOrRelationship } from "../types";
 import styled from "styled-components";
 import "../App.css";
@@ -9,6 +9,7 @@ interface AttributeProps {
 }
 
 const AttributeList = ({ attribute, onChange }: AttributeProps) => {
+  const [isHovered, setIsHovered] = useState(false);
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.checked);
   };
@@ -19,7 +20,10 @@ const AttributeList = ({ attribute, onChange }: AttributeProps) => {
       style={{
         display: "flex",
         gap: "5px",
+        alignItems: "center",
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <input
         type="checkbox"
@@ -38,6 +42,7 @@ const AttributeList = ({ attribute, onChange }: AttributeProps) => {
         }}
       >
         {attribute.attributeName}
+        {isHovered && <span style={{ marginLeft: "5px" }}>🔍</span>}
       </label>
     </div>
   );
