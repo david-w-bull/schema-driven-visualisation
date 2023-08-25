@@ -225,7 +225,24 @@ public class VizSchema {
     public void analyseDataRelationships(String username, String password) {
 
         String rawDataQuery = getRawDataQuery();
+        int exampleDatasetSize = 20;
 
+        // The rawDataQuery expects two keys. If this is not the case a blank string is returned
+        // If only one key exists - this suggests a single entity and so a basic schema pattern.
+        // If neither keyOne nor keyTwo exists then there is no data or pattern to detect.
+        if (rawDataQuery == "") {
+            if (keyOneAlias != null) {
+                setDataRelationship(VizSchemaType.BASIC);
+                // For basic entities data relationship and schema relationship have the same examplar data
+                exampleData = new ArrayList<>();
+                for (int i = 0; i < exampleDatasetSize && i < dataset.size(); i++) {
+                    exampleData.add(dataset.get(i));
+                }
+            } else {
+                setDataRelationship(VizSchemaType.NONE);
+            }
+            return;
+        }
         try (Connection connection = DriverManager.getConnection(this.connectionString, username, password);
              Statement statement = connection.createStatement()) {
 
@@ -248,18 +265,19 @@ public class VizSchema {
             ResultSet queryResults = null;
             if(maxA > 1 && maxB > 1) {
                 setDataRelationship(VizSchemaType.MANYTOMANY);
-                String manyManyExampleData = "SELECT * FROM temp_cardinality_data WHERE a_count > 1 AND b_count > 1 LIMIT 20";
+                String manyManyExampleData = "SELECT * FROM temp_cardinality_data "
+                        + "WHERE a_count > 1 AND b_count > 1 LIMIT " + exampleDatasetSize;
                 queryResults = statement.executeQuery(manyManyExampleData);
             } else if (maxA == 1 && maxB == 1) {
                 setDataRelationship(VizSchemaType.BASIC);
-                String basicExampleData = "SELECT * FROM temp_cardinality_data LIMIT 20";
+                String basicExampleData = "SELECT * FROM temp_cardinality_data LIMIT " + exampleDatasetSize;
                 queryResults = statement.executeQuery(basicExampleData);
             } else if ((maxA == 1 && maxB > 1)
                     || maxA > 1 && maxB == 1) {
                 setDataRelationship(VizSchemaType.ONETOMANY);
                 String oneManyExampleData =
                         "SELECT * FROM temp_cardinality_data WHERE a_count = 1 AND b_count > 1\n"
-                        + "OR a_count > 1 AND b_count = 1 LIMIT 20";
+                        + "OR a_count > 1 AND b_count = 1 LIMIT " + exampleDatasetSize;
                 queryResults = statement.executeQuery(oneManyExampleData);
             }
 
@@ -283,6 +301,10 @@ public class VizSchema {
     }
 
     private String getRawDataQuery() {
+
+        if(keyOneAlias == null || keyTwoAlias == null) {
+            return "";
+        }
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("CREATE TEMPORARY  TABLE temp_cardinality_data AS\n");
         queryBuilder.append("WITH raw_data AS (\n");

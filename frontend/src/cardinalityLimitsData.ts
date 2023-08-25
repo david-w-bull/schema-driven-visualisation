@@ -8,7 +8,7 @@ const cardinalityLimits: CardinalityLimits = {
   "Stacked Bar Chart": 100,
   "Treemap": 500,
   "Chord Diagram": 100,
-  "Sankey Diagram": 50,
+  "Sankey Diagram": 30,
   "Line Chart": 20,
 };
 

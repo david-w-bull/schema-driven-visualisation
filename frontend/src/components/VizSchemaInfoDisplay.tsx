@@ -76,18 +76,20 @@ const VizSchemaInfoDisplay = ({ vizSchema }: VizSchemaInfoDisplayProps) => {
           shape="square"
           description="The relationship between entities in database metadata"
         />
-
-        <FieldInfoDisplay
-          text={getRelationshipLabel(vizSchema.dataRelationship)}
-          title="Data Relationship"
-          backgroundColor="#c2eafc"
-          color="#007bb2"
-          shape="square"
-          description="The relationship between keys in your query results"
-        />
+        {vizSchema.dataRelationship &&
+          vizSchema.dataRelationship !== vizSchema.type && (
+            <FieldInfoDisplay
+              text={getRelationshipLabel(vizSchema.dataRelationship)}
+              title="Data Relationship"
+              backgroundColor="#c2eafc"
+              color="#007bb2"
+              shape="square"
+              description="The relationship between keys in your query results"
+            />
+          )}
       </Row>
       <div style={{ height: "20px" }}></div>
-      <Header>Exemplar Data</Header>
+      <Header>Example Data</Header>
       <SubHeader>
         A small sample of data demonstrating the data relationship
       </SubHeader>

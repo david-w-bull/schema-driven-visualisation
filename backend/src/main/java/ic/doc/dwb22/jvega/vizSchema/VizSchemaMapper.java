@@ -127,6 +127,7 @@ public class VizSchemaMapper {
         vizSchema.setConnectionString(databaseSchema.getConnectionString());
         vizSchema.fetchSqlData(sqlUser, sqlPassword);
         vizSchema.calculateMaxKeyCardinality(sqlUser, sqlPassword);
+        vizSchema.analyseDataRelationships(sqlUser, sqlPassword);
         return vizSchema;
     }
 

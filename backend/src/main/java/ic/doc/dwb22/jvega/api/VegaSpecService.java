@@ -159,10 +159,7 @@ public class VegaSpecService {
         String pw = System.getenv("POSTGRES_PASSWORD");
         vizSchema.fetchSqlData(user, pw);
         vizSchema.calculateMaxKeyCardinality(user, pw);
-        if(vizSchema.getDataRelationship() == VizSchemaType.ONETOMANY
-                || vizSchema.getDataRelationship() == VizSchemaType.MANYTOMANY) {
-            vizSchema.analyseDataRelationships(user, pw);
-        }
+        vizSchema.analyseDataRelationships(user, pw);
         vizSchema.matchSchemaChartTypes();
         vizSchema.matchDataChartTypes();
         return vizSchema;

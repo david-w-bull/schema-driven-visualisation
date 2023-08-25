@@ -368,7 +368,7 @@ function App() {
 
             {radioSelect === "Visualisations" && (
               <>
-                {dataChartTypes && dataChartTypes.length > 0 && (
+                {vizSchema.dataRelationship !== vizSchema.type && (
                   <Radio.Group
                     onChange={handleChangeRecommendations}
                     value={radioRecommendations}
