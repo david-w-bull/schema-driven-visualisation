@@ -26,8 +26,6 @@ const SankeyDiagram = ({ vizSchema }: SankeyDiagramProps) => {
     });
   });
 
-  console.log(sankeyData);
-
   const config = {
     data: sankeyData,
     sourceField: "source",
