@@ -31,20 +31,15 @@ import {
   Drawer,
   Alert,
   Divider,
-  Avatar,
-  List,
 } from "antd";
 import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
 import ChartDisplayModal from "./components/ChartDisplayModal";
-import manyManyIcon from "./assets/many-to-many.svg";
-import oneManyIcon from "./assets/one-to-many.svg";
 import VizSchemaInfoDisplay from "./components/VizSchemaInfoDisplay";
 
 function App() {
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
   const [vegaActionMenu, setVegaActionMenu] = useState(false);
   const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
-  const [schemaConnection, setSchemaConnection] = useState("No connection");
 
   const handleSelectDatabase = (selectedValue: string) => {
     axios
@@ -52,7 +47,6 @@ function App() {
       .then((response) => {
         console.log(response.data);
         setSchemaInfo(response.data);
-        setSchemaConnection(response.data.connectionString);
       })
       .catch((error) => {
         console.error("There was an error!", error);
@@ -109,6 +103,7 @@ function App() {
     setVegaSpec(BLANKSPEC);
     setVegaActionMenu(false);
     setSqlCode("");
+    setShowErrors(false);
     axios
       // the 'data' payload is a DatabaseSchema object filtered based on user selections
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
@@ -124,14 +119,27 @@ function App() {
             returnedVizSchema.keyOneCardinality >
             returnedVizSchema.keyTwoCardinality
           ) {
-            console.log("Swapping");
-            console.log(returnedVizSchema);
+            console.log("Swapping keys");
             returnedVizSchema = swapKeyFields(returnedVizSchema);
-            console.log(returnedVizSchema);
           }
         }
 
         setVizSchema(returnedVizSchema);
+        if (
+          returnedVizSchema.type == "NONE" ||
+          returnedVizSchema.type == "ERROR"
+        ) {
+          setSchemaChartTypes([]);
+          setDataChartTypes([]);
+          setSchemaRecommendedCharts(BLANKRECOMMENDATIONS);
+          setDataRecommendedCharts(BLANKRECOMMENDATIONS);
+          setErrorMessages([
+            "Your selected fields did not match any visualisation schema patterns",
+          ]);
+          setShowErrors(true);
+          return;
+        }
+
         setRadioEnabled(true);
         returnedVizSchema.sqlQuery && setSqlCode(returnedVizSchema.sqlQuery);
         returnedVizSchema.keyCardinality &&
@@ -191,21 +199,46 @@ function App() {
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [showErrors, setShowErrors] = useState(false);
 
-  const handleBackendErrors = (vizSchema: VizSchema) => {
-    if (vizSchema.type === "ERROR") {
-      setErrorMessages(vizSchema.messages);
+  function hasAliasChanged(
+    vizSchema: VizSchema,
+    updatedVizSchema: VizSchema
+  ): boolean {
+    if (!vizSchema.dataset || !updatedVizSchema.dataset) {
+      return true;
+    }
+
+    const vizSchemaFields = new Set(Object.keys(vizSchema.dataset[0]));
+    const updatedVizSchemaFields = new Set(
+      Object.keys(updatedVizSchema.dataset[0])
+    );
+
+    return ![...vizSchemaFields].every((element) =>
+      updatedVizSchemaFields.has(element)
+    );
+  }
+
+  const handleBackendErrors = (updatedVizSchema: VizSchema) => {
+    if (updatedVizSchema.type === "ERROR") {
+      setErrorMessages(updatedVizSchema.messages);
       setShowErrors(true);
       return true;
     }
     if (
-      !vizSchema.dataset ||
-      (vizSchema.dataset && vizSchema.dataset.length === 0)
+      !updatedVizSchema.dataset ||
+      (updatedVizSchema.dataset && updatedVizSchema.dataset.length === 0)
     ) {
       setErrorMessages(["Your query returned no data"]);
       setShowErrors(true);
       return true;
     }
 
+    if (hasAliasChanged(vizSchema, updatedVizSchema)) {
+      setErrorMessages([
+        "Field aliases cannot be changed as part of SQL updates",
+      ]);
+      setShowErrors(true);
+      return true;
+    }
     return false;
   };
 
@@ -326,12 +359,10 @@ function App() {
                     handleSqlSubmit={handleSqlSubmit}
                   />
                 </div>
-                {typeof vizSchema.exampleData != "undefined" && (
-                  <DataTable
-                    data={vizSchema.dataset ? vizSchema.dataset : []}
-                    scrollHeight={500}
-                  ></DataTable>
-                )}
+                <DataTable
+                  data={vizSchema.dataset ? vizSchema.dataset : []}
+                  scrollHeight={500}
+                ></DataTable>
               </div>
             )}
 
@@ -396,7 +427,6 @@ function App() {
       </FloatButton.Group>
       {showErrors && (
         <TopWarningAlert
-          className="top-warning-alert"
           message="Error"
           description={errorMessages.join("\n")}
           type="error"

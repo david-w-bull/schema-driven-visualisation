@@ -62,6 +62,9 @@ const Treemap = ({ vizSchema }: TreemapProps) => {
         type: "drag-move",
       },
     ],
+    legend: {
+      position: "top-left" as "top-left",
+    },
     tooltip: {
       follow: true,
       enterable: true,
