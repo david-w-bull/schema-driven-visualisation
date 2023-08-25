@@ -1,13 +1,31 @@
 import styled from "styled-components";
-import { Divider, Avatar, List } from "antd";
-import manyManyIcon from "../assets/many-to-many.svg";
-import oneManyIcon from "../assets/one-to-many.svg";
+import { Divider, Avatar, List, Col, Row } from "antd";
+import DataTable from "./DataTable";
+import FieldInfoDisplay from "./FieldInfoDisplay";
 
 interface VizSchemaInfoDisplayProps {
   vizSchema: any;
 }
 
 const VizSchemaInfoDisplay = ({ vizSchema }: VizSchemaInfoDisplayProps) => {
+  function getRelationshipLabel(dataRelationship: string) {
+    switch (dataRelationship) {
+      case "ONETOMANY":
+        return "1:M";
+      case "MANYTOMANY":
+        return "M:N";
+      case "BASIC":
+        return "BASIC";
+      case "SUBSET":
+        return "SUBSET";
+      case "WEAK":
+        return "WEAK";
+
+      default:
+        return "Unknown";
+    }
+  }
+
   return (
     <div
       style={{
@@ -18,108 +36,64 @@ const VizSchemaInfoDisplay = ({ vizSchema }: VizSchemaInfoDisplayProps) => {
     >
       <Header>Visualisation Schema</Header>
       <SubHeader>Information about the matched visualisation pattern</SubHeader>
+      <StyledDivider style={{ paddingBottom: "30px" }} />
+      <Row style={{ paddingBottom: "30px" }}>
+        {vizSchema.keyOneAlias && (
+          <FieldInfoDisplay
+            text="K1"
+            title="Key One"
+            description={vizSchema.keyOneAlias}
+          />
+        )}
+        {vizSchema.keyTwoAlias && (
+          <FieldInfoDisplay
+            text="K2"
+            title="Key Two"
+            description={vizSchema.keyTwoAlias}
+          />
+        )}
+        {vizSchema.scalarOneAlias && (
+          <FieldInfoDisplay
+            text="A1"
+            title="Scalar One"
+            description={vizSchema.scalarOneAlias}
+          />
+        )}
+        {vizSchema.scalarTwoAlias && (
+          <FieldInfoDisplay
+            text="A2"
+            title="Scalar Two"
+            description={vizSchema.scalarTwoAlias}
+          />
+        )}
+      </Row>
+      <Row style={{ paddingBottom: "30px" }}>
+        <FieldInfoDisplay
+          text={getRelationshipLabel(vizSchema.type)}
+          title="Schema Relationship"
+          backgroundColor="#c2eafc"
+          color="#007bb2"
+          shape="square"
+          description="The relationship between entities in database metadata"
+        />
+
+        <FieldInfoDisplay
+          text={getRelationshipLabel(vizSchema.dataRelationship)}
+          title="Data Relationship"
+          backgroundColor="#c2eafc"
+          color="#007bb2"
+          shape="square"
+          description="The relationship between keys in your query results"
+        />
+      </Row>
+      <div style={{ height: "20px" }}></div>
+      <Header>Exemplar Data</Header>
+      <SubHeader>
+        A small sample of data demonstrating the data relationship
+      </SubHeader>
       <StyledDivider />
-      <List itemLayout="horizontal">
-        {vizSchema.keyOne && (
-          <List.Item>
-            <List.Item.Meta
-              avatar={
-                <Avatar
-                  size="large"
-                  style={{
-                    backgroundColor: "#fde3cf",
-                    color: "#f56a00",
-                  }}
-                >
-                  K1
-                </Avatar>
-              }
-              title={
-                <>
-                  <div>Key One</div>
-                  <div style={{ fontWeight: 300 }}>{vizSchema.keyOneAlias}</div>
-                </>
-              }
-            />
-          </List.Item>
-        )}
-        {vizSchema.keyTwo && (
-          <List.Item>
-            <List.Item.Meta
-              avatar={
-                <Avatar
-                  size="large"
-                  style={{
-                    backgroundColor: "#fde3cf",
-                    color: "#f56a00",
-                  }}
-                >
-                  K2
-                </Avatar>
-              }
-              title={
-                <>
-                  <div>Key Two</div>
-                  <div style={{ fontWeight: 300 }}>{vizSchema.keyTwoAlias}</div>
-                </>
-              }
-            />
-          </List.Item>
-        )}
-        {vizSchema.scalarOne && (
-          <List.Item>
-            <List.Item.Meta
-              avatar={
-                <Avatar
-                  size="large"
-                  style={{
-                    backgroundColor: "#fde3cf",
-                    color: "#f56a00",
-                  }}
-                >
-                  A1
-                </Avatar>
-              }
-              title={
-                <>
-                  <div>Scalar One</div>
-                  <div style={{ fontWeight: 300 }}>
-                    {vizSchema.scalarOneAlias}
-                  </div>
-                </>
-              }
-            />
-          </List.Item>
-        )}
-      </List>
-      <div>
-        <div style={{ height: "40px" }}></div>
-        <Header>Schema Relationship</Header>
-        <SubHeader>
-          Based on database metadata. Indicative of how data can be related
-          between your selected tables
-        </SubHeader>
-        <div>
-          {vizSchema.type == "ONETOMANY" ? (
-            <RelationshipIcon src={oneManyIcon}></RelationshipIcon>
-          ) : (
-            <RelationshipIcon src={manyManyIcon}></RelationshipIcon>
-          )}
-        </div>
-        <div style={{ height: "40px" }}></div>
-        <Header>Data Relationship</Header>
-        <SubHeader>
-          The actual relationship exhibited by the data returned by your query.
-          May not hold for all queries.
-        </SubHeader>
-        <div>
-          {vizSchema.dataRelationship == "ONETOMANY" ? (
-            <RelationshipIcon src={oneManyIcon}></RelationshipIcon>
-          ) : (
-            <RelationshipIcon src={manyManyIcon}></RelationshipIcon>
-          )}
-        </div>
-      </div>
+      <div style={{ height: "20px" }}></div>
+      <DataTable data={vizSchema.exampleData} scrollHeight={450}></DataTable>
     </div>
   );
 };

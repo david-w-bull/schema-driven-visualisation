@@ -3,9 +3,10 @@ import { Table } from "antd";
 
 type TableProps = {
   data: any[];
+  scrollHeight: number;
 };
 
-const DataTable = ({ data }: TableProps) => {
+const DataTable = ({ data, scrollHeight }: TableProps) => {
   if (!data || data.length === 0) return null;
 
   const dataSource = data.map((item, index) => ({
@@ -29,6 +30,7 @@ const DataTable = ({ data }: TableProps) => {
     sorter: (a: any, b: any) => genericSorter(a, b, key),
   }));
 
+  // Exclude columns used in backend vizSchema calculations
   const columnsToExclude = ["a_count", "b_count"];
 
   const filteredColumns = columns.filter(
@@ -39,7 +41,7 @@ const DataTable = ({ data }: TableProps) => {
     <Table
       dataSource={dataSource}
       columns={filteredColumns}
-      scroll={{ y: 300 }}
+      scroll={{ y: scrollHeight }}
       pagination={false}
     />
   );

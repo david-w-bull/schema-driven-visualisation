@@ -327,7 +327,10 @@ function App() {
                   />
                 </div>
                 {typeof vizSchema.exampleData != "undefined" && (
-                  <DataTable data={vizSchema.exampleData}></DataTable>
+                  <DataTable
+                    data={vizSchema.dataset ? vizSchema.dataset : []}
+                    scrollHeight={500}
+                  ></DataTable>
                 )}
               </div>
             )}
