@@ -35,15 +35,20 @@ import {
 import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
 import ChartDisplayModal from "./components/ChartDisplayModal";
 import VizSchemaInfoDisplay from "./components/VizSchemaInfoDisplay";
+import LoadExampleButton from "./components/LoadExampleButton";
 
 function App() {
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
   const [vegaActionMenu, setVegaActionMenu] = useState(false);
   const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
+  const [selectedDatabase, setSelectedDatabase] = useState(
+    "64e4b803fe3299654b1739bf"
+  );
 
-  const handleSelectDatabase = (selectedValue: string) => {
+  const handleSelectDatabase = (newValue: string) => {
+    setSelectedDatabase(newValue);
     axios
-      .get("http://localhost:8080/api/v1/schemas/" + selectedValue)
+      .get("http://localhost:8080/api/v1/schemas/" + newValue)
       .then((response) => {
         console.log(response.data);
         setSchemaInfo(response.data);
@@ -297,6 +302,11 @@ function App() {
     setSettingsDrawIsOpen(false);
   };
 
+  const handleLoadExample = () => {
+    console.log("Loading example");
+    handleSelectDatabase("64e4b8f4fc72440674f39f11");
+  };
+
   return (
     <>
       <div style={{ display: "flex", height: "100vh", width: "100%" }}>
@@ -320,7 +330,10 @@ function App() {
               flexDirection: "column",
             }}
           >
-            <DatabaseSelector onSelectDatabase={handleSelectDatabase} />
+            <DatabaseSelector
+              selectedValue={selectedDatabase}
+              onSelectDatabase={handleSelectDatabase}
+            />
             <EntityList
               data={schemaInfo}
               onSelectedData={handleSelectedData}
@@ -352,7 +365,10 @@ function App() {
             {radioSelect === "SQL" && (
               <div>
                 <div>
-                  <SQLEditor value={sqlCode} onChange={setSqlCode} />
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <SQLEditor value={sqlCode} onChange={setSqlCode} />
+                    <LoadExampleButton handleLoadExample={handleLoadExample} />
+                  </div>
                   <SQLSubmitButton
                     sqlCode={sqlCode}
                     radioEnabled={radioEnabled}
