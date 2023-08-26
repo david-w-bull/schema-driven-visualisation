@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { Attribute, EntityOrRelationship } from "../types";
 import styled from "styled-components";
+import { Select } from "antd";
 import "../App.css";
+import DataTypeSelector from "./DataTypeSelector";
 
 interface AttributeProps {
   attribute: Attribute;
   onChange: (checked: boolean) => void;
 }
 
+const { Option } = Select;
+
 const AttributeList = ({ attribute, onChange }: AttributeProps) => {
-  const [isHovered, setIsHovered] = useState(false);
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.checked);
   };
@@ -19,31 +22,31 @@ const AttributeList = ({ attribute, onChange }: AttributeProps) => {
       className="custom-control custom-checkbox"
       style={{
         display: "flex",
-        gap: "5px",
+        justifyContent: "space-between",
         alignItems: "center",
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
-      <input
-        type="checkbox"
-        className="custom-control-input pr-3"
-        id={attribute.attributeId.toString()}
-        checked={attribute.isChecked || false}
-        onChange={handleCheckboxChange}
-      />
-      <label
-        className="custom-control-label"
-        htmlFor={attribute.attributeId.toString()}
-        style={{
-          fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-          fontWeight: 300,
-          // fontFamily: "'Rubik', sans-serif",
-        }}
-      >
-        {attribute.attributeName}
-        {isHovered && <span style={{ marginLeft: "5px" }}>🔍</span>}
-      </label>
+      <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+        <input
+          type="checkbox"
+          className="custom-control-input pr-3"
+          id={attribute.attributeId.toString()}
+          checked={attribute.isChecked || false}
+          onChange={handleCheckboxChange}
+        />
+        <label
+          className="custom-control-label"
+          htmlFor={attribute.attributeId.toString()}
+          style={{
+            fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+            fontWeight: 300,
+          }}
+        >
+          {attribute.attributeName}
+        </label>
+      </div>
+      {/* Data type selection POC trialled but not functional or connected to backend data */}
+      {/* {attribute.isChecked && <DataTypeSelector />} */}
     </div>
   );
 };
