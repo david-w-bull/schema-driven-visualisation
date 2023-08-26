@@ -8,11 +8,16 @@ import DataTypeSelector from "./DataTypeSelector";
 interface AttributeProps {
   attribute: Attribute;
   onChange: (checked: boolean) => void;
+  databaseName: string;
 }
 
 const { Option } = Select;
 
-const AttributeList = ({ attribute, onChange }: AttributeProps) => {
+const AttributeList = ({
+  attribute,
+  onChange,
+  databaseName,
+}: AttributeProps) => {
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.checked);
   };
@@ -30,13 +35,13 @@ const AttributeList = ({ attribute, onChange }: AttributeProps) => {
         <input
           type="checkbox"
           className="custom-control-input pr-3"
-          id={attribute.attributeId.toString()}
+          id={databaseName + "-attr-" + attribute.attributeId.toString()}
           checked={attribute.isChecked || false}
           onChange={handleCheckboxChange}
         />
         <label
           className="custom-control-label"
-          htmlFor={attribute.attributeId.toString()}
+          htmlFor={databaseName + "-attr-" + attribute.attributeId.toString()}
           style={{
             fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
             fontWeight: 300,
@@ -54,9 +59,14 @@ const AttributeList = ({ attribute, onChange }: AttributeProps) => {
 interface EntityProps {
   item: EntityOrRelationship;
   onAttributeChange: (attribute: Attribute, checked: boolean) => void;
+  databaseName: string;
 }
 
-const EntityComponent = ({ item, onAttributeChange }: EntityProps) => {
+const EntityComponent = ({
+  item,
+  onAttributeChange,
+  databaseName,
+}: EntityProps) => {
   return (
     <EntityContainer>
       <EntityHeader>{item.name}</EntityHeader>
@@ -66,6 +76,7 @@ const EntityComponent = ({ item, onAttributeChange }: EntityProps) => {
           key={attribute.attributeId}
           attribute={attribute}
           onChange={(checked) => onAttributeChange(attribute, checked)}
+          databaseName={databaseName}
         />
       ))}
     </EntityContainer>

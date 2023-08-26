@@ -307,15 +307,13 @@ function App() {
     handleSelectDatabase("64e4b8f4fc72440674f39f11");
 
     // Need to update element ids to be totally unique and then use polling before next step
-    useEffect(() => {
-      // Do something once schemaInfo is updated
-      const arrayOfNumbers = [1, 3, 5];
-      arrayOfNumbers.forEach((number) => {
-        const selector = `.custom-control-input.pr-3[id="${number}"]`;
-        const element = document.querySelector(selector) as HTMLElement;
-        element?.click();
-      });
-    }, [schemaInfo]);
+    // Do something once schemaInfo is updated
+    const arrayOfNumbers = [1, 3, 5];
+    arrayOfNumbers.forEach((number) => {
+      const selector = `.custom-control-input.pr-3[id="${number}"]`;
+      const element = document.querySelector(selector) as HTMLElement;
+      element?.click();
+    });
   };
 
   return (

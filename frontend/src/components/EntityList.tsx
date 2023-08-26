@@ -14,6 +14,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   const [data, setData] = useState(initialData);
   const [entityNames, setEntityNames] = useState<string[]>([]);
   const [relationshipNames, setRelationshipNames] = useState<string[]>([]);
+  const [databaseName, setDatabaseName] = useState("");
   const [subsetEntities, setSubsetEntities] = useState<Entity[]>([]);
   const [isSelectionMade, setIsSelectionMade] = useState(false);
   const [checkedAttributes, setCheckedAttributes] = useState<Attribute[]>([]);
@@ -39,10 +40,10 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     setReachableRelationships(new Set());
 
     const lastSlashIndex = initialData.connectionString.lastIndexOf("/");
-    const databaseName = initialData.connectionString.substring(
+    const currentDatabaseName = initialData.connectionString.substring(
       lastSlashIndex + 1
     );
-    console.log(databaseName);
+    setDatabaseName(currentDatabaseName);
   }, [initialData]);
 
   const handleAttributeChange = (
@@ -307,6 +308,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
             onAttributeChange={(attributeId, checked) =>
               handleAttributeChange(true, entity.id, attributeId, checked)
             }
+            databaseName={databaseName}
           />
         ))}
         {(checkedAttributes.length > 0
