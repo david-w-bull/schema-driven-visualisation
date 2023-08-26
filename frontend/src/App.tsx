@@ -104,6 +104,8 @@ function App() {
     setSchemaRecommendedCharts(recommendedCharts);
   };
 
+  const [vizDataFetched, setVizDataFetched] = useState(false);
+
   const handleSelectedData = (data: Data) => {
     setVegaSpec(BLANKSPEC);
     setVegaActionMenu(false);
@@ -179,7 +181,7 @@ function App() {
         });
         setSpecList(response.data.specs);
       });
-
+    setVizDataFetched(true);
     console.log(data);
   };
 
@@ -304,16 +306,54 @@ function App() {
 
   const handleLoadExample = () => {
     console.log("Loading example");
+    setVizDataFetched(false);
     handleSelectDatabase("64e4b8f4fc72440674f39f11");
 
-    // Need to update element ids to be totally unique and then use polling before next step
-    // Do something once schemaInfo is updated
-    const arrayOfNumbers = [1, 3, 5];
-    arrayOfNumbers.forEach((number) => {
-      const selector = `.custom-control-input.pr-3[id="${number}"]`;
-      const element = document.querySelector(selector) as HTMLElement;
-      element?.click();
-    });
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    const interval = setInterval(() => {
+      const arrayOfNumbers = [1, 5];
+      let allFound = true;
+
+      arrayOfNumbers.forEach((number) => {
+        const element = document.getElementById(
+          "mondial_full-attr-" + number
+        ) as HTMLInputElement;
+
+        if (element) {
+          if (!element.checked) {
+            element.click();
+          }
+        } else {
+          allFound = false;
+        }
+      });
+
+      attempts += 1;
+      if (allFound || attempts >= maxAttempts) {
+        clearInterval(interval);
+        const submitFieldsButton = document.getElementById(
+          "button-submit-selected-fields"
+        );
+        if (submitFieldsButton) {
+          submitFieldsButton.click();
+        }
+
+        const queryString =
+          "SELECT" +
+          "airport.iata_code AS airport_iata_code," +
+          "airport.elevation AS airport_elevation";
+
+        ("FROM airport");
+        ("WHERE airport.elevation > 100");
+        if (vizDataFetched) {
+          setSqlCode(queryString);
+        }
+      }
+    }, 500); // Adjust interval as needed
+
+    return () => clearInterval(interval);
   };
 
   return (

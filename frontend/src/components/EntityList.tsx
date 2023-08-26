@@ -283,6 +283,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   return (
     <>
       <Button
+        id="button-submit-selected-fields"
         variant="contained"
         endIcon={<AddchartIcon />}
         onClick={() => {
@@ -333,6 +334,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
                   checked
                 )
               }
+              databaseName={databaseName}
             />
           ))}
       </ComponentContainer>
