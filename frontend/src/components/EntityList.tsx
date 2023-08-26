@@ -17,6 +17,12 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
   const [subsetEntities, setSubsetEntities] = useState<Entity[]>([]);
   const [isSelectionMade, setIsSelectionMade] = useState(false);
   const [checkedAttributes, setCheckedAttributes] = useState<Attribute[]>([]);
+  const [reachableEntities, setReachableEntities] = useState<Set<string>>(
+    new Set()
+  );
+  const [reachableRelationships, setReachableRelationships] = useState<
+    Set<string>
+  >(new Set());
 
   useEffect(() => {
     setData(initialData);
@@ -27,6 +33,16 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     setSubsetEntities(
       initialData.entityList.filter((entity) => entity.entityType == "SUBSET")
     );
+    setIsSelectionMade(false);
+    setCheckedAttributes([]);
+    setReachableEntities(new Set());
+    setReachableRelationships(new Set());
+
+    const lastSlashIndex = initialData.connectionString.lastIndexOf("/");
+    const databaseName = initialData.connectionString.substring(
+      lastSlashIndex + 1
+    );
+    console.log(databaseName);
   }, [initialData]);
 
   const handleAttributeChange = (
@@ -143,13 +159,6 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
       relationshipIdsWithCheckedAttributes,
     };
   };
-
-  const [reachableEntities, setReachableEntities] = useState<Set<string>>(
-    new Set()
-  );
-  const [reachableRelationships, setReachableRelationships] = useState<
-    Set<string>
-  >(new Set());
 
   const getActiveRelationships = (
     data: Data,
