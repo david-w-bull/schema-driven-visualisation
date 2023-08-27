@@ -76,8 +76,11 @@ public class VizSchema {
         if (type == VizSchemaType.BASIC) {
             if(keyTwo != null && scalarOne != null) {
                 matchedChartTypes.add("Grouped Bar Chart");
-                matchedChartTypes.add("Stacked Bar Chart");
-                matchedChartTypes.add("Line Chart");
+                if(isScalar(keyTwo.getDataType())) {
+                    matchedChartTypes.add("Line Chart");
+                } else {
+                    matchedChartTypes.add("Stacked Bar Chart");
+                }
             }
             if(keyOne != null) {
                 if(scalarTwo != null) {
@@ -108,8 +111,11 @@ public class VizSchema {
             }
         } else if(type == VizSchemaType.WEAK) {
             matchedChartTypes.add("Grouped Bar Chart");
-            matchedChartTypes.add("Stacked Bar Chart");
-            matchedChartTypes.add("Line Chart");
+            if(isScalar(keyTwo.getDataType())) {
+                matchedChartTypes.add("Line Chart");
+            } else {
+                matchedChartTypes.add("Stacked Bar Chart");
+            }
 //            matchedChartTypes.add("Treemap");
         }
 
@@ -127,6 +133,22 @@ public class VizSchema {
             case CHAR:
             case VARCHAR:
             case TEXT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private Boolean isScalar(SqlDataType dataType) {
+        switch(dataType) {
+            case INT4:
+            case NUMERIC:
+            case BIGINT:
+            case INT:
+            case SMALLINT:
+            case TINYINT:
+            case FLOAT:
+            case DOUBLE:
                 return true;
             default:
                 return false;

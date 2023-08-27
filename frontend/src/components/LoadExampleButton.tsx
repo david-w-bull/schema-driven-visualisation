@@ -1,6 +1,5 @@
-import Button from "@mui/material/Button";
-import CachedIcon from "@mui/icons-material/Cached";
-
+// import Button from "@mui/material/Button";
+import { Button } from "antd";
 type LoadExampleButtonProps = {
   handleLoadExample: () => void;
   buttonText?: string;
@@ -12,12 +11,16 @@ function LoadExampleButton({
 }: LoadExampleButtonProps) {
   return (
     <Button
-      variant="outlined"
       onClick={handleLoadExample}
+      type="primary"
       style={{
-        height: "100px",
-        width: "200px",
+        whiteSpace: "normal",
+        height: "90px",
+        width: "150px",
+        marginRight: "20px",
+        marginBottom: "10px",
       }}
+      ghost
     >
       {buttonText ? buttonText : "Example"}
     </Button>

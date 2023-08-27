@@ -136,6 +136,8 @@ function App() {
 
         setVizSchema(returnedVizSchema);
         setVizPayloadId(response.data.vizId);
+        console.log("VizId");
+        console.log(response.data.vizId);
         if (
           returnedVizSchema.type == "NONE" ||
           returnedVizSchema.type == "ERROR"
@@ -287,25 +289,38 @@ function App() {
             return;
           }
         }
-        setVizSchema(response.data);
+        let returnedVizSchema = response.data;
+        if (
+          returnedVizSchema.dataRelationship &&
+          returnedVizSchema.dataRelationship == "ONETOMANY"
+        ) {
+          if (
+            returnedVizSchema.keyOneCardinality >
+            returnedVizSchema.keyTwoCardinality
+          ) {
+            console.log("Swapping keys");
+            returnedVizSchema = swapKeyFields(returnedVizSchema);
+          }
+        }
+        setVizSchema(returnedVizSchema);
         console.log("Custom SQL");
         console.log(customSql);
         customSql && setSqlCode(customSql);
-        console.log(response.data);
-        setSchemaChartTypes(response.data.chartTypes);
-        setDataChartTypes(response.data.dataChartTypes);
-        setKeyCardinality(response.data.keyCardinality);
+        console.log(returnedVizSchema);
+        setSchemaChartTypes(returnedVizSchema.chartTypes);
+        setDataChartTypes(returnedVizSchema.dataChartTypes);
+        setKeyCardinality(returnedVizSchema.keyCardinality);
 
         let schemaRecommendedCharts = categorizeCharts(
-          response.data.chartTypes,
+          returnedVizSchema.chartTypes,
           cardinalityLimits,
-          response.data.keyCardinality
+          returnedVizSchema.keyCardinality
         );
 
         let dataRecommendedCharts = categorizeCharts(
-          response.data.dataChartTypes,
+          returnedVizSchema.dataChartTypes,
           cardinalityLimits,
-          response.data.keyCardinality
+          returnedVizSchema.keyCardinality
         );
 
         setSchemaRecommendedCharts(schemaRecommendedCharts);
@@ -434,21 +449,33 @@ function App() {
                 <div>
                   <div style={{ display: "flex", flexDirection: "row" }}>
                     <SQLEditor value={sqlCode} onChange={setSqlCode} />
-                    {examplesData.map((example, index) => (
-                      <LoadExampleButton
-                        key={index}
-                        buttonText={example.exampleName}
-                        handleLoadExample={() =>
-                          handleLoadExample(
-                            example.databaseId,
-                            example.databaseName,
-                            example.attributeIdList,
-                            example.vizId,
-                            example.queryString
-                          )
-                        }
-                      />
-                    ))}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        overflowY: "auto",
+                        marginLeft: "50px",
+                        maxHeight: "300px", // Set to a height that works for you
+                        width: "30%",
+                      }}
+                    >
+                      {examplesData.map((example, index) => (
+                        <LoadExampleButton
+                          key={index}
+                          buttonText={example.exampleName}
+                          handleLoadExample={() =>
+                            handleLoadExample(
+                              example.databaseId,
+                              example.databaseName,
+                              example.attributeIdList,
+                              example.vizId,
+                              example.queryString
+                            )
+                          }
+                        />
+                      ))}
+                    </div>
                   </div>
                   <SQLSubmitButton
                     sqlCode={sqlCode}

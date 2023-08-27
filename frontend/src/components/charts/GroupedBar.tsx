@@ -11,6 +11,17 @@ const GroupedBar = ({ vizSchema }: GroupedBarProps) => {
     value: parseFloat(item[vizSchema.scalarOneAlias]),
   }));
 
+  const isNumeric = (n: any) => {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  };
+
+  // Check if the 'type' field is numeric
+  const isTypeNumeric = DATA.length > 0 && isNumeric(DATA[0].type);
+
+  if (isTypeNumeric) {
+    DATA.sort((a: any, b: any) => parseFloat(a.type) - parseFloat(b.type));
+  }
+
   const config = {
     data: DATA,
     isGroup: true,
