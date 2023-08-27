@@ -44,6 +44,7 @@ function App() {
   const [selectedDatabase, setSelectedDatabase] = useState(
     "64e4b803fe3299654b1739bf"
   );
+  const [vizPayloadId, setVizPayloadId] = useState("");
 
   const handleSelectDatabase = (newValue: string) => {
     setSelectedDatabase(newValue);
@@ -104,13 +105,14 @@ function App() {
     setSchemaRecommendedCharts(recommendedCharts);
   };
 
-  const [vizDataFetched, setVizDataFetched] = useState(false);
+  const [selectedData, setSelectedData] = useState<Data>(BLANKSCHEMA);
 
   const handleSelectedData = (data: Data) => {
     setVegaSpec(BLANKSPEC);
     setVegaActionMenu(false);
     setSqlCode("");
     setShowErrors(false);
+    setSelectedData(data);
     axios
       // the 'data' payload is a DatabaseSchema object filtered based on user selections
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
@@ -132,6 +134,7 @@ function App() {
         }
 
         setVizSchema(returnedVizSchema);
+        setVizPayloadId(response.data.vizId);
         if (
           returnedVizSchema.type == "NONE" ||
           returnedVizSchema.type == "ERROR"
@@ -181,7 +184,6 @@ function App() {
         });
         setSpecList(response.data.specs);
       });
-    setVizDataFetched(true);
     console.log(data);
   };
 
@@ -211,7 +213,7 @@ function App() {
     updatedVizSchema: VizSchema
   ): boolean {
     if (!vizSchema.dataset || !updatedVizSchema.dataset) {
-      return true;
+      return false;
     }
 
     const vizSchemaFields = new Set(Object.keys(vizSchema.dataset[0]));
@@ -249,16 +251,30 @@ function App() {
     return false;
   };
 
-  const handleSqlSubmit = () => {
+  const handleSqlSubmitButton = () => {
+    // A function to separate event handler calls of this function
+    // vs. calls with custom parameters
+    handleSqlSubmit();
+  };
+
+  const handleSqlSubmit = (customSql?: string, loadedVizSchema?: VizSchema) => {
     // Clear previous alerts
     setShowErrors(false);
 
+    const vizSchemaToUpdate =
+      vizSchema === BLANKVIZSCHEMA && loadedVizSchema != undefined
+        ? loadedVizSchema
+        : vizSchema;
+
     const updatedVizSchema = {
-      ...vizSchema,
-      sqlQuery: sqlCode,
+      ...vizSchemaToUpdate,
+      sqlQuery: customSql ? customSql : sqlCode,
       chartTypes: [],
       dataChartTypes: [],
     };
+
+    console.log("Updated vizSchema");
+    console.log(updatedVizSchema);
 
     axios
       .post(
@@ -271,6 +287,9 @@ function App() {
           return;
         }
         setVizSchema(response.data);
+        console.log("Custom SQL");
+        console.log(customSql);
+        customSql && setSqlCode(customSql);
         console.log(response.data);
         setSchemaChartTypes(response.data.chartTypes);
         setDataChartTypes(response.data.dataChartTypes);
@@ -306,7 +325,6 @@ function App() {
 
   const handleLoadExample = () => {
     console.log("Loading example");
-    setVizDataFetched(false);
     handleSelectDatabase("64e4b8f4fc72440674f39f11");
 
     let attempts = 0;
@@ -333,23 +351,37 @@ function App() {
       attempts += 1;
       if (allFound || attempts >= maxAttempts) {
         clearInterval(interval);
-        const submitFieldsButton = document.getElementById(
-          "button-submit-selected-fields"
-        );
-        if (submitFieldsButton) {
-          submitFieldsButton.click();
-        }
+        axios
+          .get(
+            "http://localhost:8080/api/v1/specs/7b32ad40-1024-449e-b424-d4ced7c59104"
+          )
+          .then((response) => {
+            setVizSchema(response.data.vizSchema);
+            const queryString =
+              "SELECT \n" +
+              "\tairport.iata_code AS airport_iata_code,\n" +
+              "\tairport.elevation AS airport_elevation\n\n" +
+              "FROM airport\n\n" +
+              "WHERE airport.elevation > 100";
+            handleSqlSubmit(queryString, response.data.vizSchema);
+            // setVizSchema(response.data.vizSchema);
+            setRadioEnabled(true);
+          })
+          .catch((error) => {
+            console.error("There was an error!", error);
+          });
+        //
 
-        const queryString =
-          "SELECT" +
-          "airport.iata_code AS airport_iata_code," +
-          "airport.elevation AS airport_elevation";
+        // const submitFieldsButton = document.getElementById(
+        //   "button-submit-selected-fields"
+        // );
+        // if (submitFieldsButton) {
+        //   submitFieldsButton.click();
+        // }
 
-        ("FROM airport");
-        ("WHERE airport.elevation > 100");
-        if (vizDataFetched) {
-          setSqlCode(queryString);
-        }
+        // handleSelectedData(selectedData);
+
+        // setSqlCode(queryString);
       }
     }, 500); // Adjust interval as needed
 
@@ -421,7 +453,7 @@ function App() {
                   <SQLSubmitButton
                     sqlCode={sqlCode}
                     radioEnabled={radioEnabled}
-                    handleSqlSubmit={handleSqlSubmit}
+                    handleSqlSubmit={handleSqlSubmitButton}
                   />
                 </div>
                 <DataTable
