@@ -114,6 +114,7 @@ function App() {
     setSqlCode("");
     setShowErrors(false);
     setSelectedData(data);
+    setRadioRecommendations("Schema");
     axios
       // the 'data' payload is a DatabaseSchema object filtered based on user selections
       .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
@@ -348,6 +349,7 @@ function App() {
   ) => {
     setVizSchema(BLANKVIZSCHEMA);
     handleSelectDatabase(databaseId);
+    setRadioRecommendations("Schema");
 
     let attempts = 0;
     const maxAttempts = 10;
