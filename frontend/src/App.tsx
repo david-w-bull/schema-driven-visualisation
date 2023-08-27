@@ -38,6 +38,8 @@ import ChartDisplayModal from "./components/ChartDisplayModal";
 import VizSchemaInfoDisplay from "./components/VizSchemaInfoDisplay";
 import LoadExampleButton from "./components/LoadExampleButton";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 function App() {
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
   const [vegaActionMenu, setVegaActionMenu] = useState(false);
@@ -50,7 +52,7 @@ function App() {
   const handleSelectDatabase = (newValue: string) => {
     setSelectedDatabase(newValue);
     axios
-      .get("http://localhost:8080/api/v1/schemas/" + newValue)
+      .get(`${apiUrl}/schemas/` + newValue)
       .then((response) => {
         console.log(response.data);
         setSchemaInfo(response.data);
@@ -117,7 +119,7 @@ function App() {
     setRadioRecommendations("Schema");
     axios
       // the 'data' payload is a DatabaseSchema object filtered based on user selections
-      .post("http://localhost:8080/api/v1/specs/specFromSchema", data)
+      .post(`${apiUrl}/specs/specFromSchema`, data)
       .then((response) => {
         console.log(response.data);
         console.log(JSON.stringify(response.data));
@@ -279,10 +281,7 @@ function App() {
     console.log(updatedVizSchema);
 
     axios
-      .post(
-        "http://localhost:8080/api/v1/specs/updateSqlData",
-        updatedVizSchema
-      )
+      .post(`${apiUrl}/specs/updateSqlData`, updatedVizSchema)
       .then((response) => {
         console.log(response.data);
         if (!loadedVizSchema) {
@@ -375,7 +374,7 @@ function App() {
       if (allFound || attempts >= maxAttempts) {
         clearInterval(interval);
         axios
-          .get("http://localhost:8080/api/v1/specs/" + vizId)
+          .get(`${apiUrl}/specs/` + vizId)
           .then((response) => {
             setVizSchema(response.data.vizSchema);
             handleSqlSubmit(queryString, response.data.vizSchema);
