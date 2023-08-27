@@ -262,9 +262,7 @@ function App() {
     setShowErrors(false);
 
     const vizSchemaToUpdate =
-      vizSchema === BLANKVIZSCHEMA && loadedVizSchema != undefined
-        ? loadedVizSchema
-        : vizSchema;
+      loadedVizSchema != undefined ? loadedVizSchema : vizSchema;
 
     const updatedVizSchema = {
       ...vizSchemaToUpdate,
@@ -283,8 +281,10 @@ function App() {
       )
       .then((response) => {
         console.log(response.data);
-        if (handleBackendErrors(response.data)) {
-          return;
+        if (!loadedVizSchema) {
+          if (handleBackendErrors(response.data)) {
+            return;
+          }
         }
         setVizSchema(response.data);
         console.log("Custom SQL");
@@ -325,6 +325,7 @@ function App() {
 
   const handleLoadExample = () => {
     console.log("Loading example");
+    setVizSchema(BLANKVIZSCHEMA);
     handleSelectDatabase("64e4b8f4fc72440674f39f11");
 
     let attempts = 0;
