@@ -15,6 +15,7 @@ import {
   BLANKRECOMMENDATIONS,
 } from "./constants";
 import cardinalityLimitsData from "./cardinalityLimitsData";
+import examplesData from "./examplesData";
 import { categorizeCharts, swapKeyFields } from "./utils/chartUtils";
 import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
@@ -271,7 +272,7 @@ function App() {
       dataChartTypes: [],
     };
 
-    console.log("Updated vizSchema");
+    console.log("Updated VizSchema");
     console.log(updatedVizSchema);
 
     axios
@@ -323,21 +324,25 @@ function App() {
     setSettingsDrawIsOpen(false);
   };
 
-  const handleLoadExample = () => {
-    console.log("Loading example");
+  const handleLoadExample = (
+    databaseId: string,
+    databaseName: string,
+    attributeIds: number[],
+    vizId: string,
+    queryString: string
+  ) => {
     setVizSchema(BLANKVIZSCHEMA);
-    handleSelectDatabase("64e4b8f4fc72440674f39f11");
+    handleSelectDatabase(databaseId);
 
     let attempts = 0;
     const maxAttempts = 10;
 
     const interval = setInterval(() => {
-      const arrayOfNumbers = [1, 5];
       let allFound = true;
 
-      arrayOfNumbers.forEach((number) => {
+      attributeIds.forEach((number) => {
         const element = document.getElementById(
-          "mondial_full-attr-" + number
+          databaseName + "-attr-" + number
         ) as HTMLInputElement;
 
         if (element) {
@@ -353,17 +358,9 @@ function App() {
       if (allFound || attempts >= maxAttempts) {
         clearInterval(interval);
         axios
-          .get(
-            "http://localhost:8080/api/v1/specs/7b32ad40-1024-449e-b424-d4ced7c59104"
-          )
+          .get("http://localhost:8080/api/v1/specs/" + vizId)
           .then((response) => {
             setVizSchema(response.data.vizSchema);
-            const queryString =
-              "SELECT \n" +
-              "\tairport.iata_code AS airport_iata_code,\n" +
-              "\tairport.elevation AS airport_elevation\n\n" +
-              "FROM airport\n\n" +
-              "WHERE airport.elevation > 100";
             handleSqlSubmit(queryString, response.data.vizSchema);
             // setVizSchema(response.data.vizSchema);
             setRadioEnabled(true);
@@ -371,20 +368,8 @@ function App() {
           .catch((error) => {
             console.error("There was an error!", error);
           });
-        //
-
-        // const submitFieldsButton = document.getElementById(
-        //   "button-submit-selected-fields"
-        // );
-        // if (submitFieldsButton) {
-        //   submitFieldsButton.click();
-        // }
-
-        // handleSelectedData(selectedData);
-
-        // setSqlCode(queryString);
       }
-    }, 500); // Adjust interval as needed
+    }, 500);
 
     return () => clearInterval(interval);
   };
@@ -449,7 +434,21 @@ function App() {
                 <div>
                   <div style={{ display: "flex", flexDirection: "row" }}>
                     <SQLEditor value={sqlCode} onChange={setSqlCode} />
-                    <LoadExampleButton handleLoadExample={handleLoadExample} />
+                    {examplesData.map((example, index) => (
+                      <LoadExampleButton
+                        key={index}
+                        buttonText={example.exampleName}
+                        handleLoadExample={() =>
+                          handleLoadExample(
+                            example.databaseId,
+                            example.databaseName,
+                            example.attributeIdList,
+                            example.vizId,
+                            example.queryString
+                          )
+                        }
+                      />
+                    ))}
                   </div>
                   <SQLSubmitButton
                     sqlCode={sqlCode}

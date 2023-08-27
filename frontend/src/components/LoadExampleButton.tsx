@@ -3,20 +3,23 @@ import CachedIcon from "@mui/icons-material/Cached";
 
 type LoadExampleButtonProps = {
   handleLoadExample: () => void;
+  buttonText?: string;
 };
 
-function LoadExampleButton({ handleLoadExample }: LoadExampleButtonProps) {
+function LoadExampleButton({
+  handleLoadExample,
+  buttonText,
+}: LoadExampleButtonProps) {
   return (
     <Button
-      variant="contained"
-      endIcon={<CachedIcon />}
+      variant="outlined"
       onClick={handleLoadExample}
       style={{
-        margin: "5px 20px 20px 0px",
-        boxShadow: "2px 2px 5px rgba(0, 0, 0, 0.3)",
+        height: "100px",
+        width: "200px",
       }}
     >
-      Load Example
+      {buttonText ? buttonText : "Example"}
     </Button>
   );
 }

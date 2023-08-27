@@ -60,12 +60,6 @@ public class VegaSpecController {
         return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.customSpec(payload.get("viz")), HttpStatus.CREATED);
     }
 
-//    @CrossOrigin
-//    @PostMapping("/specFromSchema")
-//    public ResponseEntity<Optional<VizSpecPayload>> createSpecFromSchema(@RequestBody Map<String, String> payload) {
-//        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specFromSchema(payload.get("schema")), HttpStatus.CREATED);
-//    }
-
     @CrossOrigin
     @PostMapping("/specFromSchema")
     public ResponseEntity<Optional<VizSpecPayload>> createSpecFromSchema(@RequestBody DatabaseSchema schema) {
