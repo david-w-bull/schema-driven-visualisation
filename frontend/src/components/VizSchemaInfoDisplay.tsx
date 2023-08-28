@@ -95,7 +95,7 @@ const VizSchemaInfoDisplay = ({ vizSchema }: VizSchemaInfoDisplayProps) => {
       </SubHeader>
       <StyledDivider />
       <div style={{ height: "20px" }}></div>
-      <DataTable data={vizSchema.exampleData} scrollHeight={450}></DataTable>
+      <DataTable data={vizSchema.exampleData} scrollHeight={300}></DataTable>
     </div>
   );
 };

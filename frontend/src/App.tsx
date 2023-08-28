@@ -38,7 +38,7 @@ import ChartDisplayModal from "./components/ChartDisplayModal";
 import VizSchemaInfoDisplay from "./components/VizSchemaInfoDisplay";
 import LoadExampleButton from "./components/LoadExampleButton";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = "/api/v1";
 
 function App() {
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
@@ -486,7 +486,7 @@ function App() {
                 </div>
                 <DataTable
                   data={vizSchema.dataset ? vizSchema.dataset : []}
-                  scrollHeight={500}
+                  scrollHeight={380}
                 ></DataTable>
               </div>
             )}
