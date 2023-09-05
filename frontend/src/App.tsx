@@ -16,7 +16,7 @@ import {
 } from "./constants";
 import cardinalityLimitsData from "./cardinalityLimitsData";
 import examplesData from "./examplesData";
-import { categorizeCharts, swapKeyFields } from "./utils/chartUtils";
+import { categorizeCharts, copyJson, swapKeyFields } from "./utils/chartUtils";
 import EntityList from "./components/EntityList";
 import DatabaseSelector from "./components/DatabaseSelector";
 import CardinalitySettings from "./components/CardinalitySettings";
@@ -38,7 +38,8 @@ import ChartDisplayModal from "./components/ChartDisplayModal";
 import VizSchemaInfoDisplay from "./components/VizSchemaInfoDisplay";
 import LoadExampleButton from "./components/LoadExampleButton";
 
-const apiUrl = "/api/v1";
+//const apiUrl = "/api/v1";
+const apiUrl = "http://localhost:8080/api/v1";
 
 function App() {
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
@@ -132,15 +133,12 @@ function App() {
             returnedVizSchema.keyOneCardinality >
             returnedVizSchema.keyTwoCardinality
           ) {
-            console.log("Swapping keys");
             returnedVizSchema = swapKeyFields(returnedVizSchema);
           }
         }
 
         setVizSchema(returnedVizSchema);
         setVizPayloadId(response.data.vizId);
-        console.log("VizId");
-        console.log(response.data.vizId);
         if (
           returnedVizSchema.type == "NONE" ||
           returnedVizSchema.type == "ERROR"
@@ -184,7 +182,8 @@ function App() {
         response.data.specs.forEach((specItem: any) => {
           specItem.data.forEach((dataItem: any) => {
             if (dataItem.name === "rawData") {
-              dataItem.values = returnedVizSchema.dataset;
+              // dataItem.values = returnedVizSchema.dataset;
+              dataItem.values = copyJson(returnedVizSchema.dataset);
             }
           });
         });
@@ -195,8 +194,12 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const updateRawDataInSpecList = (newVizSchemaDataset: any) => {
-    const updatedSpecList = specList.map((specItem) => {
+  const updateRawDataInSpecList = (
+    newVizSchemaDataset: any,
+    loadedSpecList?: any[]
+  ) => {
+    const specListToUpdate = loadedSpecList ? loadedSpecList : specList;
+    const updatedSpecList = specListToUpdate.map((specItem) => {
       const updatedData = specItem.data.map((dataItem: any) => {
         if (dataItem.name === "rawData") {
           return { ...dataItem, values: newVizSchemaDataset };
@@ -227,9 +230,17 @@ function App() {
       Object.keys(updatedVizSchema.dataset[0])
     );
 
-    return ![...vizSchemaFields].every((element) =>
+    // Check if every key in vizSchemaFields exists in updatedVizSchemaFields
+    const vizIsSubsetOfUpdated = [...vizSchemaFields].every((element) =>
       updatedVizSchemaFields.has(element)
     );
+
+    // Check if every key in updatedVizSchemaFields exists in vizSchemaFields
+    const updatedIsSubsetOfViz = [...updatedVizSchemaFields].every((element) =>
+      vizSchemaFields.has(element)
+    );
+
+    return !vizIsSubsetOfUpdated && !updatedIsSubsetOfViz;
   }
 
   const handleBackendErrors = (updatedVizSchema: VizSchema) => {
@@ -263,7 +274,11 @@ function App() {
     handleSqlSubmit();
   };
 
-  const handleSqlSubmit = (customSql?: string, loadedVizSchema?: VizSchema) => {
+  const handleSqlSubmit = (
+    customSql?: string,
+    loadedVizSchema?: VizSchema,
+    loadedSpecList?: any[]
+  ) => {
     // Clear previous alerts
     setShowErrors(false);
 
@@ -276,9 +291,6 @@ function App() {
       chartTypes: [],
       dataChartTypes: [],
     };
-
-    console.log("Updated VizSchema");
-    console.log(updatedVizSchema);
 
     axios
       .post(`${apiUrl}/specs/updateSqlData`, updatedVizSchema)
@@ -298,15 +310,11 @@ function App() {
             returnedVizSchema.keyOneCardinality >
             returnedVizSchema.keyTwoCardinality
           ) {
-            console.log("Swapping keys");
             returnedVizSchema = swapKeyFields(returnedVizSchema);
           }
         }
         setVizSchema(returnedVizSchema);
-        console.log("Custom SQL");
-        console.log(customSql);
         customSql && setSqlCode(customSql);
-        console.log(returnedVizSchema);
         setSchemaChartTypes(returnedVizSchema.chartTypes);
         setDataChartTypes(returnedVizSchema.dataChartTypes);
         setKeyCardinality(returnedVizSchema.keyCardinality);
@@ -325,7 +333,15 @@ function App() {
 
         setSchemaRecommendedCharts(schemaRecommendedCharts);
         setDataRecommendedCharts(dataRecommendedCharts);
-        updateRawDataInSpecList(response.data.dataset);
+
+        if (!loadedSpecList) {
+          updateRawDataInSpecList(copyJson(response.data.dataset));
+        } else {
+          updateRawDataInSpecList(
+            copyJson(response.data.dataset),
+            loadedSpecList
+          );
+        }
       });
   };
 
@@ -377,8 +393,20 @@ function App() {
           .get(`${apiUrl}/specs/` + vizId)
           .then((response) => {
             setVizSchema(response.data.vizSchema);
-            handleSqlSubmit(queryString, response.data.vizSchema);
-            // setVizSchema(response.data.vizSchema);
+            // Copy the reference to the VizSchema data into any Vega specs as 'rawData'.
+            response.data.specs.forEach((specItem: any) => {
+              specItem.data.forEach((dataItem: any) => {
+                if (dataItem.name === "rawData") {
+                  dataItem.values = copyJson(response.data.vizSchema.dataset);
+                }
+              });
+            });
+            setSpecList(response.data.specs);
+            handleSqlSubmit(
+              queryString,
+              response.data.vizSchema,
+              response.data.specs
+            );
             setRadioEnabled(true);
           })
           .catch((error) => {
@@ -457,7 +485,7 @@ function App() {
                         flexWrap: "wrap",
                         overflowY: "auto",
                         marginLeft: "50px",
-                        maxHeight: "300px", // Set to a height that works for you
+                        maxHeight: "300px",
                         width: "30%",
                       }}
                     >
@@ -531,7 +559,7 @@ function App() {
           selectedChart={selectedChart}
           vegaSpec={vegaSpec}
           vegaActionMenu={vegaActionMenu}
-          vizSchema={vizSchema}
+          vizSchema={{ ...vizSchema }}
         ></ChartDisplayModal>
       )}
       <Drawer

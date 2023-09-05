@@ -4,7 +4,6 @@ import ChordDiagramTest from "../components/charts/ChordDiagramTest";
 import GroupedBar from "../components/charts/GroupedBar";
 import StackedBar from "../components/charts/StackedBar";
 import ScatterPlot from "../components/charts/ScatterPlot";
-import ColumnSlider from "../components/charts/ColumnSlider";
 import WordCloud from "../components/charts/WordCloud";
 import BarSlider from "../components/charts/BarSlider";
 import Treemap from "../components/charts/Treemap";
@@ -74,6 +73,10 @@ export const categorizeCharts = (
     Possible,
     Other,
   };
+};
+
+export const copyJson = (jsonObject: any): any => {
+  return JSON.parse(JSON.stringify(jsonObject));
 };
 
 export const swapKeyFields = (vizSchema: VizSchema): VizSchema => {

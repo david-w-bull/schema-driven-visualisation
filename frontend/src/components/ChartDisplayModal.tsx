@@ -33,16 +33,29 @@ function ChartDisplayModal({
         <CloseIcon onClick={() => setIsModalOpen(false)}>×</CloseIcon>
 
         {showVegaSpec ? (
-          <Vega spec={vegaSpec} actions={vegaActionMenu} />
+          <div
+            style={{
+              width: "95%",
+              height: "95%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Vega spec={vegaSpec} actions={vegaActionMenu} />
+          </div>
         ) : selectedChart ? (
-          renderChartComponent(selectedChart, vizSchema)
+          <div style={{ width: "95%", height: "95%" }}>
+            {renderChartComponent(selectedChart, vizSchema)}
+          </div>
         ) : (
-          <div>Visualisation Unavailable</div> // Blank div
+          <div>Visualisation Unavailable</div>
         )}
 
         {vegaSpec && vegaSpec !== BLANKSPEC && (
           <button
-            style={{ position: "absolute", bottom: "10px", right: "10px" }}
+            style={{ alignSelf: "flex-end", bottom: "10px", right: "10px" }}
             onClick={handleToggleVega}
           >
             {showVegaSpec ? "Ant-V" : "Vega"}
@@ -82,9 +95,15 @@ const ModalContent = styled.div`
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  width: 80%;
-  height: 80%;
+  width: 100%;
+  height: 100%;
+  max-width: 80vw;
+  max-height: 80vh;
   z-index: 1001;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 `;
 
 const CloseIcon = styled.div`

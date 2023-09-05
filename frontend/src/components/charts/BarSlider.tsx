@@ -12,6 +12,7 @@ const BarSlider = ({ vizSchema }: BarSliderProps) => {
   );
 
   useEffect(() => {
+    console.log("Schema data changing");
     setData(
       vizSchema.dataset.map((item: any) => {
         return {
@@ -25,6 +26,7 @@ const BarSlider = ({ vizSchema }: BarSliderProps) => {
         };
       })
     );
+    console.log(vizSchema.dataset);
   }, [vizSchema]);
 
   const config = {

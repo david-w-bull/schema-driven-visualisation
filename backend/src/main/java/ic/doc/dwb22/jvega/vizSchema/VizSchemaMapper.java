@@ -337,7 +337,7 @@ public class VizSchemaMapper {
                     + entity.getName()
                     + "\n\n"
                     + "LIMIT 30"
-                    ; // Limit needs to be removed once a better solution can be found
+                    ;
         }
 
         else if(type == VizSchemaType.ONETOMANY || type == VizSchemaType.WEAK) {
@@ -412,7 +412,6 @@ public class VizSchemaMapper {
             List<String> join = new ArrayList<>();
             List<String> on = new ArrayList<>();
 
-
             String tableAlias1 = "";
             String tableAlias2 = "";
 
@@ -453,7 +452,6 @@ public class VizSchemaMapper {
                     pkJoinFieldsAliased = pkColumnNames.stream()
                             .map(field -> foreignKey.getPkTableName() + "." + field)
                             .collect(Collectors.toList());
-
                 }
 
                 String onItem = IntStream.range(0, fkColumnNames.size())

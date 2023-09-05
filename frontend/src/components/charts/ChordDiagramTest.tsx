@@ -13,20 +13,20 @@ const ChordDiagramTest = ({ vizSchema }: ChordDiagramProps) => {
 
   console.log(vizSchema);
 
-  const DATA = vizSchema.dataset.map((item: any) => ({
+  const data = vizSchema.dataset.map((item: any) => ({
     source: item[vizSchema.keyOneAlias],
     target: item[vizSchema.keyTwoAlias],
     value: parseFloat(item[vizSchema.scalarOneAlias]),
   }));
 
-  const colors = ["#FF5733", "#33FF57", "#5733FF", "#F33FF5"];
+  //const colors = ["#FF5733", "#33FF57", "#5733FF", "#F33FF5"];
 
   const config = {
-    data: DATA,
+    data: data,
     sourceField: "source",
     targetField: "target",
     weightField: "value",
-    color: colors,
+    //color: colors,
   };
   return <Chord {...config} />;
 };
