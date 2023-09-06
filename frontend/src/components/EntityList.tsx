@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import EntityComponent from "./EntityComponent";
-import { Data, Entity, Attribute, Relationship } from "../types";
+import {
+  Data,
+  Entity,
+  Attribute,
+  Relationship,
+  EntityOrRelationship,
+} from "../types";
 import styled from "styled-components";
 import Button from "@mui/material/Button";
 import AddchartIcon from "@mui/icons-material/Addchart";
+import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 
 interface EntityListProps {
   data: Data;
@@ -45,6 +52,27 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     );
     setDatabaseName(currentDatabaseName);
   }, [initialData]);
+
+  const handleClearSelection = () => {
+    checkedAttributes.forEach((attribute) => {
+      const parentName = attribute.parentEntityName;
+      const isEntity = entityNames.includes(parentName);
+      let itemId = -1;
+
+      const searchList: EntityOrRelationship[] = isEntity
+        ? data.entityList
+        : data.relationshipList;
+      const parentObject = searchList.find(
+        (item): any => item.name === parentName
+      );
+      parentObject && (itemId = parentObject.id);
+      // console.log("----Attribute----");
+      // console.log(isEntity);
+      // console.log(itemId);
+      // console.log(attribute);
+      handleAttributeChange(isEntity, itemId, attribute, false);
+    });
+  };
 
   const handleAttributeChange = (
     isEntity: boolean,
@@ -88,6 +116,8 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
       setCheckedAttributes((prevAttributes) => {
         const newAttributes = [...prevAttributes, attribute];
         setIsSelectionMade(newAttributes.length > 0);
+        console.log("Checked:");
+        console.log(newAttributes);
         return newAttributes;
       });
     } else {
@@ -95,6 +125,8 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
         const newAttributes = prevAttributes.filter(
           (attr) => attr.attributeId !== attribute.attributeId
         );
+        console.log("Checked:");
+        console.log(newAttributes);
         setIsSelectionMade(newAttributes.length > 0);
         return newAttributes;
       });
@@ -290,12 +322,33 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
           handleSubmit();
         }}
         style={{
-          margin: "5px 20px 20px 20px",
+          margin: "5px 20px 5px 20px",
         }}
         disabled={!isSelectionMade}
       >
         Visualise
       </Button>
+      {isSelectionMade ? (
+        <Button
+          variant="text"
+          endIcon={<DeleteSweepIcon />}
+          onClick={() => {
+            handleClearSelection();
+          }}
+          style={{
+            margin: "5px 20px 5px 20px",
+          }}
+        >
+          Clear Selection
+        </Button>
+      ) : (
+        <div
+          style={{
+            minHeight: "20px",
+            margin: "5px 20px 5px 20px",
+          }}
+        ></div>
+      )}
       <ComponentContainer>
         {(checkedAttributes.length > 0
           ? data.entityList.filter((entity) =>
@@ -338,7 +391,6 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
             />
           ))}
       </ComponentContainer>
-      {/* <button onClick={handleSubmit}>Submit</button> */}
     </>
   );
 };
