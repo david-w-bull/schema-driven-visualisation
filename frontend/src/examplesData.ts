@@ -10,17 +10,17 @@ const examplesData: any[] = [
 	country1.name AS country1_name, 
 	borders.length AS borders_length
     
-    FROM borders
+FROM borders
     
-    JOIN country AS country2
-    ON borders.country2 = country2.code
+JOIN country AS country2
+ON borders.country2 = country2.code
     
-    JOIN country AS country1
-    ON borders.country1 = country1.code
+JOIN country AS country1
+ON borders.country1 = country1.code
     
-    JOIN encompasses
-    ON encompasses.country = country1.code
-    AND encompasses.continent = 'South America'`,
+JOIN encompasses
+ON encompasses.country = country1.code
+AND encompasses.continent = 'South America'`,
   },
   {
     "exampleName": "Multi-Continent Countries",
@@ -33,16 +33,16 @@ const examplesData: any[] = [
 	country.name AS country_name, 
 	ROUND(country.area * encompasses.percentage / 100) AS encompasses_percentage
     
-    FROM encompasses
+FROM encompasses
     
-    JOIN continent
-    ON encompasses.continent = continent.name
+JOIN continent
+ON encompasses.continent = continent.name
     
-    JOIN country
-    ON encompasses.country = country.code
+JOIN country
+ON encompasses.country = country.code
     
-    WHERE country.code IN (SELECT country FROM encompasses GROUP BY country
-        HAVING COUNT(DISTINCT continent) > 1)`,
+WHERE country.code IN (SELECT country FROM encompasses GROUP BY country
+    HAVING COUNT(DISTINCT continent) > 1)`,
   },
   {
     "exampleName": "Country Populations Over Time",
@@ -89,14 +89,14 @@ ON island.in_waterbody = waterbody.name`,
     economy.gdp AS economy_gdp,
     economy.unemployment AS economy_unemployment
   
-  FROM economy
+FROM economy
   
-  JOIN country
-  ON economy.country = country.code
+JOIN country
+ON economy.country = country.code
   
-  JOIN encompasses
-  ON encompasses.country = country.code
-  AND encompasses.continent = 'Europe'`,
+JOIN encompasses
+ON encompasses.country = country.code
+AND encompasses.continent = 'Europe'`,
   },
   {
     "exampleName": "South American Languages",
@@ -107,41 +107,42 @@ ON island.in_waterbody = waterbody.name`,
     "queryString": `-- Shows the languages spoken in South American countries
 -- Limited to languages spoken by at least 1m people in the continent
     
-    WITH sa_languages AS
-    (
-    SELECT
-        spoken.name AS spoken_name,
-        spoken.percentage AS spoken_percentage,
-        country.name AS country_name,
-        country.population AS country_pop,
-      ROUND(country.population * (spoken.percentage / 100)) AS spoken_pop
+WITH sa_languages AS (
+SELECT
+  spoken.name AS spoken_name,
+  spoken.percentage AS spoken_percentage,
+  country.name AS country_name,
+  country.population AS country_pop,
+  ROUND(country.population * (spoken.percentage / 100)) AS spoken_pop
     
-    FROM spoken
+FROM spoken
     
-    JOIN country
-    ON spoken.country = country.code
+JOIN country
+ON spoken.country = country.code
     
-    JOIN encompasses
-    ON encompasses.country = country.code
+JOIN encompasses
+ON encompasses.country = country.code
     
-    WHERE encompasses.continent = 'South America'
-    )
+WHERE encompasses.continent = 'South America'
+)
     
-    , language_totals AS (
-        SELECT spoken_name, SUM(spoken_pop) AS total_speakers
-        FROM sa_languages
-        GROUP BY spoken_name
-    )
+, language_totals AS (
+SELECT 
+  spoken_name, 
+  SUM(spoken_pop) AS total_speakers
+FROM sa_languages
+GROUP BY spoken_name
+)
     
-    SELECT *
-    FROM sa_languages
-    WHERE spoken_name NOT IN (
-        SELECT spoken_name
-        FROM language_totals
-        WHERE total_speakers < 1000000
-        OR total_speakers IS NULL
-        )
-    ORDER BY spoken_name`,
+SELECT *
+FROM sa_languages
+WHERE spoken_name NOT IN (
+  SELECT spoken_name
+  FROM language_totals
+  WHERE total_speakers < 1000000
+  OR total_speakers IS NULL
+  )
+ORDER BY spoken_name`,
   },
 ];
 
