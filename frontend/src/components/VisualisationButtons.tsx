@@ -1,6 +1,5 @@
 import { Button } from "antd";
 import { CardinalityLimits } from "../types";
-import styled from "styled-components";
 import { BLANKSPEC } from "../constants";
 
 type VisualisationButtonsProps = {
@@ -8,6 +7,7 @@ type VisualisationButtonsProps = {
   specList: any[];
   cardinalityLimits?: CardinalityLimits;
   keyCardinality?: number;
+  keyOneCardinality?: number;
   setVegaSpec: (spec: any) => void;
   setVegaActionMenu: (value: boolean) => void;
   setSelectedChart: (chart: string | null) => void;
@@ -20,6 +20,7 @@ const VisualisationButtons = ({
   specList,
   cardinalityLimits,
   keyCardinality,
+  keyOneCardinality,
   setVegaSpec,
   setVegaActionMenu,
   setSelectedChart,
@@ -70,7 +71,10 @@ const VisualisationButtons = ({
                   {chartType}
                 </div>
                 <div style={{ fontSize: 11, color: "#999999" }}>
-                  Dataset: {keyCardinality}
+                  Dataset:{" "}
+                  {chartType === "Line Chart"
+                    ? keyOneCardinality
+                    : keyCardinality}
                 </div>
                 <div style={{ fontSize: 11, color: "#999999" }}>
                   Limit: {cardinalityLimits && cardinalityLimits[chartType]}

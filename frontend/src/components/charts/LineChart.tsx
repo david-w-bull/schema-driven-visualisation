@@ -22,6 +22,14 @@ const LineChart = ({ vizSchema }: LineChartProps) => {
     data.sort((a: any, b: any) => parseFloat(a.type) - parseFloat(b.type));
   }
 
+  let xLabel = vizSchema.keyTwo.attributeName;
+  let yLabel = vizSchema.scalarOne.attributeName;
+
+  if (vizSchema.keyTwo.attributeName == vizSchema.scalarOne.attributeName) {
+    xLabel = vizSchema.keyTwoAlias;
+    yLabel = vizSchema.scalarOneAlias;
+  }
+
   const config = {
     data,
     xField: "type",
@@ -29,6 +37,34 @@ const LineChart = ({ vizSchema }: LineChartProps) => {
     seriesField: vizSchema.keyTwoAlias ? "label" : undefined,
     legend: {
       position: "right" as "right",
+    },
+    xAxis: {
+      label: {
+        autoRotate: true,
+        style: {
+          fill: "#aaa",
+        },
+      },
+      title: {
+        text: xLabel,
+        style: {
+          fontSize: 14,
+        },
+      },
+    },
+    yAxis: {
+      label: {
+        autoRotate: true,
+        style: {
+          fill: "#aaa",
+        },
+      },
+      title: {
+        text: yLabel,
+        style: {
+          fontSize: 14,
+        },
+      },
     },
   };
 

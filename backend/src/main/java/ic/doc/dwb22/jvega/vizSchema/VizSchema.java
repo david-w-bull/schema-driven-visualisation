@@ -65,7 +65,8 @@ public class VizSchema {
     }
 
     public List<String> matchDataChartTypes() {
-        if(this.dataRelationship != null && this.dataRelationship != this.type) {
+        if(this.dataRelationship != null && this.dataRelationship != this.type
+                && this.type != VizSchemaType.BASIC && this.type != VizSchemaType.WEAK) {
             return matchChartTypes(this.dataRelationship, true);
         }
         return new ArrayList<>();

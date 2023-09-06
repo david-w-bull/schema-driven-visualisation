@@ -29,6 +29,20 @@ const GroupedBar = ({ vizSchema }: GroupedBarProps) => {
     yField: "label",
     seriesField: vizSchema.keyTwoAlias ? "type" : undefined,
     marginRatio: 0,
+    xAxis: {
+      label: {
+        autoRotate: true,
+        style: {
+          fill: "#aaa",
+        },
+      },
+      title: {
+        text: vizSchema.scalarOne.attributeName,
+        style: {
+          fontSize: 14,
+        },
+      },
+    },
     label: {
       position: "right" as "right",
       layout: [

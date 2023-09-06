@@ -32,6 +32,18 @@ const ScatterPlot = ({ vizSchema }: ScatterPlotProps) => {
           stroke: "#aaa",
         },
       },
+      label: {
+        autoRotate: true,
+        style: {
+          fill: "#aaa",
+        },
+      },
+      title: {
+        text: vizSchema.scalarTwoAlias,
+        style: {
+          fontSize: 14,
+        },
+      },
     },
     xAxis: {
       grid: {
@@ -44,6 +56,18 @@ const ScatterPlot = ({ vizSchema }: ScatterPlotProps) => {
       line: {
         style: {
           stroke: "#aaa",
+        },
+      },
+      label: {
+        autoRotate: true,
+        style: {
+          fill: "#aaa",
+        },
+      },
+      title: {
+        text: vizSchema.scalarOneAlias,
+        style: {
+          fontSize: 14,
         },
       },
     },

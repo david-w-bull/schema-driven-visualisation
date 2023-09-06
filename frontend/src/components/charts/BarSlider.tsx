@@ -39,6 +39,20 @@ const BarSlider = ({ vizSchema }: BarSliderProps) => {
         autoRotate: true,
       },
     },
+    xAxis: {
+      label: {
+        autoRotate: true,
+        style: {
+          fill: "#aaa",
+        },
+      },
+      title: {
+        text: vizSchema.scalarOne.attributeName,
+        style: {
+          fontSize: 14,
+        },
+      },
+    },
     slider: {
       start: 0.0,
       end: 1.0,

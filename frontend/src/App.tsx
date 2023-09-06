@@ -38,9 +38,6 @@ import ChartDisplayModal from "./components/ChartDisplayModal";
 import VizSchemaInfoDisplay from "./components/VizSchemaInfoDisplay";
 import LoadExampleButton from "./components/LoadExampleButton";
 
-//const apiUrl = "/api/v1";
-const apiUrl = "http://localhost:8080/api/v1";
-
 function App() {
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
   const [vegaActionMenu, setVegaActionMenu] = useState(false);
@@ -49,6 +46,9 @@ function App() {
     "64e4b803fe3299654b1739bf"
   );
   const [vizPayloadId, setVizPayloadId] = useState("");
+
+  //const apiUrl = "/api/v1";
+  const apiUrl = "http://localhost:8080/api/v1";
 
   const handleSelectDatabase = (newValue: string) => {
     setSelectedDatabase(newValue);
@@ -75,6 +75,7 @@ function App() {
   const [specList, setSpecList] = useState<any[]>([]);
   const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
   const [keyCardinality, setKeyCardinality] = useState<number>(0);
+  const [keyOneCardinality, setKeyOneCardinality] = useState<number>(0);
 
   const [cardinalityLimits, setCardinalityLimits] = useState<CardinalityLimits>(
     cardinalityLimitsData
@@ -103,7 +104,8 @@ function App() {
     let recommendedCharts = categorizeCharts(
       schemaChartTypes,
       newCardinalityLimits,
-      keyCardinality
+      keyCardinality,
+      keyOneCardinality
     );
 
     setSchemaRecommendedCharts(recommendedCharts);
@@ -158,6 +160,8 @@ function App() {
         returnedVizSchema.sqlQuery && setSqlCode(returnedVizSchema.sqlQuery);
         returnedVizSchema.keyCardinality &&
           setKeyCardinality(returnedVizSchema.keyCardinality);
+        returnedVizSchema.keyOneCardinality &&
+          setKeyOneCardinality(returnedVizSchema.keyOneCardinality);
         returnedVizSchema.chartTypes &&
           setSchemaChartTypes(returnedVizSchema.chartTypes);
         returnedVizSchema.dataChartTypes &&
@@ -166,13 +170,15 @@ function App() {
         let schemaRecommendedCharts = categorizeCharts(
           returnedVizSchema.chartTypes,
           cardinalityLimits,
-          returnedVizSchema.keyCardinality
+          returnedVizSchema.keyCardinality,
+          returnedVizSchema.keyOneCardinality
         );
 
         let dataRecommendedCharts = categorizeCharts(
           returnedVizSchema.dataChartTypes,
           cardinalityLimits,
-          returnedVizSchema.keyCardinality
+          returnedVizSchema.keyCardinality,
+          returnedVizSchema.keyOneCardinality
         );
 
         setSchemaRecommendedCharts(schemaRecommendedCharts);
@@ -318,17 +324,20 @@ function App() {
         setSchemaChartTypes(returnedVizSchema.chartTypes);
         setDataChartTypes(returnedVizSchema.dataChartTypes);
         setKeyCardinality(returnedVizSchema.keyCardinality);
+        setKeyOneCardinality(returnedVizSchema.keyOneCardinality);
 
         let schemaRecommendedCharts = categorizeCharts(
           returnedVizSchema.chartTypes,
           cardinalityLimits,
-          returnedVizSchema.keyCardinality
+          returnedVizSchema.keyCardinality,
+          returnedVizSchema.keyOneCardinality
         );
 
         let dataRecommendedCharts = categorizeCharts(
           returnedVizSchema.dataChartTypes,
           cardinalityLimits,
-          returnedVizSchema.keyCardinality
+          returnedVizSchema.keyCardinality,
+          returnedVizSchema.keyOneCardinality
         );
 
         setSchemaRecommendedCharts(schemaRecommendedCharts);
@@ -463,7 +472,6 @@ function App() {
             <Radio.Group
               onChange={handleRadioSelect}
               defaultValue="SQL"
-              // buttonStyle="solid"
               size="large"
               style={{ marginBottom: "20px" }}
               disabled={!radioEnabled}
@@ -521,15 +529,16 @@ function App() {
 
             {radioSelect === "Visualisations" && (
               <>
-                {vizSchema.dataRelationship !== vizSchema.type && (
-                  <Radio.Group
-                    onChange={handleChangeRecommendations}
-                    value={radioRecommendations}
-                  >
-                    <Radio value={"Schema"}>Schema</Radio>
-                    <Radio value={"Data"}>Data</Radio>
-                  </Radio.Group>
-                )}
+                {vizSchema.dataChartTypes &&
+                  vizSchema.dataRelationship !== vizSchema.type && (
+                    <Radio.Group
+                      onChange={handleChangeRecommendations}
+                      value={radioRecommendations}
+                    >
+                      <Radio value={"Schema"}>Schema</Radio>
+                      <Radio value={"Data"}>Data</Radio>
+                    </Radio.Group>
+                  )}
                 <VisualisationButtonsGroup
                   vizSchemaType={vizSchema.type}
                   chartTypes={
@@ -540,6 +549,7 @@ function App() {
                   specList={specList}
                   cardinalityLimits={cardinalityLimits}
                   keyCardinality={keyCardinality}
+                  keyOneCardinality={keyOneCardinality}
                   setVegaSpec={setVegaSpec}
                   setVegaActionMenu={setVegaActionMenu}
                   setSelectedChart={setSelectedChart}

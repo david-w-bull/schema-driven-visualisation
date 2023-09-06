@@ -17,6 +17,20 @@ const StackedBar = ({ vizSchema }: StackedBarProps) => {
     xField: "value",
     yField: "label",
     seriesField: "type",
+    xAxis: {
+      label: {
+        autoRotate: true,
+        style: {
+          fill: "#aaa",
+        },
+      },
+      title: {
+        text: vizSchema.scalarOne.attributeName,
+        style: {
+          fontSize: 14,
+        },
+      },
+    },
     brush: {
       enabled: true,
       type: "x-rect" as "x-rect",

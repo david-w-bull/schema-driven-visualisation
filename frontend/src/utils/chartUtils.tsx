@@ -41,7 +41,8 @@ export const renderChartComponent = (
 export const categorizeCharts = (
   charts: string[],
   cardinalityLimits: CardinalityLimits,
-  vizCardinality: number
+  vizCardinality: number,
+  keyOneCardinality: number
 ): ChartRecommendations => {
   const Recommended: string[] = [];
   const Possible: string[] = [];
@@ -49,7 +50,12 @@ export const categorizeCharts = (
   if (charts != undefined) {
     for (const chart of charts) {
       if (cardinalityLimits[chart] !== undefined) {
-        if (cardinalityLimits[chart] >= vizCardinality) {
+        if (
+          chart === "Line Chart" &&
+          cardinalityLimits[chart] >= keyOneCardinality
+        ) {
+          Recommended.push(chart);
+        } else if (cardinalityLimits[chart] >= vizCardinality) {
           Recommended.push(chart);
         } else {
           Possible.push(chart);
@@ -99,4 +105,12 @@ export const swapKeyFields = (vizSchema: VizSchema): VizSchema => {
     keyTwoAlias: keyOneAlias,
     keyTwoCardinality: keyOneCardinality,
   };
+};
+
+export const formatLabel = (value: any) => {
+  if (typeof value === "number") {
+    return 7;
+    // return new Intl.NumberFormat().format(value); // Format as thousands separator
+  }
+  return value;
 };

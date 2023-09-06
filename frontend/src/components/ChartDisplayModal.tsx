@@ -4,6 +4,9 @@ import { VizSchema } from "../types";
 import { BLANKSPEC } from "../constants";
 import { renderChartComponent } from "../utils/chartUtils";
 import { useState } from "react";
+import { Divider } from "antd";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import { Button } from "@mui/material";
 
 type ChartDisplayModalProps = {
   setIsModalOpen: (isOpen: boolean) => void;
@@ -31,6 +34,23 @@ function ChartDisplayModal({
       <ModalBackdrop />
       <ModalContent>
         <CloseIcon onClick={() => setIsModalOpen(false)}>×</CloseIcon>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "95%",
+            alignItems: "center",
+          }}
+        >
+          <Header>{selectedChart}</Header>
+          {showVegaSpec && (
+            <SubHeader>
+              Vega specifications are included for evaluation purposes only.
+              Data may not be displayed correctly.
+            </SubHeader>
+          )}
+          <StyledDivider></StyledDivider>
+        </div>
 
         {showVegaSpec ? (
           <div
@@ -54,12 +74,19 @@ function ChartDisplayModal({
         )}
 
         {vegaSpec && vegaSpec !== BLANKSPEC && (
-          <button
-            style={{ alignSelf: "flex-end", bottom: "10px", right: "10px" }}
+          <Button
+            variant="outlined"
+            endIcon={<SwapHorizIcon />}
+            style={{
+              alignSelf: "flex-end",
+              bottom: "10px",
+              right: "10px",
+              textTransform: "none",
+            }}
             onClick={handleToggleVega}
           >
             {showVegaSpec ? "Ant-V" : "Vega"}
-          </button>
+          </Button>
         )}
       </ModalContent>
     </ModalContainer>
@@ -113,4 +140,24 @@ const CloseIcon = styled.div`
   cursor: pointer;
   font-size: 24px;
   color: #000;
+`;
+
+const Header = styled.h1`
+  font-size: 25px;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 500;
+  margin: 0px;
+  color: #36454f;
+`;
+
+const SubHeader = styled.p`
+  font-size: 14px;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 300;
+  margin: 0px;
+`;
+
+const StyledDivider = styled(Divider)`
+  margin: 2px 0px 10px 0px;
+  border-top-color: #d3d3d3;
 `;

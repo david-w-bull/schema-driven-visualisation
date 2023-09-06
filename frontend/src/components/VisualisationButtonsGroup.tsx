@@ -11,6 +11,7 @@ type VisualisationButtonsGroupProps = {
   specList: any[];
   cardinalityLimits?: CardinalityLimits;
   keyCardinality?: number;
+  keyOneCardinality?: number;
   setVegaSpec: (spec: any) => void;
   setVegaActionMenu: (value: boolean) => void;
   setSelectedChart: (chart: string | null) => void;
@@ -23,6 +24,7 @@ const VisualisationButtonsGroup = ({
   specList,
   cardinalityLimits,
   keyCardinality,
+  keyOneCardinality,
   setVegaSpec,
   setVegaActionMenu,
   setSelectedChart,
@@ -76,6 +78,7 @@ const VisualisationButtonsGroup = ({
             chartTypes={chartTypes.Possible}
             specList={specList}
             keyCardinality={keyCardinality}
+            keyOneCardinality={keyOneCardinality}
             cardinalityLimits={cardinalityLimits}
             setVegaSpec={setVegaSpec}
             setVegaActionMenu={setVegaActionMenu}
