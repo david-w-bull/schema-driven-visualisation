@@ -11,7 +11,7 @@ const VizSchemaInfoDisplay = ({ vizSchema }: VizSchemaInfoDisplayProps) => {
   function getRelationshipLabel(dataRelationship: string) {
     switch (dataRelationship) {
       case "ONETOMANY":
-        return "1:M";
+        return "1:N";
       case "MANYTOMANY":
         return "M:N";
       case "BASIC":
@@ -20,6 +20,24 @@ const VizSchemaInfoDisplay = ({ vizSchema }: VizSchemaInfoDisplayProps) => {
         return "SUBSET";
       case "WEAK":
         return "WEAK";
+
+      default:
+        return "Unknown";
+    }
+  }
+
+  function getRelationshipText(dataRelationship: string) {
+    switch (dataRelationship) {
+      case "ONETOMANY":
+        return "one-to-many";
+      case "MANYTOMANY":
+        return "many-to-many";
+      case "BASIC":
+        return "basic entity";
+      case "SUBSET":
+        return "subset";
+      case "WEAK":
+        return "weak entity";
 
       default:
         return "Unknown";
@@ -74,7 +92,11 @@ const VizSchemaInfoDisplay = ({ vizSchema }: VizSchemaInfoDisplayProps) => {
           backgroundColor="#c2eafc"
           color="#007bb2"
           shape="square"
-          description="The relationship between entities in database metadata"
+          description={
+            "Database metadata shows a " +
+            getRelationshipText(vizSchema.type) +
+            " relationship"
+          }
         />
         {vizSchema.dataRelationship &&
           vizSchema.dataRelationship !== vizSchema.type && (
@@ -84,7 +106,11 @@ const VizSchemaInfoDisplay = ({ vizSchema }: VizSchemaInfoDisplayProps) => {
               backgroundColor="#c2eafc"
               color="#007bb2"
               shape="square"
-              description="The relationship between keys in your query results"
+              description={
+                "Keys in your query results have a " +
+                getRelationshipText(vizSchema.dataRelationship) +
+                " relationship"
+              }
             />
           )}
       </Row>
