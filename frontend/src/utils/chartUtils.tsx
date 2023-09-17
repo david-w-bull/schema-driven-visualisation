@@ -10,6 +10,12 @@ import Treemap from "../components/charts/Treemap";
 import SankeyDiagram from "../components/charts/SankeyDiagram";
 import LineChart from "../components/charts/LineChart";
 
+/**
+ * Renders the correct chart type based on provided information, usually passed from a user selection.
+ * @param chartType {string} The type of chart that should be rendered, passed from parent object
+ * @param vizSchema {VizSchema} The VizSchema containing the dataset and field information for the visualisation
+ * @returns A component which provides a visualisaion of the specificied chart type
+ */
 export const renderChartComponent = (
   chartType: string,
   vizSchema: VizSchema
@@ -38,6 +44,14 @@ export const renderChartComponent = (
   }
 };
 
+/**
+ * Compares the recommended chart types returned by the backend and compares them to cardinality thresholds
+ * @param charts {string[]} A list of all the recommended charts returned by the backend
+ * @param cardinalityLimits {CardinalityLimits} An object mapping chart type to cardinality threshold
+ * @param vizCardinality {number} The maximum cardinality across all keys in the VizSchema
+ * @param keyOneCardinality {number} The specific cardinality of key one, used by line charts
+ * @returns Three arrays of strings for different levels of chart recommendations
+ */
 export const categorizeCharts = (
   charts: string[],
   cardinalityLimits: CardinalityLimits,
@@ -63,6 +77,7 @@ export const categorizeCharts = (
       }
     }
 
+    // Any chart types not returned by the backend go to the 'not recommended' list
     for (const key in cardinalityLimits) {
       if (charts.indexOf(key) === -1) {
         Other.push(key);
@@ -81,10 +96,20 @@ export const categorizeCharts = (
   };
 };
 
+/**
+ * Provides a copy of a given JSON object.
+ * Not for use with complex objects as relies on conversion to string type
+ */
 export const copyJson = (jsonObject: any): any => {
   return JSON.parse(JSON.stringify(jsonObject));
 };
 
+/**
+ * A helper function to swap all KeyOne.. fields with KeyTwo... fields in a VizSchema
+ * Primarily used for composite key visualisations where a hierarchy needs to be created between keys
+ * @param vizSchema {VizSchema} A VizSchema object containing keys to be swapped
+ * @returns A VizSchema objects with KeyOne... and KeyTwo... fields swapped
+ */
 export const swapKeyFields = (vizSchema: VizSchema): VizSchema => {
   const {
     keyOne,
@@ -105,12 +130,4 @@ export const swapKeyFields = (vizSchema: VizSchema): VizSchema => {
     keyTwoAlias: keyOneAlias,
     keyTwoCardinality: keyOneCardinality,
   };
-};
-
-export const formatLabel = (value: any) => {
-  if (typeof value === "number") {
-    return 7;
-    // return new Intl.NumberFormat().format(value); // Format as thousands separator
-  }
-  return value;
 };

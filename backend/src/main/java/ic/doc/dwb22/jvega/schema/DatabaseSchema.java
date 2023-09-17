@@ -47,6 +47,10 @@ public class DatabaseSchema {
         this.testId = testId;
     }
 
+    public DatabaseSchema(String message) {
+        this.name = message;
+    }
+
     public JsonNode toJson() {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.valueToTree(this);

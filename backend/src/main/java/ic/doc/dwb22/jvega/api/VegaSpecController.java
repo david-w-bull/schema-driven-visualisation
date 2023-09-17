@@ -2,7 +2,11 @@ package ic.doc.dwb22.jvega.api;
 
 import ic.doc.dwb22.jvega.VizSpecPayload;
 import ic.doc.dwb22.jvega.schema.DatabaseSchema;
+import ic.doc.dwb22.jvega.spec.VegaSpec;
 import ic.doc.dwb22.jvega.vizSchema.VizSchema;
+import ic.doc.dwb22.jvega.vizSchema.VizSchemaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,25 +22,34 @@ import java.util.Optional;
 @RequestMapping("/api/v1/specs")
 public class VegaSpecController {
 
+    private static final Logger logger = LoggerFactory.getLogger(VegaSpecController.class);
+
     @Autowired
     private VegaSpecService vegaSpecService;
 
     @GetMapping
     public ResponseEntity<List<VizSpecPayload>> getAllSpecs() {
-        return new ResponseEntity<List<VizSpecPayload>>(vegaSpecService.allSpecs(), HttpStatus.OK);
+        try {
+            return new ResponseEntity<List<VizSpecPayload>>(vegaSpecService.allSpecs(), HttpStatus.OK);
+        } catch (Exception e) {
+            VegaSpec errorSpec = new VegaSpec.BuildSpec().setDescription("Error fetching all specs").createVegaSpec();
+            logger.error("Error fetching all specs: " + e);
+            return new ResponseEntity<List<VizSpecPayload>>(Arrays.asList(new VizSpecPayload(errorSpec)), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Optional<VegaSpec>> getSpecById(@PathVariable ObjectId id) {
-//        return new ResponseEntity<Optional<VegaSpec>>(vegaSpecService.specById(id), HttpStatus.OK);
-//    }
 
     @GetMapping("/{vizId}")
     public ResponseEntity<Optional<VizSpecPayload>> getSpecByVizId(@PathVariable String vizId) {
-        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specByVizId(vizId), HttpStatus.OK);
+        try {
+            return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specByVizId(vizId), HttpStatus.OK);
+        } catch (Exception e) {
+            VegaSpec errorSpec = new VegaSpec.BuildSpec().setDescription("Error fetching spec by id").createVegaSpec();
+            logger.error("Error fetching spec by id: " + e);
+            return new ResponseEntity<Optional<VizSpecPayload>>(Optional.of(new VizSpecPayload(errorSpec)), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    // Endpoint included for testing only -- otherwise specTemplatesByChartType is only used internally
+    // Admin endpoints included for testing only -- only used internally
     @GetMapping("/admin/{chartType}")
     public ResponseEntity<List<VizSpecPayload>> getSpecTemplatesByChartType(@PathVariable String chartType) {
         List<String> chartTypes = Arrays.asList(chartType);
@@ -63,13 +76,25 @@ public class VegaSpecController {
     @CrossOrigin
     @PostMapping("/specFromSchema")
     public ResponseEntity<Optional<VizSpecPayload>> createSpecFromSchema(@RequestBody DatabaseSchema schema) {
-        return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specFromSchema(schema), HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<Optional<VizSpecPayload>>(vegaSpecService.specFromSchema(schema), HttpStatus.CREATED);
+        }
+        catch (Exception e) {
+            VegaSpec errorSpec = new VegaSpec.BuildSpec().setDescription("Error creating spec from schema").createVegaSpec();
+            logger.error("Error creating spec from schema: " + e);
+            return new ResponseEntity<Optional<VizSpecPayload>>(Optional.of(new VizSpecPayload(errorSpec)), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @CrossOrigin
     @PostMapping("/updateSqlData")
     public ResponseEntity<VizSchema> updateVizSchemaSqlData(@RequestBody VizSchema vizSchema) {
-        return new ResponseEntity<VizSchema>(vegaSpecService.updateSqlData(vizSchema), HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<VizSchema>(vegaSpecService.updateSqlData(vizSchema), HttpStatus.CREATED);
+        } catch (Exception e) {
+            logger.error("Error updating VizSchema: " + e);
+            return new ResponseEntity<VizSchema>(new VizSchema(VizSchemaType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

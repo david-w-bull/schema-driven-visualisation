@@ -2,6 +2,21 @@ import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import "./App.css";
+import cardinalityLimitsData from "./cardinalityLimitsData";
+import examplesData from "./examplesData";
+import EntityList from "./components/EntityList";
+import DatabaseSelector from "./components/DatabaseSelector";
+import CardinalitySettings from "./components/CardinalitySettings";
+import SQLEditor from "./components/SQLEditor";
+import SQLSubmitButton from "./components/SQLSubmitButton";
+import DataTable from "./components/DataTable";
+import VisualisationButtonsGroup from "./components/VisualisationButtonsGroup";
+import Split from "react-split";
+import ChartDisplayModal from "./components/ChartDisplayModal";
+import VizSchemaInfoDisplay from "./components/VizSchemaInfoDisplay";
+import LoadExampleButton from "./components/LoadExampleButton";
+import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
+import { categorizeCharts, copyJson, swapKeyFields } from "./utils/chartUtils";
 import {
   Data,
   VizSchema,
@@ -14,17 +29,6 @@ import {
   BLANKVIZSCHEMA,
   BLANKRECOMMENDATIONS,
 } from "./constants";
-import cardinalityLimitsData from "./cardinalityLimitsData";
-import examplesData from "./examplesData";
-import { categorizeCharts, copyJson, swapKeyFields } from "./utils/chartUtils";
-import EntityList from "./components/EntityList";
-import DatabaseSelector from "./components/DatabaseSelector";
-import CardinalitySettings from "./components/CardinalitySettings";
-import SQLEditor from "./components/SQLEditor";
-import SQLSubmitButton from "./components/SQLSubmitButton";
-import DataTable from "./components/DataTable";
-import VisualisationButtonsGroup from "./components/VisualisationButtonsGroup";
-import Split from "react-split";
 import {
   Radio,
   RadioChangeEvent,
@@ -33,23 +37,54 @@ import {
   Alert,
   Divider,
 } from "antd";
-import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
-import ChartDisplayModal from "./components/ChartDisplayModal";
-import VizSchemaInfoDisplay from "./components/VizSchemaInfoDisplay";
-import LoadExampleButton from "./components/LoadExampleButton";
 
 function App() {
+  // const apiUrl = "/api/v1";  // Production API URL stem
+  const apiUrl = "http://localhost:8080/api/v1"; // Deb API URL stem
+
+  /* State variables managing Vega visualisations */
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
   const [vegaActionMenu, setVegaActionMenu] = useState(false);
+  const [specList, setSpecList] = useState<any[]>([]);
+
+  /* State variables managing database schema */
   const [schemaInfo, setSchemaInfo] = useState(BLANKSCHEMA);
   const [selectedDatabase, setSelectedDatabase] = useState(
     "64e4b803fe3299654b1739bf"
   );
+
+  /* State variables managing UI components and their visibility */
+  const [radioSelect, setRadioSelect] = useState("SQL");
+  const [radioEnabled, setRadioEnabled] = useState(false);
+  const [radioRecommendations, setRadioRecommendations] = useState("Schema");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [settingsDrawIsOpen, setSettingsDrawIsOpen] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
+  /* State variables managing VizSchema information and user queries */
+  const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
   const [vizPayloadId, setVizPayloadId] = useState("");
+  const [selectedChart, setSelectedChart] = useState<string | null>(null);
+  const [keyCardinality, setKeyCardinality] = useState<number>(0);
+  const [keyOneCardinality, setKeyOneCardinality] = useState<number>(0);
+  const [schemaChartTypes, setSchemaChartTypes] = useState<string[]>([]);
+  const [dataChartTypes, setDataChartTypes] = useState<string[]>([]);
+  const [sqlCode, setSqlCode] = useState("");
 
-  //const apiUrl = "/api/v1";
-  const apiUrl = "http://localhost:8080/api/v1";
+  /* State variables managing visualisation recommendations */
+  const [schemaRecommendedCharts, setSchemaRecommendedCharts] =
+    useState<ChartRecommendations>(BLANKRECOMMENDATIONS);
+  const [dataRecommendedCharts, setDataRecommendedCharts] =
+    useState<ChartRecommendations>(BLANKRECOMMENDATIONS);
+  const [cardinalityLimits, setCardinalityLimits] = useState<CardinalityLimits>(
+    cardinalityLimitsData
+  );
 
+  /**
+   * Fetches stored schema information from MongoDB
+   * @param newValue  A string representing the database UUID
+   */
   const handleSelectDatabase = (newValue: string) => {
     setSelectedDatabase(newValue);
     axios
@@ -59,41 +94,29 @@ function App() {
         setSchemaInfo(response.data);
       })
       .catch((error) => {
-        console.error("There was an error!", error);
+        console.error("Error fetching database schema information: ", error);
       });
   };
 
-  const [schemaChartTypes, setSchemaChartTypes] = useState<string[]>([]);
-  const [dataChartTypes, setDataChartTypes] = useState<string[]>([]);
-
-  const [schemaRecommendedCharts, setSchemaRecommendedCharts] =
-    useState<ChartRecommendations>(BLANKRECOMMENDATIONS);
-  const [dataRecommendedCharts, setDataRecommendedCharts] =
-    useState<ChartRecommendations>(BLANKRECOMMENDATIONS);
-
-  const [selectedChart, setSelectedChart] = useState<string | null>(null);
-  const [specList, setSpecList] = useState<any[]>([]);
-  const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
-  const [keyCardinality, setKeyCardinality] = useState<number>(0);
-  const [keyOneCardinality, setKeyOneCardinality] = useState<number>(0);
-
-  const [cardinalityLimits, setCardinalityLimits] = useState<CardinalityLimits>(
-    cardinalityLimitsData
-  );
-
-  const [radioSelect, setRadioSelect] = useState("SQL");
-  const [radioEnabled, setRadioEnabled] = useState(false);
-
-  const [radioRecommendations, setRadioRecommendations] = useState("Schema");
-
+  /**
+   * Handler for user interaction with radio selections for page browsing
+   */
   const handleRadioSelect = (e: RadioChangeEvent) => {
     setRadioSelect(e.target.value);
   };
 
+  /**
+   * Handler for user interaction with radio selection for data vs. schema visualisation
+   */
   const handleChangeRecommendations = (e: RadioChangeEvent) => {
     setRadioRecommendations(e.target.value);
   };
 
+  /**
+   * Regenerates chart recommendations in response to updated cardinality limits
+   * @param key {string} The chart type which the cardinality refers to
+   * @param value {number} The new cardinality limit to be applied
+   */
   const handleCardinalityUpdate = (key: string, value: number) => {
     const newCardinalityLimits = {
       ...cardinalityLimits,
@@ -111,99 +134,102 @@ function App() {
     setSchemaRecommendedCharts(recommendedCharts);
   };
 
-  const [selectedData, setSelectedData] = useState<Data>(BLANKSCHEMA);
-
+  /**
+   * Sends a DatabaseSchema object to the backend, filtered based on user selections.
+   * Returns a full VizSpecPayload object which is used to populate all UI state.
+   * @param data A DatabaseSchema object, filtered based on user selections
+   */
   const handleSelectedData = (data: Data) => {
     setVegaSpec(BLANKSPEC);
     setVegaActionMenu(false);
     setSqlCode("");
     setShowErrors(false);
-    setSelectedData(data);
     setRadioRecommendations("Schema");
-    axios
-      // the 'data' payload is a DatabaseSchema object filtered based on user selections
-      .post(`${apiUrl}/specs/specFromSchema`, data)
-      .then((response) => {
-        console.log(response.data);
-        console.log(JSON.stringify(response.data));
-        let returnedVizSchema = response.data.vizSchema;
+    axios.post(`${apiUrl}/specs/specFromSchema`, data).then((response) => {
+      console.log(response.data);
+      console.log(JSON.stringify(response.data));
+      let returnedVizSchema = response.data.vizSchema;
+      if (
+        returnedVizSchema.dataRelationship &&
+        returnedVizSchema.dataRelationship == "ONETOMANY"
+      ) {
         if (
-          returnedVizSchema.dataRelationship &&
-          returnedVizSchema.dataRelationship == "ONETOMANY"
+          returnedVizSchema.keyOneCardinality >
+          returnedVizSchema.keyTwoCardinality
         ) {
-          if (
-            returnedVizSchema.keyOneCardinality >
-            returnedVizSchema.keyTwoCardinality
-          ) {
-            returnedVizSchema = swapKeyFields(returnedVizSchema);
+          returnedVizSchema = swapKeyFields(returnedVizSchema);
+        }
+      }
+
+      setVizSchema(returnedVizSchema);
+      setVizPayloadId(response.data.vizId);
+      if (
+        returnedVizSchema.type == "NONE" ||
+        returnedVizSchema.type == "ERROR"
+      ) {
+        setSchemaChartTypes([]);
+        setDataChartTypes([]);
+        setSchemaRecommendedCharts(BLANKRECOMMENDATIONS);
+        setDataRecommendedCharts(BLANKRECOMMENDATIONS);
+        setErrorMessages([
+          "Your selected fields did not match any visualisation schema patterns",
+        ]);
+        setShowErrors(true);
+        return;
+      }
+
+      setRadioEnabled(true);
+      returnedVizSchema.sqlQuery && setSqlCode(returnedVizSchema.sqlQuery);
+      returnedVizSchema.keyCardinality &&
+        setKeyCardinality(returnedVizSchema.keyCardinality);
+      returnedVizSchema.keyOneCardinality &&
+        setKeyOneCardinality(returnedVizSchema.keyOneCardinality);
+      returnedVizSchema.chartTypes &&
+        setSchemaChartTypes(returnedVizSchema.chartTypes);
+      returnedVizSchema.dataChartTypes &&
+        setDataChartTypes(returnedVizSchema.dataChartTypes);
+
+      let schemaRecommendedCharts = categorizeCharts(
+        returnedVizSchema.chartTypes,
+        cardinalityLimits,
+        returnedVizSchema.keyCardinality,
+        returnedVizSchema.keyOneCardinality
+      );
+
+      let dataRecommendedCharts = categorizeCharts(
+        returnedVizSchema.dataChartTypes,
+        cardinalityLimits,
+        returnedVizSchema.keyCardinality,
+        returnedVizSchema.keyOneCardinality
+      );
+
+      setSchemaRecommendedCharts(schemaRecommendedCharts);
+      setDataRecommendedCharts(dataRecommendedCharts);
+
+      // Copy the reference to the VizSchema data into any Vega specs as the 'rawData' dataset
+      response.data.specs.forEach((specItem: any) => {
+        specItem.data.forEach((dataItem: any) => {
+          if (dataItem.name === "rawData") {
+            dataItem.values = copyJson(returnedVizSchema.dataset);
           }
-        }
-
-        setVizSchema(returnedVizSchema);
-        setVizPayloadId(response.data.vizId);
-        if (
-          returnedVizSchema.type == "NONE" ||
-          returnedVizSchema.type == "ERROR"
-        ) {
-          setSchemaChartTypes([]);
-          setDataChartTypes([]);
-          setSchemaRecommendedCharts(BLANKRECOMMENDATIONS);
-          setDataRecommendedCharts(BLANKRECOMMENDATIONS);
-          setErrorMessages([
-            "Your selected fields did not match any visualisation schema patterns",
-          ]);
-          setShowErrors(true);
-          return;
-        }
-
-        setRadioEnabled(true);
-        returnedVizSchema.sqlQuery && setSqlCode(returnedVizSchema.sqlQuery);
-        returnedVizSchema.keyCardinality &&
-          setKeyCardinality(returnedVizSchema.keyCardinality);
-        returnedVizSchema.keyOneCardinality &&
-          setKeyOneCardinality(returnedVizSchema.keyOneCardinality);
-        returnedVizSchema.chartTypes &&
-          setSchemaChartTypes(returnedVizSchema.chartTypes);
-        returnedVizSchema.dataChartTypes &&
-          setDataChartTypes(returnedVizSchema.dataChartTypes);
-
-        let schemaRecommendedCharts = categorizeCharts(
-          returnedVizSchema.chartTypes,
-          cardinalityLimits,
-          returnedVizSchema.keyCardinality,
-          returnedVizSchema.keyOneCardinality
-        );
-
-        let dataRecommendedCharts = categorizeCharts(
-          returnedVizSchema.dataChartTypes,
-          cardinalityLimits,
-          returnedVizSchema.keyCardinality,
-          returnedVizSchema.keyOneCardinality
-        );
-
-        setSchemaRecommendedCharts(schemaRecommendedCharts);
-        setDataRecommendedCharts(dataRecommendedCharts);
-
-        // Copy the reference to the VizSchema data into any Vega specs as 'rawData'.
-        response.data.specs.forEach((specItem: any) => {
-          specItem.data.forEach((dataItem: any) => {
-            if (dataItem.name === "rawData") {
-              // dataItem.values = returnedVizSchema.dataset;
-              dataItem.values = copyJson(returnedVizSchema.dataset);
-            }
-          });
         });
-        setSpecList(response.data.specs);
       });
+      setSpecList(response.data.specs);
+    });
     console.log(data);
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+  /**
+   * A helper function to update the dataset used by Vega specifications when data updates
+   * This may be in response to a user-generated SQL query, for example
+   * @param newVizSchemaDataset {VizSchema} A JSON object representing the VizSchema
+   * @param loadedSpecList {VegaSpec[]} A list of Vega specs. Only utilised during loadExamples function.
+   */
   const updateRawDataInSpecList = (
     newVizSchemaDataset: any,
     loadedSpecList?: any[]
   ) => {
+    // When examples are loaded the specList comes from MongoDB rather than user selections
     const specListToUpdate = loadedSpecList ? loadedSpecList : specList;
     const updatedSpecList = specListToUpdate.map((specItem) => {
       const updatedData = specItem.data.map((dataItem: any) => {
@@ -218,11 +244,12 @@ function App() {
     setSpecList(updatedSpecList);
   };
 
-  const [sqlCode, setSqlCode] = useState("");
-
-  const [errorMessages, setErrorMessages] = useState<string[]>([]);
-  const [showErrors, setShowErrors] = useState(false);
-
+  /**
+   * A helper function to identify whether user SQL updates have changed field aliases (currently not supported)
+   * @param vizSchema {VizSchema} The VizSchema before user updates
+   * @param updatedVizSchema {VizSchema} The VizSchema after user updates
+   * @returns
+   */
   function hasAliasChanged(
     vizSchema: VizSchema,
     updatedVizSchema: VizSchema
@@ -249,6 +276,12 @@ function App() {
     return !vizIsSubsetOfUpdated && !updatedIsSubsetOfViz;
   }
 
+  /**
+   * A helper function to catch and handle common error, including user notifications
+   * @param updatedVizSchema {VizShema} The VizSchema object to check for errors
+   *  This is compared to the current VizSchema that is held in state.
+   * @returns boolean
+   */
   const handleBackendErrors = (updatedVizSchema: VizSchema) => {
     if (updatedVizSchema.type === "ERROR") {
       setErrorMessages(updatedVizSchema.messages);
@@ -274,12 +307,12 @@ function App() {
     return false;
   };
 
-  const handleSqlSubmitButton = () => {
-    // A function to separate event handler calls of this function
-    // vs. calls with custom parameters
-    handleSqlSubmit();
-  };
-
+  /**
+   * Sends user SQL updates to the backend to regenerate all VizSchema information and UI state
+   * @param customSql {string} Optional parameter for loading example SQL code from a file rather than from state
+   * @param loadedVizSchema {VizSchema} Optional parameter for loading VizSchema from MongoDB rather than from state
+   * @param loadedSpecList {VegaSpec[]} Optional parameter for loading Vega specs from MongoDB rather than from state
+   */
   const handleSqlSubmit = (
     customSql?: string,
     loadedVizSchema?: VizSchema,
@@ -354,8 +387,17 @@ function App() {
       });
   };
 
-  const [settingsDrawIsOpen, setSettingsDrawIsOpen] = useState(false);
+  /**
+   * A function to separate event handler calls of handleSqlSubmit()
+   * as opposed to calls with custom parameters
+   */
+  const handleSqlSubmitButton = () => {
+    handleSqlSubmit();
+  };
 
+  /**
+   * Functions to manage the state of the UI setting drawer
+   */
   const showSettingsDrawer = () => {
     setSettingsDrawIsOpen(true);
   };
@@ -364,6 +406,14 @@ function App() {
     setSettingsDrawIsOpen(false);
   };
 
+  /**
+   * Handles loading examples from the example buttons provided in the UI
+   * @param databaseId {string} A UUID for the target database in MongoDB
+   * @param databaseName {string} The name of the target database
+   * @param attributeIds {number[]} A list of attributeIds from the Entity/Relationship object, used to select relevant attribute checkboxes
+   * @param vizId {string} A UUID for the stored VizSpecPayload in MongoDB
+   * @param queryString {string} A SQL query string
+   */
   const handleLoadExample = (
     databaseId: string,
     databaseName: string,

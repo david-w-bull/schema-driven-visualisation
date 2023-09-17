@@ -32,6 +32,9 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     Set<string>
   >(new Set());
 
+  /**
+   * Whenever new DatabaseSchema information is loaded, set descriptive variables
+   */
   useEffect(() => {
     setData(initialData);
     setEntityNames(initialData.entityList.map((entity) => entity.name));
@@ -53,6 +56,9 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     setDatabaseName(currentDatabaseName);
   }, [initialData]);
 
+  /**
+   * A helper function to clear user selected attributes
+   */
   const handleClearSelection = () => {
     checkedAttributes.forEach((attribute) => {
       const parentName = attribute.parentEntityName;
@@ -66,14 +72,18 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
         (item): any => item.name === parentName
       );
       parentObject && (itemId = parentObject.id);
-      // console.log("----Attribute----");
-      // console.log(isEntity);
-      // console.log(itemId);
-      // console.log(attribute);
       handleAttributeChange(isEntity, itemId, attribute, false);
     });
   };
 
+  /**
+   * Handles the checking and unchecking of user selected attributes
+   * This includes filtering the DatabaseSchema (Data) object to relevant Attributes, Entities, Relationships and ForeignKeys
+   * @param isEntity {boolean} A flag to indicate if the object is an Entity or Relationship
+   * @param itemId {number} The id of the Entity or Relationship object in the DatabaseSchema
+   * @param attribute {Attribute} The Attribute object from the DatabaseSchema for the selected attribute
+   * @param checked {boolean} Indicates whether the checkbox is being checked or unchecked
+   */
   const handleAttributeChange = (
     isEntity: boolean,
     itemId: number,
@@ -111,7 +121,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
       }
     }
 
-    // Track checked attributes
+    // Track whether attributes are checked or unchecked
     if (checked) {
       setCheckedAttributes((prevAttributes) => {
         const newAttributes = [...prevAttributes, attribute];
@@ -134,6 +144,7 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     setData(newData);
   };
 
+  // Track which entities and relationships have at least one checked attribute
   const getCheckedAttributesData = (data: Data) => {
     const entitiesWithCheckedAttributes: Set<Entity> = new Set();
     const entityNamesWithCheckedAttributes: Set<string> = new Set();
@@ -193,6 +204,13 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     };
   };
 
+  /**
+   * Tracks which Relationship objects have a direct link to an Entity or Relationship with a currently checked attribute
+   * @param data {DatabaseSchema} The database schema
+   * @param entityNames {Set<string>} A set of entities with currently selected attributes
+   * @param relationshipNames {Set<string>} A set of relationships with currently selected attributes
+   * @returns An array of relationships with a direct link to an Entity or Relationship with a currently checked attribute
+   */
   const getActiveRelationships = (
     data: Data,
     entityNames: Set<string>,
@@ -207,6 +225,11 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     });
   };
 
+  /**
+   * Whenever an attribute is checked or unchecked, update the Entity and Relationship list
+   * to show only those Entities/Relationship that have a direct link in the schema to one that
+   * is currently selected
+   */
   useEffect(() => {
     const {
       entitiesWithCheckedAttributes,
@@ -256,6 +279,11 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
     setReachableRelationships(allReachableRelationships);
   }, [checkedAttributes]);
 
+  /**
+   * On user submit, filter the DatabaseShema (Data) object to
+   * only include Attributes, Entities, Relationships and ForeignKeys related to checked attributes
+   * The actual backend submit is handled by the parent component (App.tsx)
+   */
   const handleSubmit = () => {
     const selectedData = {
       schemaId: data.schemaId,

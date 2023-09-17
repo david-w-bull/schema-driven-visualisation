@@ -3,7 +3,7 @@ import { Attribute, EntityOrRelationship } from "../types";
 import styled from "styled-components";
 import { Select } from "antd";
 import "../App.css";
-import DataTypeSelector from "./DataTypeSelector";
+// import DataTypeSelector from "./DataTypeSelector";  // Feature currently incomplete and disabled
 
 interface AttributeProps {
   attribute: Attribute;
@@ -13,6 +13,9 @@ interface AttributeProps {
 
 const { Option } = Select;
 
+/**
+ * The list of attributes and checkboxes for each Entity/Relationship displayed in the UI
+ */
 const AttributeList = ({
   attribute,
   onChange,
@@ -62,6 +65,9 @@ interface EntityProps {
   databaseName: string;
 }
 
+/**
+ * The header and attribute list for each Entity/Relationship shown in the UI
+ */
 const EntityComponent = ({
   item,
   onAttributeChange,

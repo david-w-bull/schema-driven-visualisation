@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ic.doc.dwb22.jvega.api.SchemaController;
 import ic.doc.dwb22.jvega.schema.DatabaseAttribute;
 import ic.doc.dwb22.jvega.schema.SqlDataType;
 import ic.doc.dwb22.jvega.utils.JsonData;
@@ -12,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
@@ -51,6 +53,8 @@ public class VizSchema {
     private Map<String, Integer> cardinalityLimits;
     private List<String> messages = new ArrayList<>(); // for returning user error messages etc.
 
+    private static final Logger logger = LoggerFactory.getLogger(VizSchema.class);
+
     public VizSchema(VizSchemaType type) {
         this.type = type;
     }
@@ -77,6 +81,7 @@ public class VizSchema {
         if (type == VizSchemaType.BASIC) {
             if(keyTwo != null && scalarOne != null) {
                 matchedChartTypes.add("Grouped Bar Chart");
+
                 if(isScalar(keyTwo.getDataType())) {
                     matchedChartTypes.add("Line Chart");
                 } else {
@@ -104,7 +109,6 @@ public class VizSchema {
         } else if(type == VizSchemaType.MANYTOMANY) {
             if(keyOne != null && keyTwo != null && scalarOne != null) {
                 if(reflexive) {
-                    // matchedChartTypes.add("Sankey Diagram");
                     matchedChartTypes.add("Chord Diagram");
                 } else {
                     matchedChartTypes.add("Sankey Diagram");
@@ -117,7 +121,6 @@ public class VizSchema {
             } else {
                 matchedChartTypes.add("Stacked Bar Chart");
             }
-//            matchedChartTypes.add("Treemap");
         }
 
         if(dataRelationships) {
@@ -125,7 +128,6 @@ public class VizSchema {
         } else {
             this.chartTypes = matchedChartTypes;
         }
-
         return matchedChartTypes;
     }
 
@@ -150,6 +152,8 @@ public class VizSchema {
             case TINYINT:
             case FLOAT:
             case DOUBLE:
+            case DATE:
+            case DATETIME:
                 return true;
             default:
                 return false;
@@ -166,7 +170,7 @@ public class VizSchema {
                 try {
                     jsonNode = JsonData.convertResultSetToJson(resultSet);
                 } catch (Exception e) {
-                    LoggerFactory.getLogger(VizSchema.class).error("Error converting SQL result set to JSON: " + e);
+                    logger.error("Error converting SQL result set to JSON: " + e);
                     this.type = VizSchemaType.ERROR;
                     this.messages.add(e.getMessage());
                     this.dataset = new ArrayList<>();
@@ -174,7 +178,7 @@ public class VizSchema {
                 }
             }
         } catch (SQLException e) {
-            LoggerFactory.getLogger(VizSchema.class).error("Error in connecting to the database:" + e);
+            logger.error("Error in connecting to the database:" + e);
             this.type = VizSchemaType.ERROR;
             this.messages.add(e.getMessage());
             this.dataset = new ArrayList<>();
@@ -239,7 +243,7 @@ public class VizSchema {
                 }
             }
         } catch (Exception e) {
-            LoggerFactory.getLogger(VizSchema.class).error("Error calculating cardinality data:" + e);
+            logger.error("Error calculating cardinality data:" + e);
         }
         this.keyCardinality = maxKeyCardinality;
         return maxKeyCardinality;
@@ -319,7 +323,7 @@ public class VizSchema {
             statement.executeUpdate(dropTempTableSql);
 
         } catch (Exception e) {
-            LoggerFactory.getLogger(VizSchema.class).error("Error analysing data relationships:" + e);
+            logger.error("Error analysing data relationships:" + e);
         }
     }
 

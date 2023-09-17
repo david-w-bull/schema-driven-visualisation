@@ -4,6 +4,8 @@ import ic.doc.dwb22.jvega.schema.DatabaseSchema;
 import io.github.MigadaTang.exception.DBConnectionException;
 import io.github.MigadaTang.exception.ParseException;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import java.util.Optional;
 @RequestMapping("/api/v1/schemas")
 public class SchemaController {
 
+    private static final Logger logger = LoggerFactory.getLogger(SchemaController.class);
+
     @Autowired
     private SchemaService schemaService;
 
@@ -30,18 +34,13 @@ public class SchemaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<DatabaseSchema>> getSchemaById(@PathVariable ObjectId id) {
-        return new ResponseEntity<Optional<DatabaseSchema>>(schemaService.schemaById(id), HttpStatus.OK);
+        try {
+            return new ResponseEntity<Optional<DatabaseSchema>>(schemaService.schemaById(id), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Error fetching schema: " + e);
+            return new ResponseEntity<Optional<DatabaseSchema>>(Optional.of(new DatabaseSchema("Schema could not be found")), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-
-//    @GetMapping("/{vizId}")
-//    public ResponseEntity<Optional<VizSpecPayload>> getSpecByVizId(@PathVariable String vizId) {
-//        return new ResponseEntity<Optional<VizSpecPayload>>(schemaService.specByVizId(vizId), HttpStatus.OK);
-//    }
-
-//    @PostMapping
-//    public ResponseEntity<VizSpecPayload> createDefaultSpec(@RequestBody Map<String, Integer> payload) {
-//        return new ResponseEntity<VizSpecPayload>(schemaService.DefaultSpec(payload.get("testId")), HttpStatus.CREATED);
-//    }
 
     @CrossOrigin
     @PostMapping("/postTest")

@@ -40,50 +40,12 @@ import static ic.doc.dwb22.jvega.utils.JsonData.readJsonFileToJsonNode;
 public class JVegaApplication {
 
 	public static void main(String[] args) throws SQLException, IOException {
-		//databaseTest();
-		//databaseTest2();
-		//System.out.println(UUID.randomUUID());
-		//scatterChartTest();
-//		JsonNode barData = JsonData.readJsonFileToJsonNode("barData.json");
-//		VegaSpec barSpec = DefaultChartSpec.barChart(barData);
-//		specTester(barSpec);
-
-//		JsonNode sankeyData = JsonData.readJsonFileToJsonNode("sankeyData.json");
-//		VegaSpec sankeySpec = DefaultChartSpec.sankeyChart(sankeyData, "fromField", "toField", "docCount");
-//		specTester(sankeySpec);
-
-		//donutChartTest();
-		//groupBarChartTest();
-
-		//testTemplateFile("barChartTemplate.json");
-
-//		DatabaseProfiler db = new DatabaseProfiler(RDBMSType.POSTGRESQL,
-//				"individual-project-postgres.postgres.database.azure.com",
-//				"5432",
-//				"mondial_full",
-//				System.getenv("POSTGRES_USER"),
-//				System.getenv("POSTGRES_PASSWORD"),
-//				0);
-//		DatabaseSchema schema = db.getDatabaseSchema();
-//
-//		System.out.println(schema.toJson().toPrettyString());
-
-//		testSchemaMapping("compoundKeySchema.json");
-
-//testTemplateFile( "sankeyTemplate.json", "manyToManySchema.json");
-
-//	ReportExamples.marksExample();
-
-//		scatterChartTest();
 
 	SpringApplication.run(JVegaApplication.class, args);
 	}
 
-//	@GetMapping("/")
-//	public String apiRoot() {
-//		return "Test endpoint";
-//	}
 
+	// Functions included for testing elements of application functionality
 	public static void specTester(VegaSpec spec) {
 		System.out.println(spec.toJson().toPrettyString());
 		String specString = spec.toJson().toString();
@@ -106,25 +68,19 @@ public class JVegaApplication {
 			throw new RuntimeException(e);
 		}
 
-		//System.out.println(schema.toJson().toPrettyString());
-
 		VizSchemaMapper mapper = new VizSchemaMapper(schema, System.getenv("POSTGRES_USER"), System.getenv("POSTGRES_PASSWORD"));
 
 		VizSchema vizSchema = mapper.generateVizSchema();
 
-//		System.out.println(mapper.getSqlQuery());
-//
-//		System.out.println(vizSchema.getDataset());
-//
 		System.out.println(vizSchema.getK1FieldName());
 		System.out.println(vizSchema.getKeyOneAlias());
 		System.out.println(vizSchema.getK2FieldName());
 		System.out.println(vizSchema.getKeyTwoAlias());
 		System.out.println(vizSchema.getA1FieldName());
-//		System.out.println(vizSchema.getScalarOneAlias());
-//		System.out.println(vizSchema.getKeyCardinality());
-//		System.out.println(vizSchema.getDataRelationship());
-//		System.out.println(vizSchema.getExampleData());
+		System.out.println(vizSchema.getScalarOneAlias());
+		System.out.println(vizSchema.getKeyCardinality());
+		System.out.println(vizSchema.getDataRelationship());
+		System.out.println(vizSchema.getExampleData());
 
 		vizSchema.matchSchemaChartTypes();
 
@@ -435,7 +391,6 @@ public class JVegaApplication {
 		String host = "localhost";
 		String port = "5432";
 		String databaseName = System.getenv("POSTGRES_DATABASE");
-		// String schemaName = "mondial_fragment";
 
 		String connectionString = "jdbc:"
 				+ databaseType
@@ -473,17 +428,6 @@ public class JVegaApplication {
 						System.out.println(pkTableName);
 						System.out.println(pkColumnName);
 						System.out.println("\n-----\n");
-
-						// System.out.println("FK Table Name: " + fkTableName);
-//						System.out.println("FK Column Name: " + fkColumnName);
-//						System.out.println("FK between: "
-//								+ fkTableName
-//								+ "::"
-//								+ fkColumnName
-//								+ " -> "
-//								+ pkTableName
-//								+ "::"
-//								+ pkColumnName );
 					}
 					System.out.println("\n-------------------------------\n");
 				}
@@ -491,75 +435,5 @@ public class JVegaApplication {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
-
-	}
-
-	public static void databaseTest2() {
-
-		Map<String, Map<String, ForeignKey>> entityForeignKeys = new HashMap<>();
-
-		String databaseType = "postgresql";
-		String host = "localhost";
-		String port = "5432";
-		String databaseName = "jvegatest";
-
-		String connectionString = "jdbc:"
-				+ databaseType
-				+ "://"
-				+ host
-				+ ":"
-				+ port
-				+ "/"
-				+ databaseName;;
-		String user = "david";
-		String pw = "dReD@pgs5b!";
-
-			try {
-				Connection conn = DriverManager.getConnection(connectionString, user, pw);
-				if (conn != null) {
-					DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
-
-					// Get all table names
-					ResultSet tables = dm.getTables(conn.getCatalog(), null, null, new String[] { "TABLE" });
-					while (tables.next()) {
-						String tableName = tables.getString("TABLE_NAME");
-
-						ResultSet rs = dm.getImportedKeys(conn.getCatalog(), null, tableName);
-						while (rs.next()) {
-
-							String fkName = rs.getString("FK_NAME");
-							String fkColumnName = rs.getString("FKCOLUMN_NAME");
-							String pkTableName = rs.getString("PKTABLE_NAME");
-							String pkColumnName = rs.getString("PKCOLUMN_NAME");
-
-
-							if(!entityForeignKeys.containsKey(tableName)) {
-								Map<String, ForeignKey> fkInfo = new HashMap<>();
-
-								ForeignKey foreignKey = new ForeignKey(fkName, tableName, pkTableName);
-								foreignKey.addForeignKeyColumn(fkColumnName);
-								foreignKey.addPrimaryKeyColumn(pkColumnName);
-								fkInfo.put(fkName, foreignKey);
-
-								entityForeignKeys.put(tableName, fkInfo);
-							}
-							else if(!entityForeignKeys.get(tableName).containsKey(fkName)) {
-								ForeignKey foreignKey = new ForeignKey(fkName, tableName, pkTableName);
-								foreignKey.addForeignKeyColumn(fkColumnName);
-								foreignKey.addPrimaryKeyColumn(pkColumnName);
-								entityForeignKeys.get(tableName).put(fkName, foreignKey);
-							}
-							else {
-								entityForeignKeys.get(tableName).get(fkName).addForeignKeyColumn(fkColumnName);
-								entityForeignKeys.get(tableName).get(fkName).addPrimaryKeyColumn(pkColumnName);
-							}
-
-						}
-					}
-				}
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-			}
-			System.out.println(entityForeignKeys.toString());
 	}
 }

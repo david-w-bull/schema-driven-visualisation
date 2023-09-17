@@ -30,10 +30,6 @@ public class VegaSpecService {
         return vegaSpecRepository.findAll();
     }
 
-//    public Optional<VegaSpec> specById(ObjectId id) {
-//        return vegaSpecRepository.findById(id);
-//    }
-
     public Optional<VizSpecPayload> specByVizId(String vizId) {
         return vegaSpecRepository.findSpecByVizId(vizId);
     }
@@ -64,8 +60,6 @@ public class VegaSpecService {
                 System.getenv("POSTGRES_PASSWORD"));
 
         VizSchema vizSchema = mapper.generateVizSchema();
-
-        // System.out.println(vizSchema.matchChartTypes());
 
         List<VegaSpec> specs = new ArrayList<>();
 
