@@ -17,6 +17,7 @@ import VizSchemaInfoDisplay from "./components/VizSchemaInfoDisplay";
 import LoadExampleButton from "./components/LoadExampleButton";
 import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
 import { categorizeCharts, copyJson, swapKeyFields } from "./utils/chartUtils";
+import aboutText from "./userInformation";
 import {
   Data,
   VizSchema,
@@ -36,6 +37,7 @@ import {
   Drawer,
   Alert,
   Divider,
+  Spin,
 } from "antd";
 
 function App() {
@@ -59,8 +61,10 @@ function App() {
   const [radioRecommendations, setRadioRecommendations] = useState("Schema");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [settingsDrawIsOpen, setSettingsDrawIsOpen] = useState(false);
+  const [helpDrawerIsOpen, setHelpDrawerIsOpen] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   /* State variables managing VizSchema information and user queries */
   const [vizSchema, setVizSchema] = useState<VizSchema>(BLANKVIZSCHEMA);
@@ -140,83 +144,93 @@ function App() {
    * @param data A DatabaseSchema object, filtered based on user selections
    */
   const handleSelectedData = (data: Data) => {
+    setLoading(true);
     setVegaSpec(BLANKSPEC);
     setVegaActionMenu(false);
     setSqlCode("");
     setShowErrors(false);
     setRadioRecommendations("Schema");
-    axios.post(`${apiUrl}/specs/specFromSchema`, data).then((response) => {
-      console.log(response.data);
-      console.log(JSON.stringify(response.data));
-      let returnedVizSchema = response.data.vizSchema;
-      if (
-        returnedVizSchema.dataRelationship &&
-        returnedVizSchema.dataRelationship == "ONETOMANY"
-      ) {
+    axios
+      .post(`${apiUrl}/specs/specFromSchema`, data)
+      .then((response) => {
+        console.log(response.data);
+        let returnedVizSchema = response.data.vizSchema;
         if (
-          returnedVizSchema.keyOneCardinality >
-          returnedVizSchema.keyTwoCardinality
+          returnedVizSchema.dataRelationship &&
+          returnedVizSchema.dataRelationship == "ONETOMANY"
         ) {
-          returnedVizSchema = swapKeyFields(returnedVizSchema);
+          if (
+            returnedVizSchema.keyOneCardinality >
+            returnedVizSchema.keyTwoCardinality
+          ) {
+            returnedVizSchema = swapKeyFields(returnedVizSchema);
+          }
         }
-      }
 
-      setVizSchema(returnedVizSchema);
-      setVizPayloadId(response.data.vizId);
-      if (
-        returnedVizSchema.type == "NONE" ||
-        returnedVizSchema.type == "ERROR"
-      ) {
-        setSchemaChartTypes([]);
-        setDataChartTypes([]);
-        setSchemaRecommendedCharts(BLANKRECOMMENDATIONS);
-        setDataRecommendedCharts(BLANKRECOMMENDATIONS);
+        setVizSchema(returnedVizSchema);
+        setVizPayloadId(response.data.vizId);
+        if (
+          returnedVizSchema.type == "NONE" ||
+          returnedVizSchema.type == "ERROR"
+        ) {
+          setSchemaChartTypes([]);
+          setDataChartTypes([]);
+          setSchemaRecommendedCharts(BLANKRECOMMENDATIONS);
+          setDataRecommendedCharts(BLANKRECOMMENDATIONS);
+          setErrorMessages([
+            "Your selected fields did not match any visualisation schema patterns",
+          ]);
+          setShowErrors(true);
+          return;
+        }
+
+        setRadioEnabled(true);
+        returnedVizSchema.sqlQuery && setSqlCode(returnedVizSchema.sqlQuery);
+        returnedVizSchema.keyCardinality &&
+          setKeyCardinality(returnedVizSchema.keyCardinality);
+        returnedVizSchema.keyOneCardinality &&
+          setKeyOneCardinality(returnedVizSchema.keyOneCardinality);
+        returnedVizSchema.chartTypes &&
+          setSchemaChartTypes(returnedVizSchema.chartTypes);
+        returnedVizSchema.dataChartTypes &&
+          setDataChartTypes(returnedVizSchema.dataChartTypes);
+
+        let schemaRecommendedCharts = categorizeCharts(
+          returnedVizSchema.chartTypes,
+          cardinalityLimits,
+          returnedVizSchema.keyCardinality,
+          returnedVizSchema.keyOneCardinality
+        );
+
+        let dataRecommendedCharts = categorizeCharts(
+          returnedVizSchema.dataChartTypes,
+          cardinalityLimits,
+          returnedVizSchema.keyCardinality,
+          returnedVizSchema.keyOneCardinality
+        );
+
+        setSchemaRecommendedCharts(schemaRecommendedCharts);
+        setDataRecommendedCharts(dataRecommendedCharts);
+
+        // Copy the reference to the VizSchema data into any Vega specs as the 'rawData' dataset
+        response.data.specs.forEach((specItem: any) => {
+          specItem.data.forEach((dataItem: any) => {
+            if (dataItem.name === "rawData") {
+              dataItem.values = copyJson(returnedVizSchema.dataset);
+            }
+          });
+        });
+        setSpecList(response.data.specs);
+        setLoading(false);
+      })
+      .catch((error) => {
         setErrorMessages([
-          "Your selected fields did not match any visualisation schema patterns",
+          "There was an error processing your selected fields. Please try again later.",
         ]);
         setShowErrors(true);
-        return;
-      }
-
-      setRadioEnabled(true);
-      returnedVizSchema.sqlQuery && setSqlCode(returnedVizSchema.sqlQuery);
-      returnedVizSchema.keyCardinality &&
-        setKeyCardinality(returnedVizSchema.keyCardinality);
-      returnedVizSchema.keyOneCardinality &&
-        setKeyOneCardinality(returnedVizSchema.keyOneCardinality);
-      returnedVizSchema.chartTypes &&
-        setSchemaChartTypes(returnedVizSchema.chartTypes);
-      returnedVizSchema.dataChartTypes &&
-        setDataChartTypes(returnedVizSchema.dataChartTypes);
-
-      let schemaRecommendedCharts = categorizeCharts(
-        returnedVizSchema.chartTypes,
-        cardinalityLimits,
-        returnedVizSchema.keyCardinality,
-        returnedVizSchema.keyOneCardinality
-      );
-
-      let dataRecommendedCharts = categorizeCharts(
-        returnedVizSchema.dataChartTypes,
-        cardinalityLimits,
-        returnedVizSchema.keyCardinality,
-        returnedVizSchema.keyOneCardinality
-      );
-
-      setSchemaRecommendedCharts(schemaRecommendedCharts);
-      setDataRecommendedCharts(dataRecommendedCharts);
-
-      // Copy the reference to the VizSchema data into any Vega specs as the 'rawData' dataset
-      response.data.specs.forEach((specItem: any) => {
-        specItem.data.forEach((dataItem: any) => {
-          if (dataItem.name === "rawData") {
-            dataItem.values = copyJson(returnedVizSchema.dataset);
-          }
-        });
+        console.error("Error creating VizSchema from selected data: ", error);
+        setLoading(false);
       });
-      setSpecList(response.data.specs);
-    });
-    console.log(data);
   };
 
   /**
@@ -320,6 +334,7 @@ function App() {
   ) => {
     // Clear previous alerts
     setShowErrors(false);
+    setLoading(true);
 
     const vizSchemaToUpdate =
       loadedVizSchema != undefined ? loadedVizSchema : vizSchema;
@@ -334,7 +349,6 @@ function App() {
     axios
       .post(`${apiUrl}/specs/updateSqlData`, updatedVizSchema)
       .then((response) => {
-        console.log(response.data);
         if (!loadedVizSchema) {
           if (handleBackendErrors(response.data)) {
             return;
@@ -384,6 +398,15 @@ function App() {
             loadedSpecList
           );
         }
+        setLoading(false);
+      })
+      .catch((error) => {
+        setErrorMessages([
+          "There was an error updating the SQL query. Please try again.",
+        ]);
+        setShowErrors(true);
+        console.error("Error updating SQL query: ", error);
+        setLoading(false);
       });
   };
 
@@ -399,11 +422,21 @@ function App() {
    * Functions to manage the state of the UI setting drawer
    */
   const showSettingsDrawer = () => {
+    setHelpDrawerIsOpen(false);
     setSettingsDrawIsOpen(true);
   };
 
   const closeSettingsDrawer = () => {
     setSettingsDrawIsOpen(false);
+  };
+
+  const showHelpDrawer = () => {
+    setSettingsDrawIsOpen(false);
+    setHelpDrawerIsOpen(true);
+  };
+
+  const closeHelpDrawer = () => {
+    setHelpDrawerIsOpen(false);
   };
 
   /**
@@ -421,6 +454,7 @@ function App() {
     vizId: string,
     queryString: string
   ) => {
+    setLoading(true);
     setVizSchema(BLANKVIZSCHEMA);
     handleSelectDatabase(databaseId);
     setRadioRecommendations("Schema");
@@ -469,7 +503,11 @@ function App() {
             setRadioEnabled(true);
           })
           .catch((error) => {
-            console.error("There was an error!", error);
+            setErrorMessages([
+              "Example data could not be loaded. Please try again later.",
+            ]);
+            setShowErrors(true);
+            console.error("Error loading example: ", error);
           });
       }
     }, 500);
@@ -479,177 +517,198 @@ function App() {
 
   return (
     <>
-      <div style={{ display: "flex", height: "100vh", width: "100%" }}>
-        <Split
-          className="split"
-          sizes={[20, 80]}
-          minSize={[350, 700]}
-          expandToMin={false}
-          gutterSize={10}
-          gutterAlign="center"
-          snapOffset={30}
-          dragInterval={1}
-          direction="horizontal"
-          cursor="col-resize"
-          style={{ width: "100%" }}
-        >
-          <div
-            style={{
-              overflowY: "auto",
-              display: "flex",
-              flexDirection: "column",
-            }}
+      <Spin spinning={loading} size="large">
+        <div style={{ display: "flex", height: "100vh", width: "100%" }}>
+          <Split
+            className="split"
+            sizes={[20, 80]}
+            minSize={[350, 700]}
+            expandToMin={false}
+            gutterSize={10}
+            gutterAlign="center"
+            snapOffset={30}
+            dragInterval={1}
+            direction="horizontal"
+            cursor="col-resize"
+            style={{ width: "100%" }}
           >
-            <DatabaseSelector
-              selectedValue={selectedDatabase}
-              onSelectDatabase={handleSelectDatabase}
-            />
-            <EntityList
-              data={schemaInfo}
-              onSelectedData={handleSelectedData}
-            ></EntityList>
-          </div>
-
-          <div
-            style={{
-              padding: "5%",
-              backgroundImage:
-                "linear-gradient(to right bottom, #ffffff, #f5f5f5, #eaeaeb, #e0e0e2, #d6d6d8)",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Radio.Group
-              onChange={handleRadioSelect}
-              defaultValue="SQL"
-              size="large"
-              style={{ marginBottom: "20px" }}
-              disabled={!radioEnabled}
+            <div
+              style={{
+                overflowY: "auto",
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
-              <Radio.Button value="SQL">SQL</Radio.Button>
-              <Radio.Button value="Visualisations">Visualisations</Radio.Button>
-              <Radio.Button value="Schema">Schema</Radio.Button>
-            </Radio.Group>
+              <DatabaseSelector
+                selectedValue={selectedDatabase}
+                onSelectDatabase={handleSelectDatabase}
+              />
+              <EntityList
+                data={schemaInfo}
+                onSelectedData={handleSelectedData}
+              ></EntityList>
+            </div>
 
-            {radioSelect === "SQL" && (
-              <div>
+            <div
+              style={{
+                padding: "5%",
+                backgroundImage:
+                  "linear-gradient(to right bottom, #ffffff, #f5f5f5, #eaeaeb, #e0e0e2, #d6d6d8)",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Radio.Group
+                onChange={handleRadioSelect}
+                defaultValue="SQL"
+                size="large"
+                style={{ marginBottom: "20px" }}
+                disabled={!radioEnabled}
+              >
+                <Radio.Button value="SQL">SQL</Radio.Button>
+                <Radio.Button value="Visualisations">
+                  Visualisations
+                </Radio.Button>
+                <Radio.Button value="Schema">Schema</Radio.Button>
+              </Radio.Group>
+
+              {radioSelect === "SQL" && (
                 <div>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <SQLEditor value={sqlCode} onChange={setSqlCode} />
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                        overflowY: "auto",
-                        marginLeft: "50px",
-                        maxHeight: "300px",
-                        width: "30%",
-                      }}
-                    >
-                      {examplesData.map((example, index) => (
-                        <LoadExampleButton
-                          key={index}
-                          buttonText={example.exampleName}
-                          handleLoadExample={() =>
-                            handleLoadExample(
-                              example.databaseId,
-                              example.databaseName,
-                              example.attributeIdList,
-                              example.vizId,
-                              example.queryString
-                            )
-                          }
-                        />
-                      ))}
+                  <div>
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                      <SQLEditor value={sqlCode} onChange={setSqlCode} />
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          flexWrap: "wrap",
+                          overflowY: "auto",
+                          marginLeft: "50px",
+                          maxHeight: "300px",
+                          width: "30%",
+                        }}
+                      >
+                        {examplesData.map((example, index) => (
+                          <LoadExampleButton
+                            key={index}
+                            buttonText={example.exampleName}
+                            handleLoadExample={() =>
+                              handleLoadExample(
+                                example.databaseId,
+                                example.databaseName,
+                                example.attributeIdList,
+                                example.vizId,
+                                example.queryString
+                              )
+                            }
+                          />
+                        ))}
+                      </div>
                     </div>
+                    <SQLSubmitButton
+                      sqlCode={sqlCode}
+                      radioEnabled={radioEnabled}
+                      handleSqlSubmit={handleSqlSubmitButton}
+                    />
                   </div>
-                  <SQLSubmitButton
-                    sqlCode={sqlCode}
-                    radioEnabled={radioEnabled}
-                    handleSqlSubmit={handleSqlSubmitButton}
-                  />
+                  <DataTable
+                    data={vizSchema.dataset ? vizSchema.dataset : []}
+                    scrollHeight={380}
+                  ></DataTable>
                 </div>
-                <DataTable
-                  data={vizSchema.dataset ? vizSchema.dataset : []}
-                  scrollHeight={380}
-                ></DataTable>
-              </div>
-            )}
+              )}
 
-            {radioSelect === "Visualisations" && (
-              <>
-                {vizSchema.dataChartTypes &&
-                  vizSchema.dataRelationship !== vizSchema.type && (
-                    <Radio.Group
-                      onChange={handleChangeRecommendations}
-                      value={radioRecommendations}
-                    >
-                      <Radio value={"Schema"}>Schema</Radio>
-                      <Radio value={"Data"}>Data</Radio>
-                    </Radio.Group>
-                  )}
-                <VisualisationButtonsGroup
-                  vizSchemaType={vizSchema.type}
-                  chartTypes={
-                    radioRecommendations == "Data"
-                      ? dataRecommendedCharts
-                      : schemaRecommendedCharts
-                  }
-                  specList={specList}
-                  cardinalityLimits={cardinalityLimits}
-                  keyCardinality={keyCardinality}
-                  keyOneCardinality={keyOneCardinality}
-                  setVegaSpec={setVegaSpec}
-                  setVegaActionMenu={setVegaActionMenu}
-                  setSelectedChart={setSelectedChart}
-                  setIsModalOpen={setIsModalOpen}
-                />
-              </>
-            )}
-            {radioSelect === "Schema" && (
-              <VizSchemaInfoDisplay vizSchema={vizSchema} />
-            )}
-          </div>
-        </Split>
-      </div>
-      {isModalOpen && (
-        <ChartDisplayModal
-          setIsModalOpen={setIsModalOpen}
-          selectedChart={selectedChart}
-          vegaSpec={vegaSpec}
-          vegaActionMenu={vegaActionMenu}
-          vizSchema={{ ...vizSchema }}
-        ></ChartDisplayModal>
-      )}
-      <Drawer
-        title="Cardinality Limits"
-        placement="right"
-        closable={true}
-        onClose={closeSettingsDrawer}
-        open={settingsDrawIsOpen}
-      >
-        <CardinalitySettings
-          data={cardinalityLimits}
-          onDataUpdate={handleCardinalityUpdate}
-        />
-      </Drawer>
-      <FloatButton.Group shape="square" style={{ right: 24 }}>
-        <FloatButton icon={<QuestionCircleOutlined />} />
-        <FloatButton icon={<SettingOutlined />} onClick={showSettingsDrawer} />
-      </FloatButton.Group>
-      {showErrors && (
-        <TopWarningAlert
-          message="Error"
-          description={errorMessages.join("\n")}
-          type="error"
-          showIcon
-          closable
-          onClose={() => {
-            setShowErrors(false);
-          }}
-        />
-      )}
+              {radioSelect === "Visualisations" && (
+                <>
+                  {vizSchema.dataChartTypes &&
+                    vizSchema.dataRelationship !== vizSchema.type && (
+                      <Radio.Group
+                        onChange={handleChangeRecommendations}
+                        value={radioRecommendations}
+                      >
+                        <Radio value={"Schema"}>Schema</Radio>
+                        <Radio value={"Data"}>Data</Radio>
+                      </Radio.Group>
+                    )}
+                  <VisualisationButtonsGroup
+                    vizSchemaType={vizSchema.type}
+                    chartTypes={
+                      radioRecommendations == "Data"
+                        ? dataRecommendedCharts
+                        : schemaRecommendedCharts
+                    }
+                    specList={specList}
+                    cardinalityLimits={cardinalityLimits}
+                    keyCardinality={keyCardinality}
+                    keyOneCardinality={keyOneCardinality}
+                    setVegaSpec={setVegaSpec}
+                    setVegaActionMenu={setVegaActionMenu}
+                    setSelectedChart={setSelectedChart}
+                    setIsModalOpen={setIsModalOpen}
+                  />
+                </>
+              )}
+              {radioSelect === "Schema" && (
+                <VizSchemaInfoDisplay vizSchema={vizSchema} />
+              )}
+            </div>
+          </Split>
+        </div>
+        {isModalOpen && (
+          <ChartDisplayModal
+            setIsModalOpen={setIsModalOpen}
+            selectedChart={selectedChart}
+            vegaSpec={vegaSpec}
+            vegaActionMenu={vegaActionMenu}
+            vizSchema={{ ...vizSchema }}
+          ></ChartDisplayModal>
+        )}
+        <Drawer
+          title="Cardinality Limits"
+          placement="right"
+          closable={true}
+          onClose={closeSettingsDrawer}
+          open={settingsDrawIsOpen}
+        >
+          <CardinalitySettings
+            data={cardinalityLimits}
+            onDataUpdate={handleCardinalityUpdate}
+          />
+        </Drawer>
+        <Drawer
+          title="About"
+          placement="right"
+          closable={true}
+          onClose={closeHelpDrawer}
+          open={helpDrawerIsOpen}
+        >
+          {aboutText.content.map((paragraph, index) => (
+            <p key={index} dangerouslySetInnerHTML={{ __html: paragraph }}></p>
+          ))}
+        </Drawer>
+        <FloatButton.Group shape="square" style={{ right: 24 }}>
+          <FloatButton
+            icon={<QuestionCircleOutlined />}
+            onClick={showHelpDrawer}
+          />
+          <FloatButton
+            icon={<SettingOutlined />}
+            onClick={showSettingsDrawer}
+          />
+        </FloatButton.Group>
+        {showErrors && (
+          <TopWarningAlert
+            message="Error"
+            description={errorMessages.join("\n")}
+            type="error"
+            showIcon
+            closable
+            onClose={() => {
+              setShowErrors(false);
+            }}
+          />
+        )}
+      </Spin>
     </>
   );
 }

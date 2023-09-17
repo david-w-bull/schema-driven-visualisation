@@ -126,8 +126,6 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
       setCheckedAttributes((prevAttributes) => {
         const newAttributes = [...prevAttributes, attribute];
         setIsSelectionMade(newAttributes.length > 0);
-        console.log("Checked:");
-        console.log(newAttributes);
         return newAttributes;
       });
     } else {
@@ -135,8 +133,6 @@ const EntityList = ({ data: initialData, onSelectedData }: EntityListProps) => {
         const newAttributes = prevAttributes.filter(
           (attr) => attr.attributeId !== attribute.attributeId
         );
-        console.log("Checked:");
-        console.log(newAttributes);
         setIsSelectionMade(newAttributes.length > 0);
         return newAttributes;
       });
