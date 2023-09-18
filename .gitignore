@@ -35,9 +35,6 @@ build/
 ### Env files ###
 .env
 
-### External JAR files ###
-backend/lib/*.jar
-
 ### Frontend node modules ###
 frontend/node_modules
 

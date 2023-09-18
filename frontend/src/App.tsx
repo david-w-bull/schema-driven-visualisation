@@ -41,8 +41,8 @@ import {
 } from "antd";
 
 function App() {
-  // const apiUrl = "/api/v1";  // Production API URL stem
-  const apiUrl = "http://localhost:8080/api/v1"; // Deb API URL stem
+  // const apiUrl = "/api/v1"; // Production API URL stem
+  const apiUrl = "http://localhost:8080/api/v1"; // Dev API URL stem
 
   /* State variables managing Vega visualisations */
   const [vegaSpec, setVegaSpec] = useState(BLANKSPEC);
