@@ -71,10 +71,10 @@ It is recommended to launch the app using the provided dockerfile template. This
 4. Run `docker run -p 8080:8080 my_image`.
 5. The app should now be accessible at http://localhost:8080 (frontend files are packaged with the backend meaning that the full application should be running).
 
-### Starting Up the Frontend
+### Launch the Frontend
 The frontend build files are included in 'backend/src/main/resources/static' meaning that the steps above will start the full application.
 However, if you would like to start the frontend development server separately, follow these steps:
-1. Navigate to the 'client' directory
+1. Navigate to the 'frontend' directory
 2. Run `npm install` to install the required Node.js packages
 3. Run `npm run dev`
 4. The app should now be accessible at http://localhost:5173
