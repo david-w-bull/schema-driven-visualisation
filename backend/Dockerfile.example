@@ -1,0 +1,39 @@
+FROM openjdk:17-alpine as build
+
+WORKDIR /app
+
+COPY mvnw .
+COPY .mvn .mvn
+
+COPY lib/ lib/
+
+# The amazing-er library is used from a local .jar file. This is installed in the docker contain for ease
+# Once installed locally by maven in the container - the pom.xml can reference the Id as version as defined below
+RUN ./mvnw install:install-file -Dfile=./lib/amazing-er.jar -DgroupId=io.github.MigadaTang -DartifactId=amazing-er -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar
+
+COPY pom.xml ./
+
+RUN ./mvnw dependency:go-offline
+
+COPY src/ src/
+
+# Build the application
+RUN ./mvnw package -DskipTests
+
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
+
+FROM openjdk:17-alpine
+
+ARG DEPENDENCY=/app/target/dependency
+
+# Copy project dependencies from the build stage
+COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
+COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
+
+ENV POSTGRES_USER=""
+ENV POSTGRES_PASSWORD=""
+
+ENTRYPOINT ["java","-cp","app:app/lib/*","ic.doc.dwb22.jvega.Application"]
+
+
