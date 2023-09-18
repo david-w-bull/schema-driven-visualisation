@@ -37,11 +37,11 @@ import static ic.doc.dwb22.jvega.utils.JsonData.readJsonFileToJsonNode;
 @SpringBootApplication
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class}) // Allows SQL connection to be configured at runtime
 @RestController
-public class JVegaApplication {
+public class Application {
 
 	public static void main(String[] args) throws SQLException, IOException {
 
-	SpringApplication.run(JVegaApplication.class, args);
+	SpringApplication.run(Application.class, args);
 	}
 
 

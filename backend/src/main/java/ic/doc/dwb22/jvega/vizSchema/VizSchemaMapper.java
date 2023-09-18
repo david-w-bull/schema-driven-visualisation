@@ -335,8 +335,6 @@ public class VizSchemaMapper {
                     + attributeList + "\n\n"
                     + "FROM "
                     + entity.getName()
-                    + "\n\n"
-                    + "LIMIT 30"
                     ;
         }
 
@@ -398,8 +396,7 @@ public class VizSchemaMapper {
                     + "\t" + select + "\n\n"
                     + "FROM " + from + "\n\n"
                     + "JOIN " + join + "\n"
-                    + "ON " + on + "\n\n"
-                    + "LIMIT 50";
+                    + "ON " + on;
         }
 
         else if(type == VizSchemaType.MANYTOMANY) {
@@ -503,8 +500,6 @@ public class VizSchemaMapper {
                 sqlString.append("JOIN " + join.get(i) + "\n");
                 sqlString.append("ON " + on.get(i) + "\n\n");
             }
-
-            sqlString.append("LIMIT 50");
 
             return sqlString.toString();
         }

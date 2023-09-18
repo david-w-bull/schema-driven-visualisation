@@ -1,6 +1,6 @@
 import { CardinalityLimits, ChartRecommendations, VizSchema } from "../types";
 
-import ChordDiagramTest from "../components/charts/ChordDiagramTest";
+import ChordDiagram from "../components/charts/ChordDiagram";
 import GroupedBar from "../components/charts/GroupedBar";
 import StackedBar from "../components/charts/StackedBar";
 import ScatterPlot from "../components/charts/ScatterPlot";
@@ -26,7 +26,7 @@ export const renderChartComponent = (
     case "Word Cloud":
       return <WordCloud vizSchema={vizSchema} />;
     case "Chord Diagram":
-      return <ChordDiagramTest vizSchema={vizSchema} />;
+      return <ChordDiagram vizSchema={vizSchema} />;
     case "Grouped Bar Chart":
       return <GroupedBar vizSchema={vizSchema} />;
     case "Stacked Bar Chart":

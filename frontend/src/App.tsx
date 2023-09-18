@@ -180,6 +180,7 @@ function App() {
           setErrorMessages([
             "Your selected fields did not match any visualisation schema patterns",
           ]);
+          setLoading(false);
           setShowErrors(true);
           return;
         }
@@ -227,9 +228,9 @@ function App() {
         setErrorMessages([
           "There was an error processing your selected fields. Please try again later.",
         ]);
+        setLoading(false);
         setShowErrors(true);
         console.error("Error creating VizSchema from selected data: ", error);
-        setLoading(false);
       });
   };
 
@@ -299,6 +300,7 @@ function App() {
   const handleBackendErrors = (updatedVizSchema: VizSchema) => {
     if (updatedVizSchema.type === "ERROR") {
       setErrorMessages(updatedVizSchema.messages);
+      setLoading(false);
       setShowErrors(true);
       return true;
     }
@@ -307,6 +309,7 @@ function App() {
       (updatedVizSchema.dataset && updatedVizSchema.dataset.length === 0)
     ) {
       setErrorMessages(["Your query returned no data"]);
+      setLoading(false);
       setShowErrors(true);
       return true;
     }
@@ -315,6 +318,7 @@ function App() {
       setErrorMessages([
         "Field aliases cannot be changed as part of SQL updates",
       ]);
+      setLoading(false);
       setShowErrors(true);
       return true;
     }
@@ -404,9 +408,9 @@ function App() {
         setErrorMessages([
           "There was an error updating the SQL query. Please try again.",
         ]);
+        setLoading(false);
         setShowErrors(true);
         console.error("Error updating SQL query: ", error);
-        setLoading(false);
       });
   };
 
@@ -506,6 +510,7 @@ function App() {
             setErrorMessages([
               "Example data could not be loaded. Please try again later.",
             ]);
+            setLoading(false);
             setShowErrors(true);
             console.error("Error loading example: ", error);
           });

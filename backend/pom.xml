@@ -85,7 +85,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<includeSystemScope>true</includeSystemScope>
-					<mainClass>ic.doc.dwb22.jvega.JVegaApplication</mainClass>
+					<mainClass>ic.doc.dwb22.jvega.Application</mainClass>
 <!--					<includeSystemScope>true</includeSystemScope>-->
 					<excludes>
 						<exclude>

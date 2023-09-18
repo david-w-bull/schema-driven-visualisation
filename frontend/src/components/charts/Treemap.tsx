@@ -45,7 +45,6 @@ const Treemap = ({ vizSchema }: TreemapProps) => {
     vizSchema.keyTwoAlias, // child field name
     vizSchema.scalarOneAlias // size field name
   );
-  console.log(hierarchicalData);
 
   const data = {
     name: "root",

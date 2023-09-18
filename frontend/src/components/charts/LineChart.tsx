@@ -22,10 +22,13 @@ const LineChart = ({ vizSchema }: LineChartProps) => {
     data.sort((a: any, b: any) => parseFloat(a.type) - parseFloat(b.type));
   }
 
-  let xLabel = vizSchema.keyTwo.attributeName;
+  let xLabel = vizSchema.keyTwo?.attributeName;
   let yLabel = vizSchema.scalarOne.attributeName;
 
-  if (vizSchema.keyTwo.attributeName == vizSchema.scalarOne.attributeName) {
+  if (
+    vizSchema.keyTwo &&
+    vizSchema.keyTwo.attributeName == vizSchema.scalarOne.attributeName
+  ) {
     xLabel = vizSchema.keyTwoAlias;
     yLabel = vizSchema.scalarOneAlias;
   }
